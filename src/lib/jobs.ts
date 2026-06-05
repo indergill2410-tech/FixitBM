@@ -38,6 +38,8 @@ export type JobSummary = {
   assigned_tradie_id: string | null;
 };
 
+export type RequestLaneLabel = "Home emergency" | "Roadside emergency" | "Trade request" | "Project quote";
+
 export type JobStatusEvent = {
   id: string;
   status: JobStatus;
@@ -1032,6 +1034,24 @@ export function statusLabel(status: JobStatus) {
 
 export function formatJobLocation(job: Pick<JobSummary, "suburb" | "postcode" | "state">) {
   return [job.suburb, job.postcode, job.state].filter(Boolean).join(" ") || "Location pending";
+}
+
+export function requestLaneLabel(job: Pick<JobSummary, "type" | "description" | "credit_cost">): RequestLaneLabel {
+  const description = job.description.toLowerCase();
+
+  if (description.includes("request lane: larger project") || job.credit_cost >= 200) return "Project quote";
+  if (description.includes("request lane: standard trade")) return "Trade request";
+  if (job.type === "road") return "Roadside emergency";
+  if (job.type === "scheduled") return "Trade request";
+  return "Home emergency";
+}
+
+export function requestLaneTone(job: Pick<JobSummary, "type" | "description" | "credit_cost">) {
+  const lane = requestLaneLabel(job);
+  if (lane === "Project quote") return "purple";
+  if (lane === "Trade request") return "blue";
+  if (lane === "Roadside emergency") return "red";
+  return "red";
 }
 
 function scoreLead(job: JobSummary, tradie: TradieProfileSummary) {

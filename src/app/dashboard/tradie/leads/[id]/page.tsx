@@ -11,7 +11,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="Lead detail" role={`Lead ${id}`} />
+        <DashboardHeader title="Lead detail" role={`Fixer lead ${id}`} />
         {lead ? (
           <Card variant={lead.urgency === "emergency" ? "emergency" : "default"}>
             <h1 className="text-2xl font-black">{lead.title}</h1>
@@ -44,7 +44,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
                 <form action="/api/leads/claim" method="post" className="md:ml-auto">
                   <input type="hidden" name="jobId" value={lead.id} />
                   <Button disabled={lead.already_claimed || !enoughCredits}>
-                    {lead.already_claimed ? "Already claimed" : enoughCredits ? "Claim lead" : "Need credits"}
+                    {lead.already_claimed ? "Already claimed" : enoughCredits ? "Claim request" : "Need credits"}
                   </Button>
                 </form>
               </div>

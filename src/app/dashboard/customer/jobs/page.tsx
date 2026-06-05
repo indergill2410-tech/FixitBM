@@ -10,14 +10,14 @@ export default async function CustomerJobsPage() {
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="My jobs" role="Customer" />
+        <DashboardHeader title="My requests" role="Customer" />
         <div className="grid gap-4">
           {jobs.length ? (
             jobs.map((job) => <CustomerJobCard key={job.id} job={job} />)
           ) : (
             <Card>
-              <h2 className="font-black">No jobs yet</h2>
-              <p className="mt-2 text-[var(--text2)]">Post a job free or claim a guest request after signing in.</p>
+              <h2 className="font-black">No requests yet</h2>
+              <p className="mt-2 text-[var(--text2)]">Start a request free or claim a guest request after signing in.</p>
             </Card>
           )}
         </div>
