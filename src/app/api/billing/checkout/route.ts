@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentAppUser } from "@/lib/auth";
-import { getBillingPlan, isStripeConfigured } from "@/lib/billing";
+import { getBillingPlan, getCreditAmount, isStripeConfigured, stripeRequest } from "@/lib/billing";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
 
@@ -39,11 +39,47 @@ export async function POST(request: Request) {
     });
   }
 
-  return NextResponse.json({
-    configured: false,
-    message:
-      "Stripe price IDs are configured, but live checkout creation is intentionally disabled until the Stripe SDK integration is enabled."
+  const origin = new URL(request.url).origin;
+  const priceId = process.env[plan.stripePriceEnv];
+  const successUrl = `${origin}/billing/status?status=success&plan=${encodeURIComponent(plan.code)}`;
+  const cancelUrl = `${origin}/billing/status?status=cancelled&plan=${encodeURIComponent(plan.code)}`;
+  const body = new URLSearchParams({
+    mode: plan.type === "credit_pack" ? "payment" : "subscription",
+    "line_items[0][price]": priceId ?? "",
+    "line_items[0][quantity]": "1",
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+    client_reference_id: user.id,
+    "metadata[user_id]": user.id,
+    "metadata[plan_code]": plan.code,
+    "metadata[product_type]": plan.type,
+    "metadata[credit_amount]": String(getCreditAmount(plan.code))
   });
+
+  if (user.email) {
+    body.set("customer_email", user.email);
+  }
+
+  if (plan.type !== "credit_pack") {
+    body.set("subscription_data[metadata][user_id]", user.id);
+    body.set("subscription_data[metadata][plan_code]", plan.code);
+    body.set("subscription_data[metadata][product_type]", plan.type);
+  }
+
+  try {
+    const session = await stripeRequest<{ id: string; url: string }>("/checkout/sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body
+    });
+
+    return NextResponse.json({ configured: true, url: session.url });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Unable to start checkout." },
+      { status: 502 }
+    );
+  }
 }
 
 async function recordPendingPlan(userId: string, planCode: string) {
