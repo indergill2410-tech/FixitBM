@@ -78,7 +78,7 @@ export function TradieRegisterForm() {
       </label>
       <Button disabled={pending}>
         {pending ? <Loader2 className="animate-spin" size={17} /> : <BriefcaseBusiness size={17} />}
-        Create tradie account
+        Create Fixer account
       </Button>
     </form>
   );

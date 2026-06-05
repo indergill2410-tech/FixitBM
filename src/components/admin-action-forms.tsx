@@ -61,7 +61,7 @@ export function AssignTradieForm({ jobId, tradies = [] }: { jobId: string; tradi
       <input type="hidden" name="jobId" value={jobId} />
       {tradies.length ? (
         <select name="tradieId" className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white" required>
-          <option value="">Choose tradie</option>
+          <option value="">Choose Fixer</option>
           {tradies.map((tradie) => (
             <option key={tradie.id} value={tradie.id}>
               {tradie.business_name || tradie.trade_category} - {tradie.trade_category}
@@ -73,11 +73,11 @@ export function AssignTradieForm({ jobId, tradies = [] }: { jobId: string; tradi
         <input
           name="tradieId"
           className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
-          placeholder="Tradie profile UUID"
+          placeholder="Fixer profile UUID"
           required
         />
       )}
-      <Button disabled={pending}>Assign tradie</Button>
+      <Button disabled={pending}>Assign Fixer</Button>
     </form>
   );
 }

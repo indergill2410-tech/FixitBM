@@ -1,40 +1,62 @@
-import { Check, Clock, Home, ShieldAlert } from "lucide-react";
-import { Badge, Card, MobileBottomActionBar, PublicHeader } from "@/components/ui";
+import type { Metadata } from "next";
+import { Check, Clock, Home, ShieldAlert, Star, Wrench } from "lucide-react";
+import { Badge, Button, Card, MobileBottomActionBar, PublicHeader } from "@/components/ui";
 import { CheckoutButton } from "@/components/billing-buttons";
+import { appUrl } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  title: "Fixit Plus | Home and roadside emergency peace of mind",
+  description:
+    "Fixit Plus gives your household priority access, emergency coordination, saved profiles, and member support from $29/month.",
+  alternates: { canonical: "/fixit-plus" },
+  openGraph: {
+    title: "Fixit Plus",
+    description: "Peace of mind before panic starts.",
+    url: `${appUrl}/fixit-plus`,
+    type: "website"
+  }
+};
 
 const plans = [
   {
     name: "Fixit Plus Home",
     code: "home",
     price: "$29",
-    note: "Emergency peace of mind for your home.",
+    note: "Peace of mind for home emergencies.",
     recommended: false,
     features: [
       "24/7 emergency request support",
       "Priority home emergency matching",
-      "Plumbing and electrical emergencies",
-      "Lockouts, leaks, urgent repairs",
+      "Plumbing emergencies",
+      "Electrical faults",
+      "Lockouts",
+      "Leaks and urgent repairs",
+      "Roof and storm issues",
+      "Glass breakage",
       "Saved property profile",
-      "Emergency job history",
+      "Emergency history",
       "Maintenance reminders",
-      "Priority support"
+      "Member support"
     ]
   },
   {
     name: "Fixit Plus Complete",
     code: "complete",
     price: "$49",
-    note: "Home + roadside emergency peace of mind.",
+    note: "Peace of mind at home and on the road.",
     recommended: true,
     features: [
       "Everything in Home",
-      "Roadside support coordination",
-      "Flat battery and tyre change support",
-      "Vehicle lockout and fuel emergency support",
+      "Roadside emergency coordination",
+      "Flat battery help",
+      "Tyre change support",
+      "Vehicle lockout support",
+      "Fuel emergency support",
       "Towing coordination",
       "Mechanic matching",
       "Saved vehicle profile",
-      "Home + road emergency dashboard"
+      "Family vehicle records",
+      "Home + road dashboard"
     ]
   }
 ];
@@ -44,29 +66,32 @@ export default function FixitPlusPage() {
     <main className="premium-shell pb-24">
       <PublicHeader />
       <section className="container py-14">
-        <Badge>Peace of mind for your home and road</Badge>
+        <Badge>Fixit Plus</Badge>
         <div className="grid gap-8 lg:grid-cols-[.9fr_1.1fr] lg:items-end">
           <div>
             <h1 className="mt-5 text-[40px] font-black leading-tight tracking-tight md:text-[58px]">
-              One membership for the moments when things go wrong.
+              Peace of mind before panic starts.
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text2)]">
-              From burst pipes and lockouts to flat tyres and dead batteries, Fixit Plus helps you get emergency support
-              when you need it most.
+              Protect your home, your road moments, and your family from the stress of not knowing who to call.
             </p>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <Button href="/post-job">Get Help Now</Button>
+              <Button href="#plans" variant="ghost">Compare plans</Button>
+            </div>
           </div>
           <Card variant="emergency">
             <Clock className="text-[var(--amber2)]" />
             <h2 className="mt-4 text-xl font-black">72-hour activation period</h2>
             <p className="mt-2 leading-7 text-[var(--text2)]">
               Fixit Plus membership benefits apply after a 72-hour activation period. Existing emergencies can still be
-              posted free and handled as pay-as-you-go jobs.
+              posted free and handled as pay-as-you-go requests.
             </p>
           </Card>
         </div>
       </section>
 
-      <section className="container grid gap-5 pb-12 md:grid-cols-2">
+      <section id="plans" className="container grid gap-5 pb-12 md:grid-cols-2">
         {plans.map((plan) => (
           <Card key={plan.name} variant={plan.recommended ? "membership" : "default"} className="relative">
             {plan.recommended ? <Badge tone="amber">Recommended</Badge> : <Badge tone="gray">Home</Badge>}
@@ -95,22 +120,62 @@ export default function FixitPlusPage() {
         ))}
       </section>
 
-      <section className="container grid gap-5 pb-16 md:grid-cols-3">
+      <section className="container grid gap-5 pb-12 md:grid-cols-3">
         <Card>
           <Home className="text-[var(--amber2)]" />
-          <h3 className="mt-4 font-black">Home emergencies covered</h3>
-          <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Plumbing, electrical, lockouts, leaks, roof and storm issues, urgent repairs, and glass breakage.</p>
+          <h3 className="mt-4 font-black">What Home covers</h3>
+          <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
+            Plumbing, electrical, lockouts, leaks, roof and storm issues, urgent repairs, glass breakage, and saved home
+            context.
+          </p>
         </Card>
         <Card>
           <ShieldAlert className="text-[var(--blue)]" />
-          <h3 className="mt-4 font-black">Road support in Complete</h3>
-          <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Flat battery help, tyre change support, vehicle lockout support, fuel emergencies, towing coordination, and mechanic matching.</p>
+          <h3 className="mt-4 font-black">What Complete adds</h3>
+          <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
+            Roadside coordination, flat battery help, tyre change support, vehicle lockout support, fuel emergency support,
+            towing coordination, and saved vehicle records.
+          </p>
         </Card>
         <Card>
-          <Badge tone="red">Important</Badge>
-          <h3 className="mt-4 font-black">What is not included</h3>
-          <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Tradie labour, parts, call-out fees, repairs, towing, and specialist services are quoted separately unless specifically included in your plan.</p>
+          <Wrench className="text-[var(--purple)]" />
+          <h3 className="mt-4 font-black">Any trade job still works</h3>
+          <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
+            Membership is for emergency peace of mind. Standard trade jobs and larger projects can still be posted free.
+          </p>
         </Card>
+      </section>
+
+      <section className="container grid gap-5 pb-12 lg:grid-cols-2">
+        <Card variant="emergency">
+          <Badge tone="red">Important</Badge>
+          <h3 className="mt-4 text-2xl font-black">What is quoted separately</h3>
+          <p className="mt-3 leading-7 text-[var(--text2)]">
+            Membership gives priority access, emergency coordination, saved profiles, and member support. Labour, parts,
+            towing, repairs, trade work, renovations, and specialist services are quoted separately unless specifically
+            included.
+          </p>
+        </Card>
+        <Card variant="membership">
+          <Star className="text-[var(--amber2)]" />
+          <h3 className="mt-4 text-2xl font-black">Saved home and vehicle profiles</h3>
+          <p className="mt-3 leading-7 text-[var(--text2)]">
+            Keep property and vehicle details ready so urgent requests start with the information Fixers and support need.
+          </p>
+        </Card>
+      </section>
+
+      <section className="container grid gap-4 pb-16 md:grid-cols-3">
+        {[
+          ["Does Fixit Plus include free repairs?", "No. Repairs, labour, parts, towing, and specialist services are quoted separately unless specifically included."],
+          ["Can I post an emergency without membership?", "Yes. Existing emergencies can be posted free and handled as pay-as-you-go requests."],
+          ["Why the activation period?", "The 72-hour activation period protects the membership from being used only after an emergency has already happened."]
+        ].map(([question, answer]) => (
+          <Card key={question}>
+            <h3 className="font-black">{question}</h3>
+            <p className="mt-3 text-sm leading-6 text-[var(--text2)]">{answer}</p>
+          </Card>
+        ))}
       </section>
       <MobileBottomActionBar />
     </main>

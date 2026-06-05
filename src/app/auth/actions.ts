@@ -164,7 +164,7 @@ export async function registerTradieAction(
   });
 
   if (!parsed.success) {
-    return { ok: false, message: "Complete the required tradie onboarding details." };
+    return { ok: false, message: "Complete the required Fixer onboarding details." };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -187,7 +187,7 @@ export async function registerTradieAction(
   });
 
   if (authError || !authData.user) {
-    return { ok: false, message: authError?.message ?? "Could not create tradie account." };
+    return { ok: false, message: authError?.message ?? "Could not create Fixer account." };
   }
 
   const { data: appUser, error: userError } = await admin

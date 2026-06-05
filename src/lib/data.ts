@@ -123,10 +123,10 @@ export const projectCategories = [
 ];
 
 export const customerTimeline = [
-  "Job posted",
-  "Matching tradies",
-  "Tradie accepted",
-  "Tradie en route",
+  "Request posted",
+  "Matching Fixers",
+  "Fixer accepted",
+  "Fixer en route",
   "On site",
   "Quote provided",
   "Work in progress",

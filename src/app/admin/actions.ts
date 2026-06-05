@@ -117,7 +117,7 @@ export async function assignTradieAction(
   });
 
   if (!parsed.success) {
-    return { ok: false, message: "Enter a valid tradie ID." };
+    return { ok: false, message: "Enter a valid Fixer ID." };
   }
 
   const { error } = await supabase
@@ -130,7 +130,7 @@ export async function assignTradieAction(
   await supabase.from("job_status_events").insert({
     job_id: parsed.data.jobId,
     status: "tradie_accepted",
-    title: "Tradie assigned",
+    title: "Fixer assigned",
     note: "Assigned by admin command centre.",
     created_by: user.id
   });
@@ -147,7 +147,7 @@ export async function assignTradieAction(
   revalidatePath("/admin/jobs");
   revalidatePath(`/admin/jobs/${parsed.data.jobId}`);
 
-  return { ok: true, message: "Tradie assigned." };
+  return { ok: true, message: "Fixer assigned." };
 }
 
 export async function reviewVerificationAction(

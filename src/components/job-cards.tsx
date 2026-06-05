@@ -17,7 +17,7 @@ export function CustomerJobCard({ job, hrefPrefix = "/dashboard/customer/jobs" }
         <div className="md:ml-auto">
           <Badge tone="gray">{statusLabel(job.status)}</Badge>
           <Button href={`${hrefPrefix}/${job.id}`} variant="ghost" className="mt-3 w-full md:w-auto">
-            View job
+            View request
             <ArrowRight size={16} />
           </Button>
         </div>
@@ -49,7 +49,7 @@ export function LeadCard({ lead }: { lead: LeadSummary }) {
           <div className="flex gap-2">
             <form action="/api/leads/claim" method="post">
               <input type="hidden" name="jobId" value={lead.id} />
-              <Button disabled={lead.already_claimed}>{lead.already_claimed ? "Claimed" : "Claim lead"}</Button>
+              <Button disabled={lead.already_claimed}>{lead.already_claimed ? "Claimed" : "Claim request"}</Button>
             </form>
             <Button href={`/dashboard/tradie/leads/${lead.id}`} variant="ghost">
               Details
