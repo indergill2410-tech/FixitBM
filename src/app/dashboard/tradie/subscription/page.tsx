@@ -11,7 +11,7 @@ export default async function TradieSubscriptionPage() {
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="Subscription" role="Tradie" />
+        <DashboardHeader title="Subscription" role="Fixer" />
         <Card variant="membership">
           <Badge>Current plan</Badge>
           <h1 className="mt-4 text-3xl font-black">

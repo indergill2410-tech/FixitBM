@@ -12,7 +12,7 @@ export default async function CustomerJobDetailPage({ params }: { params: Promis
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="Job detail" role={`Job ${id}`} />
+        <DashboardHeader title="Request detail" role={`Request ${id}`} />
         {job ? (
           <div className="grid gap-5 lg:grid-cols-[.65fr_.35fr]">
             <Card variant="emergency">
@@ -23,7 +23,7 @@ export default async function CustomerJobDetailPage({ params }: { params: Promis
               </p>
               <p className="mt-4 leading-7 text-[var(--text2)]">{job.description}</p>
               <div className="mt-6 grid gap-3">
-                {(job.events.length ? job.events : [{ id: "fallback", title: "Job posted", status: job.status, note: "Request received.", created_at: job.created_at }]).map((event) => (
+                {(job.events.length ? job.events : [{ id: "fallback", title: "Request posted", status: job.status, note: "Request received.", created_at: job.created_at }]).map((event) => (
                   <div key={event.id} className="flex gap-3">
                     <span className="mt-1 h-3 w-3 rounded-full bg-[var(--green)]" />
                     <div>
@@ -47,7 +47,7 @@ export default async function CustomerJobDetailPage({ params }: { params: Promis
                       </div>
                     ))
                   ) : (
-                    <p className="text-sm leading-6 text-[var(--text2)]">Messages will appear here when a tradie or support agent replies.</p>
+                    <p className="text-sm leading-6 text-[var(--text2)]">Messages will appear here when a Fixer or support agent replies.</p>
                   )}
                 </div>
                 <JobMessageForm jobId={job.id} />
@@ -60,13 +60,13 @@ export default async function CustomerJobDetailPage({ params }: { params: Promis
                       <div key={photo.id} className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg2)]">
                         {photo.signed_url ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={photo.signed_url} alt={photo.file_name ?? "Job photo"} className="aspect-video w-full object-cover" />
+                          <img src={photo.signed_url} alt={photo.file_name ?? "Request photo"} className="aspect-video w-full object-cover" />
                         ) : null}
                         <p className="p-3 text-sm font-semibold text-[var(--text2)]">{photo.file_name ?? photo.file_url}</p>
                       </div>
                     ))
                   ) : (
-                    <p className="text-sm leading-6 text-[var(--text2)]">Add job photos so support and tradies can assess the job faster.</p>
+                    <p className="text-sm leading-6 text-[var(--text2)]">Add request photos so support and Fixers can assess the issue faster.</p>
                   )}
                 </div>
                 <JobPhotoUploadForm jobId={job.id} />
@@ -74,7 +74,7 @@ export default async function CustomerJobDetailPage({ params }: { params: Promis
               {["completed", "closed"].includes(job.status) ? (
                 <Card>
                   <Badge tone="green">Review</Badge>
-                  <h2 className="mt-4 text-xl font-black">Rate this completed job</h2>
+                  <h2 className="mt-4 text-xl font-black">Rate this completed request</h2>
                   <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Your review helps keep the Fixit247 network accountable.</p>
                   <JobReviewForm jobId={job.id} />
                 </Card>
@@ -83,8 +83,8 @@ export default async function CustomerJobDetailPage({ params }: { params: Promis
           </div>
         ) : (
           <Card>
-            <h1 className="text-xl font-black">Job not found</h1>
-            <p className="mt-2 text-[var(--text2)]">This job may not belong to the signed-in customer.</p>
+            <h1 className="text-xl font-black">Request not found</h1>
+            <p className="mt-2 text-[var(--text2)]">This request may not belong to the signed-in customer.</p>
           </Card>
         )}
       </section>

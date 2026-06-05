@@ -5,7 +5,7 @@ export default function AdminSettingsPage() {
     {
       label: "Supabase public URL",
       ready: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
-      detail: "Browser auth and customer/tradie flows can reach the project."
+      detail: "Browser auth and customer/Fixer flows can reach the project."
     },
     {
       label: "Supabase publishable key",
@@ -20,7 +20,7 @@ export default function AdminSettingsPage() {
     {
       label: "Cron secret",
       ready: Boolean(process.env.CRON_SECRET),
-      detail: "Monthly 111-credit tradie bonus renewals can be protected in production."
+      detail: "Monthly 111-credit Fixer bonus renewals can be protected in production."
     },
     {
       label: "Stripe secret key",
@@ -60,10 +60,10 @@ export default function AdminSettingsPage() {
           <Card variant="dark">
             <h2 className="text-xl font-black">Business rules</h2>
             <div className="mt-4 grid gap-3 text-sm leading-6 text-white/75">
-              <p>Customers post jobs free, with guest-first posting kept open for emergencies.</p>
-              <p>Tradies keep 100% of the job value; Fixit247 monetises subscriptions, lead credits, verification, priority, and tools.</p>
-              <p>Launch bonus grants tradies 111 lead credits every month for 6 months, including Free Starter accounts.</p>
-              <p>Admin can assign jobs, update status, review verification, refund bad leads, and monitor disputes.</p>
+              <p>Customers start requests free, with guest-first posting kept open for emergencies.</p>
+              <p>Fixers keep 100% of the work value; Fixit247 monetises subscriptions, lead credits, verification, priority, and tools.</p>
+              <p>Launch bonus grants Fixers 111 lead credits every month for 6 months, including Free Starter accounts.</p>
+              <p>Admin can assign requests, update status, review verification, refund bad leads, and monitor disputes.</p>
             </div>
           </Card>
         </div>

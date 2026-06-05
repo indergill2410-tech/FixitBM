@@ -10,23 +10,23 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-black text-[var(--text)]">Marketplace role</h2>
             <p className="mt-2">
-              Fixit247 helps customers submit home, roadside, and scheduled service requests and helps matched tradies
-              receive, claim, and manage those requests. Unless a written Fixit247 plan says otherwise, the tradie is
+              Fixit247 helps customers submit home, roadside, and scheduled service requests and helps matched Fixers
+              receive, claim, and manage those requests. Unless a written Fixit247 plan says otherwise, the Fixer is
               responsible for quoting, completing, warranting, and charging for the work they perform.
             </p>
           </section>
           <section>
             <h2 className="text-xl font-black text-[var(--text)]">Customer requests</h2>
             <p className="mt-2">
-              Customers can post jobs without paying Fixit247. Job descriptions, photos, contact details, location notes,
-              urgency, and access instructions must be accurate enough for a tradie to assess the request. Emergency
+              Customers can start requests without paying Fixit247. Request descriptions, photos, contact details, location notes,
+              urgency, and access instructions must be accurate enough for a Fixer to assess the request. Emergency
               situations should always be handled with appropriate emergency services first.
             </p>
           </section>
           <section>
-            <h2 className="text-xl font-black text-[var(--text)]">Tradie access</h2>
+            <h2 className="text-xl font-black text-[var(--text)]">Fixer access</h2>
             <p className="mt-2">
-              Tradies keep 100% of the job value agreed with the customer. Fixit247 may charge for subscriptions, lead
+              Fixers keep 100% of the work value agreed with the customer. Fixit247 may charge for subscriptions, lead
               credits, verification, visibility, priority placement, and business tools. Launch bonus credits can be used
               to claim eligible leads and may expire or be limited by anti-abuse rules.
             </p>

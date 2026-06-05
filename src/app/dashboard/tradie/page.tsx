@@ -18,26 +18,26 @@ export default async function TradieDashboardPage() {
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="Tradie command centre" role="Tradie" />
+        <DashboardHeader title="Fixer command centre" role="Fixer" />
         <div className="grid gap-5 lg:grid-cols-[.7fr_.3fr]">
           <div className="grid gap-5">
             <div className="grid gap-4 md:grid-cols-4">
-              <StatCard label="Availability" value={profile?.emergency_available ? "On" : "Off"} detail="Emergency jobs" />
+              <StatCard label="Availability" value={profile?.emergency_available ? "On" : "Off"} detail="Emergency requests" />
               <StatCard label="Wallet" value={String(availableCredits)} detail="Lead credits" />
               <StatCard label="Open leads" value={String(leads.length)} detail="Ready to claim" />
-              <StatCard label="Active jobs" value={String(activeJobs.length)} detail={`${jobs.length} assigned total`} />
+              <StatCard label="Active work" value={String(activeJobs.length)} detail={`${jobs.length} assigned total`} />
             </div>
             {topLead ? (
               <LeadCard lead={topLead} />
             ) : activeJobs[0] ? (
               <Card variant="dark">
-                <Badge>Active job</Badge>
+                <Badge>Active request</Badge>
                 <h2 className="mt-4 text-2xl font-black">{activeJobs[0].title}</h2>
                 <p className="mt-2 text-white/70">
                   {formatJobLocation(activeJobs[0])} · {statusLabel(activeJobs[0].status)}
                 </p>
                 <Button href={`/dashboard/tradie/jobs/${activeJobs[0].id}`} variant="ghost" className="mt-5">
-                  Open job
+                  Open request
                 </Button>
               </Card>
             ) : (
@@ -50,14 +50,14 @@ export default async function TradieDashboardPage() {
           </div>
           <Card>
             <Badge tone="green">No commission</Badge>
-            <h2 className="mt-4 text-xl font-black">Keep 100% of the job value.</h2>
+            <h2 className="mt-4 text-xl font-black">Keep 100% of the work value.</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Pay for leads, priority access, verification upgrades, and business tools.</p>
           </Card>
           <Card variant="membership">
             <Badge>Signup bonus</Badge>
             <h2 className="mt-4 text-xl font-black">111 credits every month for 6 months.</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-              Claim job leads on Free Starter before choosing a paid subscription.
+              Claim request leads on Free Starter before choosing a paid subscription.
             </p>
             <Button href="/dashboard/tradie/wallet" className="mt-5 w-full">
               View wallet

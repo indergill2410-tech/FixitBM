@@ -45,12 +45,12 @@ export function TradieJobActions({ jobId, status }: { jobId: string; status: Job
       return;
     }
 
-    setMessage("Job status updated.");
+    setMessage("Request status updated.");
     router.refresh();
   }
 
   if (!availableActions.length) {
-    return <p className="text-sm leading-6 text-[var(--text2)]">No tradie action is needed at this status.</p>;
+    return <p className="text-sm leading-6 text-[var(--text2)]">No Fixer action is needed at this status.</p>;
   }
 
   return (

@@ -10,7 +10,7 @@ export default async function AdminJobDetailPage({ params }: { params: Promise<{
   return (
     <main className="min-h-screen bg-[#120f0c] text-white">
       <section className="container py-8">
-        <DashboardHeader title="Admin job detail" role={`Job ${id}`} />
+        <DashboardHeader title="Admin request detail" role={`Request ${id}`} />
         {job ? (
           <div className="grid gap-4">
             <Card variant="dark">
@@ -26,7 +26,7 @@ export default async function AdminJobDetailPage({ params }: { params: Promise<{
                   <p className="font-bold text-white">Request details</p>
                   <p className="mt-3">Location: {formatJobLocation(job)}</p>
                   <p>Contact: {job.guest_name || "Account customer"} · {job.guest_phone || job.preferred_contact_method}</p>
-                  <p>Assigned: {job.assigned_tradie_name || "Unassigned"}</p>
+                    <p>Assigned Fixer: {job.assigned_tradie_name || "Unassigned"}</p>
                   <p>Credits: {job.credit_cost}</p>
                 </div>
               </div>
@@ -77,7 +77,7 @@ export default async function AdminJobDetailPage({ params }: { params: Promise<{
                       </div>
                     ))
                   ) : (
-                    <p className="text-white/70">No messages on this job yet.</p>
+                    <p className="text-white/70">No messages on this request yet.</p>
                   )}
                 </div>
               </Card>
@@ -102,14 +102,14 @@ export default async function AdminJobDetailPage({ params }: { params: Promise<{
 
             {job.photos.length ? (
               <Card variant="dark">
-                <h2 className="text-lg font-black">Job photos</h2>
+                <h2 className="text-lg font-black">Request photos</h2>
                 <div className="mt-4 grid gap-3 md:grid-cols-3">
                   {job.photos.map((photo) => (
                     <div key={photo.id} className="overflow-hidden rounded-xl border border-white/10 bg-white/5">
                       {photo.signed_url ? (
                         <Image
                           src={photo.signed_url}
-                          alt={photo.file_name || "Job photo"}
+                          alt={photo.file_name || "Request photo"}
                           width={640}
                           height={420}
                           className="aspect-[4/3] w-full object-cover"
@@ -125,7 +125,7 @@ export default async function AdminJobDetailPage({ params }: { params: Promise<{
           </div>
         ) : (
           <Card variant="dark">
-            <p className="text-white/70">Job not found.</p>
+            <p className="text-white/70">Request not found.</p>
           </Card>
         )}
       </section>

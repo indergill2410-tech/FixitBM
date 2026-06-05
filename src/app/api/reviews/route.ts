@@ -44,7 +44,7 @@ export async function POST(request: Request) {
   }
 
   if (!job.assigned_tradie_id) {
-    return NextResponse.json({ error: "This job has no assigned tradie to review." }, { status: 400 });
+    return NextResponse.json({ error: "This request has no assigned Fixer to review." }, { status: 400 });
   }
 
   const { data: tradie } = await supabase
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     .maybeSingle();
 
   if (!tradie?.user_id) {
-    return NextResponse.json({ error: "Tradie profile could not be found." }, { status: 404 });
+    return NextResponse.json({ error: "Fixer profile could not be found." }, { status: 404 });
   }
 
   const reviewPayload = {

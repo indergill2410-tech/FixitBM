@@ -51,7 +51,7 @@ export async function POST(request: Request) {
   }
 
   const senderName = [user.first_name, user.last_name].filter(Boolean).join(" ").trim();
-  const senderLabel = senderName || (user.role === "tradie" ? "Tradie" : user.role === "customer" ? "Customer" : "Fixit247");
+  const senderLabel = senderName || (user.role === "tradie" ? "Fixer" : user.role === "customer" ? "Customer" : "Fixit247");
 
   const { data: message, error } = await supabase
     .from("job_messages")

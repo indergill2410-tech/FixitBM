@@ -29,7 +29,7 @@ export default async function AdminVerificationPage() {
           ) : (
             <Card variant="dark">
               <h2 className="font-black">No verification documents yet</h2>
-              <p className="mt-2 text-sm text-white/70">Uploaded tradie documents will appear here for review.</p>
+              <p className="mt-2 text-sm text-white/70">Uploaded Fixer documents will appear here for review.</p>
             </Card>
           )}
         </div>

@@ -81,7 +81,7 @@ export function PublicHeader() {
             Login
           </Button>
           <Button href="/post-job" variant="ghost" className="min-h-9 px-4">
-            Post Job Free
+            Start Request
           </Button>
           <Button href="/post-job" className="min-h-9 px-4">
             Get Help Now

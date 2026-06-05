@@ -21,7 +21,7 @@ export function LoginForm() {
         Continue
       </Button>
       <Button href="/post-job" variant="ghost">
-        Post a job without logging in
+        Start a request without logging in
       </Button>
     </form>
   );
@@ -74,7 +74,7 @@ export function TradieRegisterForm() {
       </div>
       <label className="flex gap-3 rounded-2xl border border-[var(--border)] bg-white p-4 text-sm text-[var(--text2)]">
         <input name="emergencyAvailable" type="checkbox" />
-        Available for emergency jobs
+        Available for emergency requests
       </label>
       <Button disabled={pending}>
         {pending ? <Loader2 className="animate-spin" size={17} /> : <BriefcaseBusiness size={17} />}

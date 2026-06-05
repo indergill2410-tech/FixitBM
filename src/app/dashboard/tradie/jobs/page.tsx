@@ -10,13 +10,13 @@ export default async function TradieJobsPage() {
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="Tradie jobs" role="Tradie" />
+        <DashboardHeader title="Assigned requests" role="Fixer" />
         <div className="grid gap-4">
           {jobs.length ? (
             jobs.map((job) => <CustomerJobCard key={job.id} job={job} hrefPrefix="/dashboard/tradie/jobs" />)
           ) : (
             <Card>
-              <h2 className="font-black">No assigned jobs yet</h2>
+              <h2 className="font-black">No assigned requests yet</h2>
               <p className="mt-2 text-[var(--text2)]">Claim a lead or wait for admin dispatch to assign confirmed work.</p>
             </Card>
           )}

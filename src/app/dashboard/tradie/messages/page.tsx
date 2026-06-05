@@ -9,7 +9,7 @@ export default async function TradieMessagesPage() {
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="Messages" role="Tradie" />
+        <DashboardHeader title="Messages" role="Fixer" />
         <div className="grid gap-4">
           {threads.length ? (
             threads.map((thread) => (
@@ -30,8 +30,8 @@ export default async function TradieMessagesPage() {
             ))
           ) : (
             <Card>
-              <h2 className="font-black">No job conversations yet</h2>
-              <p className="mt-2 text-[var(--text2)]">Messages appear here after you claim or are assigned jobs.</p>
+              <h2 className="font-black">No request conversations yet</h2>
+              <p className="mt-2 text-[var(--text2)]">Messages appear here after you claim or are assigned requests.</p>
             </Card>
           )}
         </div>

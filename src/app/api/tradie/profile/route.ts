@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   const user = await getCurrentAppUser();
 
   if (!user || user.role !== "tradie") {
-    return NextResponse.json({ error: "Tradie access required." }, { status: 401 });
+    return NextResponse.json({ error: "Fixer access required." }, { status: 401 });
   }
 
   if (!isSupabaseServerConfigured()) {

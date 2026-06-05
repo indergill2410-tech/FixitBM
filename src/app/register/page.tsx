@@ -13,14 +13,14 @@ export default function RegisterPage() {
             <Card>
               <Home className="text-[var(--amber2)]" />
               <h2 className="mt-4 text-xl font-black">I need help</h2>
-              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Create a customer account for tracking jobs, properties, vehicles, messages, and Fixit Plus.</p>
+              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Create a customer account for tracking requests, properties, vehicles, messages, and Fixit Plus.</p>
               <Button href="/register/customer" className="mt-5 w-full">Customer account</Button>
             </Card>
             <Card>
               <BriefcaseBusiness className="text-[var(--purple)]" />
-              <h2 className="mt-4 text-xl font-black">I am a tradie</h2>
+              <h2 className="mt-4 text-xl font-black">I am a Fixer</h2>
               <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Create a business profile, manage availability, and access local leads without commission.</p>
-              <Button href="/register/tradie" variant="dark" className="mt-5 w-full">Tradie onboarding</Button>
+              <Button href="/register/fixer" variant="dark" className="mt-5 w-full">Fixer onboarding</Button>
             </Card>
           </div>
         </div>

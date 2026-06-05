@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   const user = await getCurrentAppUser();
 
   if (!user || !["tradie", "admin", "super_admin"].includes(user.role)) {
-    return NextResponse.json({ error: "Tradie access required." }, { status: 401 });
+    return NextResponse.json({ error: "Fixer access required." }, { status: 401 });
   }
 
   if (!isSupabaseServerConfigured()) {
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   const { data: tradie } = await supabase.from("tradie_profiles").select("id").eq("user_id", user.id).maybeSingle();
 
   if (!tradie) {
-    return NextResponse.json({ error: "Tradie profile not found." }, { status: 404 });
+    return NextResponse.json({ error: "Fixer profile not found." }, { status: 404 });
   }
 
   const path = storagePath(["tradies", tradie.id, documentType], file.name);
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
       type: documentType,
       status: "pending",
       file_url: path,
-      notes: "Uploaded by tradie"
+      notes: "Uploaded by Fixer"
     })
     .select("id, file_url, status")
     .single();

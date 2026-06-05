@@ -12,7 +12,7 @@ export default async function TradieJobDetailPage({ params }: { params: Promise<
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="Tradie job detail" role={`Job ${id}`} />
+        <DashboardHeader title="Fixer request detail" role={`Request ${id}`} />
         {job ? (
           <div className="grid gap-5 lg:grid-cols-[.65fr_.35fr]">
             <Card variant="emergency">
@@ -23,7 +23,7 @@ export default async function TradieJobDetailPage({ params }: { params: Promise<
               </p>
               <p className="mt-4 leading-7 text-[var(--text2)]">{job.description}</p>
               <div className="mt-6 grid gap-3">
-                {(job.events.length ? job.events : [{ id: "fallback", title: "Job posted", status: job.status, note: "Request received.", created_at: job.created_at }]).map((event) => (
+                {(job.events.length ? job.events : [{ id: "fallback", title: "Request posted", status: job.status, note: "Request received.", created_at: job.created_at }]).map((event) => (
                   <div key={event.id} className="flex gap-3">
                     <span className="mt-1 h-3 w-3 rounded-full bg-[var(--green)]" />
                     <div>
@@ -37,10 +37,10 @@ export default async function TradieJobDetailPage({ params }: { params: Promise<
             </Card>
             <div className="grid gap-5">
               <Card>
-                <Badge tone="amber">Job actions</Badge>
+                <Badge tone="amber">Request actions</Badge>
                 <h2 className="mt-4 text-xl font-black">Move the work forward</h2>
                 <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                  Update only confirmed assigned jobs. Customers and ops see these status changes on the shared timeline.
+                  Update only confirmed assigned requests. Customers and ops see these status changes on the shared timeline.
                 </p>
                 <TradieJobActions jobId={job.id} status={job.status} />
               </Card>
@@ -55,7 +55,7 @@ export default async function TradieJobDetailPage({ params }: { params: Promise<
                       </div>
                     ))
                   ) : (
-                    <p className="text-sm leading-6 text-[var(--text2)]">Use the job chat for customer updates and support notes.</p>
+                    <p className="text-sm leading-6 text-[var(--text2)]">Use the request chat for customer updates and support notes.</p>
                   )}
                 </div>
                 <JobMessageForm jobId={job.id} />
@@ -68,13 +68,13 @@ export default async function TradieJobDetailPage({ params }: { params: Promise<
                       <div key={photo.id} className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--bg2)]">
                         {photo.signed_url ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={photo.signed_url} alt={photo.file_name ?? "Job photo"} className="aspect-video w-full object-cover" />
+                          <img src={photo.signed_url} alt={photo.file_name ?? "Request photo"} className="aspect-video w-full object-cover" />
                         ) : null}
                         <p className="p-3 text-sm font-semibold text-[var(--text2)]">{photo.file_name ?? photo.file_url}</p>
                       </div>
                     ))
                   ) : (
-                    <p className="text-sm leading-6 text-[var(--text2)]">Attach inspection photos as the job progresses.</p>
+                    <p className="text-sm leading-6 text-[var(--text2)]">Attach inspection photos as the request progresses.</p>
                   )}
                 </div>
                 <JobPhotoUploadForm jobId={job.id} />
@@ -83,8 +83,8 @@ export default async function TradieJobDetailPage({ params }: { params: Promise<
           </div>
         ) : (
           <Card>
-            <h1 className="text-xl font-black">Job not found</h1>
-            <p className="mt-2 text-[var(--text2)]">This job may not be assigned to your trade profile yet.</p>
+            <h1 className="text-xl font-black">Request not found</h1>
+            <p className="mt-2 text-[var(--text2)]">This request may not be assigned to your Fixer profile yet.</p>
           </Card>
         )}
       </section>

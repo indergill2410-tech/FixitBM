@@ -11,7 +11,7 @@ export default async function TradieProfilePage() {
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="Business profile" role="Tradie" />
+        <DashboardHeader title="Business profile" role="Fixer" />
         {profile ? (
           <div className="grid gap-5">
             <div className="grid gap-4 md:grid-cols-4">
@@ -71,7 +71,7 @@ export default async function TradieProfilePage() {
         ) : (
           <Card>
             <h2 className="font-black">Profile not found</h2>
-            <p className="mt-2 text-[var(--text2)]">Complete tradie registration to create a business profile.</p>
+            <p className="mt-2 text-[var(--text2)]">Complete Fixer registration to create a business profile.</p>
           </Card>
         )}
       </section>

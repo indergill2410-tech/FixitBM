@@ -151,7 +151,7 @@ export default function HomePage() {
           <Badge tone="gray">Fixit symbols</Badge>
           <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">A calm system for urgent moments.</h2>
           <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
-            Simple service marks for the core Fixit247 experience: repairs, road help, protection, urgency, and tradie credits.
+            Simple service marks for the core Fixit247 experience: repairs, road help, protection, urgency, and Fixer credits.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">

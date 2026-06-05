@@ -17,8 +17,8 @@ export default function LoginPage() {
             <Button href="/register/customer" variant="ghost">
               Create customer account
             </Button>
-            <Button href="/register/tradie" variant="ghost">
-              Join as a tradie
+            <Button href="/register/fixer" variant="ghost">
+              Join as a Fixer
             </Button>
           </div>
         </Card>

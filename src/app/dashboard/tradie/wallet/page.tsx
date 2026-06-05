@@ -10,7 +10,7 @@ export default async function TradieWalletPage() {
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="Credit wallet" role="Tradie" />
+        <DashboardHeader title="Credit wallet" role="Fixer" />
         <div className="grid gap-4 md:grid-cols-3">
           <StatCard label="Available credits" value={String(totalAvailable)} detail="Paid plus valid bonus credits" />
           <StatCard label="Bonus credits" value={String(wallet?.bonus_balance ?? 0)} detail="Signup offer" />
@@ -18,10 +18,10 @@ export default async function TradieWalletPage() {
         </div>
         <div className="mt-5 grid gap-5 lg:grid-cols-[.4fr_.6fr]">
           <Card variant="membership">
-            <Badge>Tradie launch offer</Badge>
+            <Badge>Fixer launch offer</Badge>
             <h2 className="mt-4 text-2xl font-black">111 bonus credits every month for 6 months.</h2>
             <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
-              Use monthly renewed bonus credits to claim job leads while staying on Free Starter. Upgrade only when you
+              Use monthly renewed bonus credits to claim request leads while staying on Free Starter. Upgrade only when you
               want priority access, higher ranking, and more growth tools.
             </p>
             <p className="mt-4 text-sm font-bold text-[var(--text)]">

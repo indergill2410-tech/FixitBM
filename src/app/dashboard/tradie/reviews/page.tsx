@@ -12,10 +12,10 @@ export default async function TradieReviewsPage() {
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="Reviews" role="Tradie" />
+        <DashboardHeader title="Reviews" role="Fixer" />
         <div className="grid gap-4 md:grid-cols-2">
           <StatCard label="Average rating" value={average} detail="Customer reviews" />
-          <StatCard label="Total reviews" value={String(reviews.length)} detail="Completed jobs" />
+          <StatCard label="Total reviews" value={String(reviews.length)} detail="Completed requests" />
         </div>
         <div className="mt-5 grid gap-4">
           {reviews.length ? (
@@ -30,7 +30,7 @@ export default async function TradieReviewsPage() {
           ) : (
             <Card>
               <h2 className="font-black">No customer reviews yet</h2>
-              <p className="mt-2 text-[var(--text2)]">Reviews appear after customers rate completed jobs.</p>
+              <p className="mt-2 text-[var(--text2)]">Reviews appear after customers rate completed requests.</p>
             </Card>
           )}
         </div>

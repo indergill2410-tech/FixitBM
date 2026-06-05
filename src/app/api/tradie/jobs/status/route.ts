@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   const user = await getCurrentAppUser();
 
   if (!user || user.role !== "tradie") {
-    return NextResponse.json({ error: "Tradie access required." }, { status: 401 });
+    return NextResponse.json({ error: "Fixer access required." }, { status: 401 });
   }
 
   if (!isSupabaseServerConfigured()) {
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   if (!supabase) return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
 
   const { data: tradie } = await supabase.from("tradie_profiles").select("id").eq("user_id", user.id).maybeSingle();
-  if (!tradie) return NextResponse.json({ error: "Tradie profile not found." }, { status: 404 });
+  if (!tradie) return NextResponse.json({ error: "Fixer profile not found." }, { status: 404 });
 
   const { data: job } = await supabase
     .from("jobs")
@@ -64,14 +64,14 @@ export async function POST(request: Request) {
     job_id: job.id,
     status: parsed.data.status,
     title,
-    note: "Updated by assigned tradie.",
+    note: "Updated by assigned Fixer.",
     created_by: user.id
   });
 
   await supabase.from("job_messages").insert({
     job_id: job.id,
     sender_user_id: user.id,
-    sender_label: user.first_name || "Tradie",
+    sender_label: user.first_name || "Fixer",
     body: title
   });
 
