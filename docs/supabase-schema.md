@@ -202,6 +202,9 @@ Expected columns:
 Important constraints:
 - unique `email`
 
+Apply SQL:
+- see `docs/supabase-ddl.sql`
+
 ## RLS Expectations
 
 All public schema tables exposed through Supabase Data API should have RLS enabled.

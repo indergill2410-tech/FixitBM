@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
 
@@ -9,6 +10,16 @@ const newsletterSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const limit = rateLimit({
+    key: `newsletter:${getClientIp(request)}`,
+    limit: 5,
+    windowMs: 60 * 60 * 1000
+  });
+
+  if (!limit.ok) {
+    return NextResponse.json({ error: "Too many signup attempts. Please try again later." }, { status: 429 });
+  }
+
   const parsed = newsletterSchema.safeParse(await request.json());
 
   if (!parsed.success) {

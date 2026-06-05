@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentAppUser } from "@/lib/auth";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
 import { jobPhotoBucket, jobPhotoTypes, maxJobPhotoBytes, storagePath } from "@/lib/uploads";
@@ -30,6 +31,16 @@ const jobRequestSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const limit = rateLimit({
+    key: `jobs:${getClientIp(request)}`,
+    limit: 8,
+    windowMs: 60 * 60 * 1000
+  });
+
+  if (!limit.ok) {
+    return NextResponse.json({ error: "Too many requests from this connection. Please try again later." }, { status: 429 });
+  }
+
   const user = await getCurrentAppUser();
   const formData = await request.formData();
   const rawRequest = formData.get("request");

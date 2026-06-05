@@ -90,3 +90,9 @@ curl -X POST "https://YOUR_RENDER_APP_URL/api/admin/bootstrap" \
 3. Sign in as a tradie and confirm 111 launch bonus credits are visible.
 4. Claim a lead and confirm credits decrease.
 5. Sign in as admin and confirm the job detail page shows status timeline, messages, audit activity, and assignment controls.
+
+## Security notes
+
+The app includes lightweight in-process rate limiting for newsletter signup and public request creation. This is useful
+for basic abuse reduction, but production should still add platform-level protection such as Render firewall rules,
+Cloudflare, or a durable rate-limit store if attack traffic becomes material.
