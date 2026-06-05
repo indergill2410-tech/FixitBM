@@ -17,6 +17,6 @@ export async function POST() {
 
   return NextResponse.json({
     configured: false,
-    message: "Stripe portal route is prepared, but live portal creation is intentionally disabled until Stripe SDK setup."
+    message: "Stripe portal is prepared, but live portal links need stored Stripe customer IDs first."
   });
 }

@@ -25,7 +25,7 @@ ADMIN_BOOTSTRAP_SECRET=
 ALLOW_DEMO_SEED=false
 ```
 
-Billing is intentionally disabled until Stripe is configured:
+Checkout starts working when Stripe is configured:
 
 ```env
 STRIPE_SECRET_KEY=
@@ -41,6 +41,9 @@ STRIPE_PRICE_CREDITS_EMERGENCY=
 STRIPE_PRICE_CREDITS_BUSINESS=
 STRIPE_PRICE_CREDITS_AGENCY=
 ```
+
+Stripe Checkout is live-ready for customer memberships, tradie subscriptions, and credit packs. Customer portal and full
+webhook reconciliation should stay in follow-up until Stripe customer records are added to the database schema.
 
 Optional integrations:
 

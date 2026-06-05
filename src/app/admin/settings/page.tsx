@@ -25,12 +25,12 @@ export default function AdminSettingsPage() {
     {
       label: "Stripe secret key",
       ready: Boolean(process.env.STRIPE_SECRET_KEY),
-      detail: "Billing stays disabled until Stripe is configured."
+      detail: "Checkout sessions can be created when the matching price IDs are also configured."
     },
     {
       label: "Stripe webhook secret",
       ready: Boolean(process.env.STRIPE_WEBHOOK_SECRET),
-      detail: "Membership and subscription events need verified webhooks before live charging."
+      detail: "Webhook requests are signature-checked before future billing reconciliation work."
     }
   ];
 

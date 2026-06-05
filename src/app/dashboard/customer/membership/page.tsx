@@ -10,8 +10,8 @@ export default function CustomerMembershipPage() {
           <Badge>Fixit Plus</Badge>
           <h1 className="mt-4 text-3xl font-black">Peace of mind for your home and road.</h1>
           <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-            Stripe checkout is prepared and will show a configuration-needed message until live Stripe keys and price IDs
-            are added.
+            Checkout starts as soon as live Stripe keys and price IDs are added. Membership benefits still follow the
+            72-hour activation period.
           </p>
           <div className="mt-6 grid gap-3 md:grid-cols-3">
             <CheckoutButton planCode="home" label="Start Home $29" variant="ghost" />
