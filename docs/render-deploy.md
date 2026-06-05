@@ -17,6 +17,7 @@ Start command: npm run start -- -p $PORT
 Paste these in Render Environment. Never paste server secrets into browser code.
 
 ```env
+NEXT_PUBLIC_APP_URL=https://fixit247.com.au
 NEXT_PUBLIC_SUPABASE_URL=https://gmmxioltehahaqbgpzpv.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SECRET_KEY=
@@ -51,6 +52,7 @@ Optional integrations:
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=
 TWILIO_ACCOUNT_SID=
 TWILIO_AUTH_TOKEN=
+TWILIO_PHONE_NUMBER=
 ```
 
 ## Cron job

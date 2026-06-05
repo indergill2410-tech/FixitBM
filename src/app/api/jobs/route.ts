@@ -7,6 +7,7 @@ import { jobPhotoBucket, jobPhotoTypes, maxJobPhotoBytes, storagePath } from "@/
 
 const jobRequestSchema = z.object({
   type: z.enum(["home", "road", "scheduled"]),
+  serviceLane: z.enum(["emergency_home", "emergency_road", "standard_trade_job", "larger_project"]).optional(),
   category: z.string().min(2),
   title: z.string().min(2),
   description: z.string().min(4),
@@ -23,6 +24,8 @@ const jobRequestSchema = z.object({
   phone: z.string().min(8),
   email: z.string().email().optional().or(z.literal("")),
   contact: z.enum(["call", "sms", "in_app"]),
+  timing: z.string().optional(),
+  budgetRange: z.string().optional(),
   consent: z.literal(true)
 });
 
@@ -70,6 +73,19 @@ export async function POST(request: Request) {
   const data = payload.data;
   const title = data.title || `${data.category} request`;
   const isCustomerAccount = user?.role === "customer";
+  const lane = data.serviceLane ?? (data.type === "road" ? "emergency_road" : data.type === "scheduled" ? "standard_trade_job" : "emergency_home");
+  const isProject = lane === "larger_project";
+  const isStandard = lane === "standard_trade_job";
+  const isEmergency = lane === "emergency_home" || lane === "emergency_road";
+  const enrichedDescription = [
+    `Request lane: ${lane.replaceAll("_", " ")}`,
+    data.timing ? `Timing: ${data.timing}` : null,
+    data.budgetRange && (isStandard || isProject) ? `Budget: ${data.budgetRange}` : null,
+    "",
+    data.description
+  ]
+    .filter((item) => item !== null)
+    .join("\n");
 
   const { data: job, error } = await supabase
     .from("jobs")
@@ -77,9 +93,9 @@ export async function POST(request: Request) {
       customer_id: isCustomerAccount ? user.id : null,
       type: data.type,
       category: data.category,
-      urgency: data.type === "scheduled" ? "flexible" : "emergency",
+      urgency: isEmergency ? "emergency" : data.timing === "Today" ? "today" : "flexible",
       title,
-      description: data.description,
+      description: enrichedDescription,
       danger_notes: data.danger,
       utilities_involved: data.utilities,
       address: data.address || null,
@@ -95,7 +111,7 @@ export async function POST(request: Request) {
       preferred_contact_method: data.contact,
       consent_to_contact: data.consent,
       status: "received",
-      credit_cost: data.type === "scheduled" ? 40 : 120
+      credit_cost: isProject ? 220 : isStandard ? 50 : 120
     })
     .select("id, public_reference")
     .single();
@@ -107,7 +123,7 @@ export async function POST(request: Request) {
   await supabase.from("job_status_events").insert({
     job_id: job.id,
     status: "received",
-    title: "Job posted",
+    title: isProject ? "Project quote request posted" : isStandard ? "Trade request posted" : "Emergency request posted",
     note: isCustomerAccount ? "Customer request received by Fixit247." : "Guest request received by Fixit247.",
     created_by: isCustomerAccount ? user.id : null
   });

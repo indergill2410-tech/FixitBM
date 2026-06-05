@@ -3,10 +3,11 @@
 import { useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, CheckCircle2, Home, Loader2, MapPin, Phone, ShieldAlert, Upload } from "lucide-react";
 import { Badge, Button, Card, PublicHeader } from "@/components/ui";
-import { homeCategories, roadsideCategories } from "@/lib/data";
+import { homeCategories, projectCategories, requestLanes, roadsideCategories, tradeCategories, type RequestLane } from "@/lib/data";
 
 type FormState = {
   type: "home" | "road" | "scheduled";
+  serviceLane: RequestLane;
   category: string;
   title: string;
   description: string;
@@ -23,11 +24,14 @@ type FormState = {
   phone: string;
   email: string;
   contact: "call" | "sms" | "in_app";
+  timing: string;
+  budgetRange: string;
   consent: boolean;
 };
 
 const initialState: FormState = {
   type: "home",
+  serviceLane: "emergency_home",
   category: "Plumbing",
   title: "",
   description: "",
@@ -44,6 +48,8 @@ const initialState: FormState = {
   phone: "",
   email: "",
   contact: "call",
+  timing: "Now",
+  budgetRange: "Not sure yet",
   consent: false
 };
 
@@ -55,8 +61,34 @@ export default function PostJobPage() {
   const [loading, setLoading] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
 
-  const categories = useMemo(() => (form.type === "road" ? roadsideCategories : homeCategories), [form.type]);
-  const steps = ["Type", "Category", "Problem", "Location", "Contact", "Review"];
+  const lane = requestLanes.find((item) => item.value === form.serviceLane) ?? requestLanes[0];
+  const categories = useMemo(() => {
+    if (form.serviceLane === "emergency_road") return roadsideCategories;
+    if (form.serviceLane === "standard_trade_job") return tradeCategories;
+    if (form.serviceLane === "larger_project") return projectCategories;
+    return homeCategories;
+  }, [form.serviceLane]);
+  const steps = ["Type", "Category", "Details", "Location", "Timing", "Contact", "Review"];
+
+  function chooseLane(value: RequestLane) {
+    const nextLane = requestLanes.find((item) => item.value === value) ?? requestLanes[0];
+    const nextCategories =
+      value === "emergency_road"
+        ? roadsideCategories
+        : value === "standard_trade_job"
+          ? tradeCategories
+          : value === "larger_project"
+            ? projectCategories
+            : homeCategories;
+
+    setForm((current) => ({
+      ...current,
+      serviceLane: value,
+      type: nextLane.backendType,
+      category: nextCategories[0]?.label ?? current.category,
+      timing: value === "emergency_home" || value === "emergency_road" ? "Now" : value === "larger_project" ? "Need quote first" : "This week"
+    }));
+  }
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -93,8 +125,8 @@ export default function PostJobPage() {
     <main className="premium-shell min-h-screen pb-10">
       <PublicHeader />
       <section className="container py-8">
-        <Badge>Guest-first emergency flow</Badge>
-        <h1 className="mt-4 text-3xl font-black tracking-tight md:text-5xl">Get help without creating an account first.</h1>
+        <Badge>Guest-first request flow</Badge>
+        <h1 className="mt-4 text-3xl font-black tracking-tight md:text-5xl">Start any request without creating an account first.</h1>
         <div className="mt-6 grid gap-6 lg:grid-cols-[.72fr_.28fr]">
           <Card>
             <div className="mb-7 grid grid-cols-3 gap-2 md:grid-cols-6">
@@ -109,24 +141,23 @@ export default function PostJobPage() {
             </div>
 
             {step === 0 && (
-              <div className="grid gap-3 md:grid-cols-3">
-                {[
-                  ["home", "Home emergency", "Leaks, lockouts, urgent repairs", Home],
-                  ["road", "Roadside emergency", "Flat tyre, battery, towing", MapPin],
-                  ["scheduled", "Normal scheduled job", "Book non-urgent work", CheckCircle2]
-                ].map(([value, title, copy, Icon]) => (
+              <div className="grid gap-3 md:grid-cols-2">
+                {requestLanes.map(({ value, title, copy }) => {
+                  const Icon = value === "emergency_road" ? MapPin : value === "standard_trade_job" ? CheckCircle2 : Home;
+                  return (
                   <button
                     key={String(value)}
-                    onClick={() => update("type", value as FormState["type"])}
+                    onClick={() => chooseLane(value)}
                     className={`focus-ring rounded-2xl border p-5 text-left shadow-[var(--shadow)] transition ${
-                      form.type === value ? "border-amber-300 bg-[var(--amber-light)]" : "border-[var(--border)] bg-white"
+                      form.serviceLane === value ? "border-amber-300 bg-[var(--amber-light)]" : "border-[var(--border)] bg-white"
                     }`}
                   >
                     <Icon className="text-[var(--amber2)]" />
                     <h2 className="mt-4 font-black">{String(title)}</h2>
                     <p className="mt-2 text-sm leading-6 text-[var(--text2)]">{String(copy)}</p>
                   </button>
-                ))}
+                  );
+                })}
               </div>
             )}
 
@@ -149,12 +180,24 @@ export default function PostJobPage() {
 
             {step === 2 && (
               <div className="grid gap-4">
-                <Input label="What happened?" value={form.title} onChange={(value) => update("title", value)} placeholder="Burst pipe under kitchen sink" />
-                <TextArea label="Describe the problem" value={form.description} onChange={(value) => update("description", value)} />
-                <div className="grid gap-4 md:grid-cols-2">
-                  <Select label="Is anyone in immediate danger?" value={form.danger} onChange={(value) => update("danger", value)} options={["No immediate danger", "Someone may be at risk", "Emergency services may be needed"]} />
-                  <Select label="Water, electricity, or gas involved?" value={form.utilities} onChange={(value) => update("utilities", value)} options={["Not sure", "Water", "Electricity", "Gas", "Multiple"]} />
-                </div>
+                <Input label={form.serviceLane === "larger_project" ? "What do you want done?" : form.serviceLane === "standard_trade_job" ? "What needs fixing or improving?" : "What happened?"} value={form.title} onChange={(value) => update("title", value)} placeholder="Burst pipe under kitchen sink" />
+                <TextArea
+                  label={
+                    form.serviceLane === "larger_project"
+                      ? "Describe the project"
+                      : form.serviceLane === "standard_trade_job"
+                        ? "Describe the trade request"
+                        : "Describe the problem"
+                  }
+                  value={form.description}
+                  onChange={(value) => update("description", value)}
+                />
+                {form.serviceLane === "emergency_home" || form.serviceLane === "emergency_road" ? (
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Select label="Is anyone in immediate danger?" value={form.danger} onChange={(value) => update("danger", value)} options={["No immediate danger", "Someone may be at risk", "Emergency services may be needed"]} />
+                    <Select label="Water, electricity, gas, or vehicle safety involved?" value={form.utilities} onChange={(value) => update("utilities", value)} options={["Not sure", "Water", "Electricity", "Gas", "Vehicle safety", "Multiple"]} />
+                  </div>
+                ) : null}
                 <div className="rounded-2xl border border-dashed border-[var(--border2)] bg-[var(--bg)] p-5 text-sm text-[var(--text2)]">
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--amber-dim)] text-[var(--amber2)]">
@@ -162,7 +205,7 @@ export default function PostJobPage() {
                     </span>
                     <div>
                       <p className="font-bold text-[var(--text)]">Add job photos</p>
-                      <p className="mt-1">Upload up to 6 JPG, PNG, or WebP images.</p>
+                      <p className="mt-1">Photos help Fixers understand the request before they contact you.</p>
                     </div>
                   </div>
                   <input
@@ -198,7 +241,7 @@ export default function PostJobPage() {
 
             {step === 3 && (
               <div className="grid gap-4">
-                {form.type === "road" ? (
+                {form.serviceLane === "emergency_road" ? (
                   <>
                     <Input label="Road name" value={form.roadName} onChange={(value) => update("roadName", value)} />
                     <Input label="Nearest suburb" value={form.suburb} onChange={(value) => update("suburb", value)} />
@@ -216,13 +259,38 @@ export default function PostJobPage() {
                   </>
                 )}
                 <p className="rounded-2xl border border-[var(--border)] bg-white p-4 text-sm leading-6 text-[var(--text2)]">
-                  Add the clearest address or road details you can. For roadside jobs, landmarks and direction help tradies
+                  Add the clearest address or road details you can. For roadside requests, landmarks and direction help Fixers
                   find you faster.
                 </p>
               </div>
             )}
 
             {step === 4 && (
+              <div className="grid gap-4">
+                <Select
+                  label="When do you need help?"
+                  value={form.timing}
+                  onChange={(value) => update("timing", value)}
+                  options={
+                    form.serviceLane === "larger_project"
+                      ? ["Ready to start", "Need quote first", "Planning stage", "Flexible"]
+                      : form.serviceLane === "standard_trade_job"
+                        ? ["Today", "This week", "Next week", "Flexible"]
+                        : ["Now", "Today"]
+                  }
+                />
+                {form.serviceLane === "standard_trade_job" || form.serviceLane === "larger_project" ? (
+                  <Select
+                    label="Budget range"
+                    value={form.budgetRange}
+                    onChange={(value) => update("budgetRange", value)}
+                    options={["Not sure yet", "Under $500", "$500-$2,000", "$2,000-$5,000", "$5,000-$15,000", "$15,000-$50,000", "$50,000+"]}
+                  />
+                ) : null}
+              </div>
+            )}
+
+            {step === 5 && (
               <div className="grid gap-4">
                 <Input label="First name" value={form.firstName} onChange={(value) => update("firstName", value)} />
                 <Input label="Phone number required" value={form.phone} onChange={(value) => update("phone", value)} />
@@ -235,17 +303,19 @@ export default function PostJobPage() {
               </div>
             )}
 
-            {step === 5 && (
+            {step === 6 && (
               <div className="grid gap-4">
-                <Review label="Type" value={form.type} />
+                <Review label="Request" value={lane.title} />
                 <Review label="Category" value={form.category} />
-                <Review label="Problem" value={form.title || "Not provided"} />
-                <Review label="Location" value={form.type === "road" ? `${form.roadName || "Road"}, ${form.suburb}` : `${form.address}, ${form.suburb}`} />
+                <Review label="Details" value={form.title || "Not provided"} />
+                <Review label="Timing" value={form.timing} />
+                {(form.serviceLane === "standard_trade_job" || form.serviceLane === "larger_project") ? <Review label="Budget" value={form.budgetRange} /> : null}
+                <Review label="Location" value={form.serviceLane === "emergency_road" ? `${form.roadName || "Road"}, ${form.suburb}` : `${form.address}, ${form.suburb}`} />
                 <Review label="Contact" value={`${form.firstName} · ${form.phone}`} />
                 <Review label="Photos" value={photos.length ? `${photos.length} attached` : "None attached"} />
                 <Button onClick={submit} className="w-full" variant={form.consent && form.phone ? "primary" : "ghost"} disabled={!form.consent || !form.phone || loading}>
                   {loading ? <Loader2 className="animate-spin" size={17} /> : null}
-                  Submit request
+                  {form.serviceLane === "larger_project" ? "Request Project Quotes" : form.serviceLane === "standard_trade_job" ? "Post My Trade Request" : "Start My Emergency Request"}
                 </Button>
               </div>
             )}
@@ -255,8 +325,8 @@ export default function PostJobPage() {
                 <ArrowLeft size={16} />
                 Back
               </Button>
-              {step < 5 ? (
-                <Button onClick={() => setStep(Math.min(5, step + 1))}>
+              {step < 6 ? (
+                <Button onClick={() => setStep(Math.min(6, step + 1))}>
                   Continue
                   <ArrowRight size={16} />
                 </Button>
@@ -269,7 +339,7 @@ export default function PostJobPage() {
               <ShieldAlert className="text-[var(--amber2)]" />
               <h2 className="mt-4 font-black">Expected next step</h2>
               <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                Your request is received first. Account creation, OTP claim, tracking, and Fixit Plus upsell happen after submission.
+                Your request is received first. Account creation, tracking, and Fixit Plus upsell happen after submission.
               </p>
             </Card>
             <Card>
@@ -285,7 +355,7 @@ export default function PostJobPage() {
                 {result.reference ? <p className="mt-2 text-sm text-[var(--text2)]">Reference: {result.reference}</p> : null}
                 <div className="mt-4 grid gap-2">
                   {result.dashboardUrl ? (
-                    <Button href={result.dashboardUrl} variant="ghost">Track this job</Button>
+                    <Button href={result.dashboardUrl} variant="ghost">Track this request</Button>
                   ) : (
                     <Button href="/login" variant="ghost">Create account with OTP</Button>
                   )}

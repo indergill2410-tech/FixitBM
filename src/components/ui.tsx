@@ -44,6 +44,15 @@ export function Button({ href, children, variant = "primary", className, onClick
 }
 
 export function PublicHeader() {
+  const navItems = [
+    ["Home", "/"],
+    ["Fixit Plus", "/fixit-plus"],
+    ["Home Emergencies", "/home-emergencies"],
+    ["Roadside Help", "/roadside-help"],
+    ["All Trade Jobs", "/all-trade-jobs"],
+    ["How It Works", "/how-it-works"]
+  ];
+
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-white/92 backdrop-blur">
       <div className="container flex h-16 items-center gap-5">
@@ -54,13 +63,7 @@ export function PublicHeader() {
           </span>
         </Link>
         <nav className="hidden items-center gap-1 md:flex">
-          {[
-            ["Home", "/"],
-            ["Fixit Plus", "/fixit-plus"],
-            ["For Tradies", "/for-tradies"],
-            ["How It Works", "/how-it-works"],
-            ["Pricing", "/pricing"]
-          ].map(([label, href]) => (
+          {navItems.map(([label, href]) => (
             <Link
               key={href}
               href={href}
@@ -71,6 +74,9 @@ export function PublicHeader() {
           ))}
         </nav>
         <div className="ml-auto hidden items-center gap-2 md:flex">
+          <Button href="/become-a-fixer" variant="ghost" className="min-h-9 px-4">
+            Become a Fixer
+          </Button>
           <Button href="/login" variant="ghost" className="min-h-9 px-4">
             Login
           </Button>
@@ -81,9 +87,27 @@ export function PublicHeader() {
             Get Help Now
           </Button>
         </div>
-        <button className="ml-auto flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--border)] bg-white md:hidden">
-          <Menu size={18} />
-        </button>
+        <details className="group ml-auto md:hidden">
+          <summary className="flex h-10 w-10 list-none items-center justify-center rounded-lg border border-[var(--border)] bg-white">
+            <Menu size={18} />
+          </summary>
+          <div className="absolute left-3 right-3 top-[72px] grid gap-2 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-lg)]">
+            {navItems.map(([label, href]) => (
+              <Link key={href} href={href} className="rounded-xl bg-[var(--bg)] px-4 py-3 text-sm font-bold text-[var(--text2)]">
+                {label}
+              </Link>
+            ))}
+            <Link href="/become-a-fixer" className="rounded-xl bg-[var(--bg)] px-4 py-3 text-sm font-bold text-[var(--text2)]">
+              Become a Fixer
+            </Link>
+            <Link href="/login" className="rounded-xl bg-[var(--bg)] px-4 py-3 text-sm font-bold text-[var(--text2)]">
+              Login
+            </Link>
+            <Button href="/post-job" className="w-full">
+              Get Help Now
+            </Button>
+          </div>
+        </details>
       </div>
     </header>
   );
@@ -213,7 +237,7 @@ export function IconTile({ icon: Icon, label }: { icon: LucideIcon; label: strin
 export function TrustStrip() {
   return (
     <div className="grid gap-3 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow)] md:grid-cols-3">
-      {["Free job posting", "Launch-stage, suburb by suburb", "Built for home and road"].map((item) => (
+      {["Free requests", "Fixit Plus from $29/month", "Any trade job"].map((item) => (
         <div key={item} className="flex items-center gap-2 text-sm font-semibold text-[var(--text2)]">
           <ShieldCheck size={16} className="text-[var(--green)]" />
           {item}

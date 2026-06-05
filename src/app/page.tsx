@@ -1,12 +1,18 @@
-import { ArrowRight, Clock, MapPin, Radar, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Clock, Hammer, Home, MapPin, Radar, ShieldCheck, Zap } from "lucide-react";
 import { FixitSymbol, fixitSymbolSet } from "@/components/brand";
+import { NewsletterForm } from "@/components/newsletter-form";
 import { Badge, Button, Card, IconTile, MobileBottomActionBar, PublicHeader, TrustStrip } from "@/components/ui";
-import { homeCategories, roadsideCategories } from "@/lib/data";
+import { homeCategories, roadsideCategories, tradeCategories } from "@/lib/data";
+import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 
 export default function HomePage() {
   return (
     <main className="premium-shell pb-24">
       <PublicHeader />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify([organizationJsonLd(), websiteJsonLd()]) }}
+      />
       <section className="container grid min-h-[calc(100vh-64px)] items-center gap-10 py-10 lg:grid-cols-[1.05fr_.95fr]">
         <div>
           <Badge>Early access now open</Badge>
@@ -14,19 +20,22 @@ export default function HomePage() {
             Emergency help for your home and road, 24/7.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-8 text-[var(--text2)] md:text-lg">
-            Post a job free, get matched with verified local tradies, or protect your household with Fixit Plus
-            peace-of-mind memberships.
+            When something breaks, leaks, locks, sparks, stalls, or leaves you stranded, Fixit247 helps you get support
+            fast, and Fixit Plus gives your household peace of mind before the next emergency.
+          </p>
+          <p className="mt-3 text-sm font-black uppercase tracking-wide text-[var(--amber2)]">
+            Built for emergencies. Ready for any trade job.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Button href="/post-job">
-              Get Emergency Help Now
+              Get Help Now
               <ArrowRight size={17} />
-            </Button>
-            <Button href="/post-job" variant="ghost">
-              Post a Job Free
             </Button>
             <Button href="/fixit-plus" variant="dark">
               Join Fixit Plus
+            </Button>
+            <Button href="/post-job" variant="ghost">
+              Post a Request Free
             </Button>
           </div>
           <div className="mt-8">
@@ -41,7 +50,7 @@ export default function HomePage() {
                   <Zap size={21} />
                 </span>
                 <div>
-                  <p className="font-black">Home emergency</p>
+                  <p className="font-black">Emergency request</p>
                   <p className="text-sm text-[var(--text2)]">Burst pipe, lockout, roof leak, urgent repair.</p>
                 </div>
                 <Badge tone="red" className="ml-auto">
@@ -57,8 +66,8 @@ export default function HomePage() {
               </Card>
               <Card>
                 <ShieldCheck className="text-[var(--green)]" />
-                <h3 className="mt-4 font-black">Verified tradies</h3>
-                <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Now onboarding verified providers across Australia.</p>
+                <h3 className="mt-4 font-black">Verified Fixers</h3>
+                <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Verified tradies and service providers behind the scenes.</p>
               </Card>
             </div>
             <Card variant="dark">
@@ -73,6 +82,32 @@ export default function HomePage() {
             </Card>
           </div>
         </Card>
+      </section>
+
+      <section className="container grid gap-6 py-12 lg:grid-cols-[.9fr_1.1fr]">
+        <Card variant="membership">
+          <Badge>Fixit Plus</Badge>
+          <h2 className="mt-4 text-3xl font-black tracking-tight">Peace of mind before panic starts.</h2>
+          <p className="mt-4 leading-7 text-[var(--text2)]">
+            Home from $29/month or Complete home + roadside support from $49/month. Membership gives priority access,
+            emergency coordination, saved profiles, and member support.
+          </p>
+          <Button href="/fixit-plus" className="mt-6">
+            View memberships
+          </Button>
+        </Card>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card>
+            <Home className="text-[var(--amber2)]" />
+            <h3 className="mt-4 text-xl font-black">Fixit Plus Home</h3>
+            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">$29/month for home emergency peace of mind.</p>
+          </Card>
+          <Card variant="emergency">
+            <ShieldCheck className="text-[var(--green)]" />
+            <h3 className="mt-4 text-xl font-black">Fixit Plus Complete</h3>
+            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">$49/month for home + roadside peace of mind.</p>
+          </Card>
+        </div>
       </section>
 
       <section className="container py-12">
@@ -94,6 +129,25 @@ export default function HomePage() {
 
       <section className="container py-12">
         <div className="mb-6 max-w-2xl">
+          <Badge tone="gray">All trade jobs</Badge>
+          <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">Not an emergency? Fixit247 can still help.</h2>
+          <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
+            From small repairs and maintenance to installations, painting, roofing, landscaping, and larger property
+            projects, you can start any trade request in one place.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5">
+          {tradeCategories.slice(0, 15).map((item) => (
+            <IconTile key={item.label} icon={item.icon} label={item.label} />
+          ))}
+        </div>
+        <Button href="/all-trade-jobs" variant="ghost" className="mt-6">
+          Start a Trade Request
+        </Button>
+      </section>
+
+      <section className="container py-12">
+        <div className="mb-6 max-w-2xl">
           <Badge tone="gray">Fixit symbols</Badge>
           <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">A calm system for urgent moments.</h2>
           <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
@@ -110,8 +164,8 @@ export default function HomePage() {
       <section className="container grid gap-4 py-12 md:grid-cols-3">
         {[
           ["Tell us what happened", "A fast guided flow captures urgency, location, photos, and safe contact details."],
-          ["We match the right help", "Home and roadside requests are prepared for the relevant local providers."],
-          ["Track, chat, and resolve", "Customers, tradies, and ops get a shared timeline from request to completion."]
+          ["We prepare the right request", "Home, roadside, trade, and project requests are organised for suitable Fixers."],
+          ["Track, chat, and resolve", "Customers, Fixers, and ops get a shared timeline from request to completion."]
         ].map(([title, copy], index) => (
           <Card key={title}>
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--amber-dim)] text-sm font-black text-[var(--amber2)]">
@@ -124,27 +178,35 @@ export default function HomePage() {
       </section>
 
       <section className="container grid gap-6 py-12 lg:grid-cols-[.9fr_1.1fr]">
-        <Card variant="membership">
-          <Badge>Fixit Plus</Badge>
-          <h2 className="mt-4 text-3xl font-black tracking-tight">Peace of mind for your home and road.</h2>
+        <Card>
+          <Badge tone="purple">Powered by verified Fixers</Badge>
+          <h2 className="mt-4 text-3xl font-black tracking-tight">Local help behind the scenes.</h2>
           <p className="mt-4 leading-7 text-[var(--text2)]">
-            Home from $29/month or Complete home + roadside support from $49/month. Benefits apply after a
-            72-hour activation period.
+            Fixers are verified tradies and service providers who can respond to emergency, repair, maintenance,
+            installation, and project opportunities without giving away commission.
           </p>
-          <Button href="/fixit-plus" className="mt-6">
-            View memberships
+          <Button href="/become-a-fixer" variant="ghost" className="mt-6">
+            Become a Fixer
           </Button>
         </Card>
-        <Card>
-          <Badge tone="purple">For tradies</Badge>
-          <h2 className="mt-4 text-3xl font-black tracking-tight">No commission. Keep 100% of the job value.</h2>
-          <p className="mt-4 leading-7 text-[var(--text2)]">
-            Fixit247 monetises tradies through subscriptions, lead credits, featured visibility, verification upgrades,
-            emergency priority access, and business tools.
+        <Card variant="dark">
+          <Hammer className="text-[var(--amber)]" />
+          <h2 className="mt-4 text-3xl font-black tracking-tight">From burst pipes to full property upgrades.</h2>
+          <p className="mt-4 leading-7 text-white/70">Emergency-first. Ready for every trade job your property needs.</p>
+          <Button href="/post-job" className="mt-6">Start a Request</Button>
+        </Card>
+      </section>
+      <section className="container py-12">
+        <Card variant="membership" className="max-w-3xl">
+          <Badge>Home emergency newsletter</Badge>
+          <h2 className="mt-4 text-3xl font-black tracking-tight">Get calm checklists before something goes wrong.</h2>
+          <p className="mt-3 leading-7 text-[var(--text2)]">
+            Practical home emergency tips, roadside preparation, maintenance reminders, and Fixit Plus updates for Australian
+            households.
           </p>
-          <Button href="/for-tradies" variant="ghost" className="mt-6">
-            See tradie plans
-          </Button>
+          <div className="mt-6">
+            <NewsletterForm source="homepage" />
+          </div>
         </Card>
       </section>
       <MobileBottomActionBar />
