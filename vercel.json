@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/admin/bonus-renewals",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}
