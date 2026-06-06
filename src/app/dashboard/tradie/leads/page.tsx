@@ -5,7 +5,7 @@ import { getTradieLeads, getTradieWallet } from "@/lib/jobs";
 
 const claimMessages: Record<string, { tone: "green" | "red" | "amber"; message: string }> = {
   success: { tone: "green", message: "Lead claimed. Credits were deducted and the lead is now in your claimed list." },
-  credits: { tone: "red", message: "Not enough credits to claim that lead. Bonus credits renew monthly during your launch offer." },
+  credits: { tone: "red", message: "Not enough credits to claim that lead. Bonus credits renew monthly during your 6-month starter bonus." },
   full: { tone: "red", message: "That request has reached its Fixer claim limit." },
   unavailable: { tone: "amber", message: "That lead is no longer available." },
   profile: { tone: "red", message: "Complete your Fixer profile before claiming leads." },

@@ -68,8 +68,7 @@ export async function POST(request: Request) {
   if (!isSupabaseServerConfigured()) {
     return NextResponse.json(
       {
-        error: "Request saving is temporarily unavailable. Please try again shortly.",
-        configured: false
+        error: "Request saving is temporarily unavailable. Please try again shortly."
       },
       { status: 503 }
     );

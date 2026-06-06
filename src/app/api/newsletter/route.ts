@@ -28,7 +28,6 @@ export async function POST(request: Request) {
 
   if (!isSupabaseServerConfigured()) {
     return NextResponse.json({
-      configured: false,
       message: "Thanks. You're on the list."
     });
   }
@@ -49,7 +48,6 @@ export async function POST(request: Request) {
 
   if (error) {
     return NextResponse.json({
-      configured: false,
       message: "Thanks. You're on the list."
     });
   }

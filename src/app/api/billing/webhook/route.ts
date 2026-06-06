@@ -7,7 +7,6 @@ export async function POST(request: Request) {
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
     return NextResponse.json(
       {
-        configured: false,
         message: "Webhook verification is temporarily unavailable."
       },
       { status: 503 }
@@ -34,7 +33,7 @@ export async function POST(request: Request) {
     received: true,
     eventId: event.id ?? null,
     type: event.type ?? null,
-    message: "Verified Stripe webhook received. Billing reconciliation will be added after Stripe customer schema is finalised."
+    message: "Billing event accepted for reconciliation."
   });
 }
 

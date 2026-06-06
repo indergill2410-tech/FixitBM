@@ -37,7 +37,7 @@ export function SavedPropertyForm() {
   return (
     <form onSubmit={onSubmit} className="grid gap-3">
       <Field name="label" label="Label" placeholder="Home" />
-      <Field name="address" label="Address" placeholder="12 Demo Street" required />
+      <Field name="address" label="Address" placeholder="12 King Street" required />
       <div className="grid gap-3 md:grid-cols-3">
         <Field name="suburb" label="Suburb" />
         <Field name="postcode" label="Postcode" />

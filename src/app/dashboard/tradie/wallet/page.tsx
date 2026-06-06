@@ -13,12 +13,12 @@ export default async function TradieWalletPage() {
         <DashboardHeader title="Credit wallet" role="Fixer" />
         <div className="grid gap-4 md:grid-cols-3">
           <StatCard label="Available credits" value={String(totalAvailable)} detail="Paid plus valid bonus credits" />
-          <StatCard label="Bonus credits" value={String(wallet?.bonus_balance ?? 0)} detail="Signup offer" />
+          <StatCard label="Bonus credits" value={String(wallet?.bonus_balance ?? 0)} detail="6-month starter bonus" />
           <StatCard label="Lifetime used" value={String(wallet?.lifetime_used ?? 0)} detail="Lead claims" />
         </div>
         <div className="mt-5 grid gap-5 lg:grid-cols-[.4fr_.6fr]">
           <Card variant="membership">
-            <Badge>Fixer launch offer</Badge>
+            <Badge>Fixer starter bonus</Badge>
             <h2 className="mt-4 text-2xl font-black">111 bonus credits every month for 6 months.</h2>
             <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
               Use monthly renewed bonus credits to claim request leads while staying on Free Starter. Upgrade only when you

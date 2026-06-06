@@ -34,7 +34,6 @@ export async function POST(request: Request) {
 
   if (!isStripeConfigured(plan)) {
     return NextResponse.json({
-      configured: false,
       message: `Checkout for ${plan.name} is temporarily unavailable. Please try again shortly.`
     });
   }
@@ -73,7 +72,7 @@ export async function POST(request: Request) {
       body
     });
 
-    return NextResponse.json({ configured: true, url: session.url });
+    return NextResponse.json({ url: session.url });
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unable to start checkout." },

@@ -30,7 +30,9 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
               </div>
               <div className="rounded-xl border border-[var(--border)] bg-white p-4">
                 <p className="text-xs font-bold uppercase text-[var(--text3)]">Refund policy</p>
-                <p className="mt-2 text-sm text-[var(--text2)]">Admin review if the customer is fake, unreachable, or already booked.</p>
+                <p className="mt-2 text-sm text-[var(--text2)]">
+                  Review is available if the request is not genuine, unreachable, or already resolved.
+                </p>
               </div>
             </div>
             <div className="mt-6 rounded-2xl border border-[var(--border)] bg-white p-4">

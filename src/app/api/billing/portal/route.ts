@@ -10,13 +10,11 @@ export async function POST() {
 
   if (!process.env.STRIPE_SECRET_KEY) {
     return NextResponse.json({
-      configured: false,
       message: "Billing management is temporarily unavailable."
     });
   }
 
   return NextResponse.json({
-    configured: false,
     message: "Billing management is temporarily unavailable."
   });
 }

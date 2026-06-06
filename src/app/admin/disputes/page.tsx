@@ -38,7 +38,9 @@ export default async function AdminDisputesPage() {
           </Card>
           <Card variant="dark">
             <h2 className="text-xl font-black">Lead credit refund</h2>
-            <p className="mt-2 text-sm leading-6 text-white/70">Refund credits when the customer is fake, unreachable, or already booked.</p>
+            <p className="mt-2 text-sm leading-6 text-white/70">
+              Refund credits when a request is not genuine, unreachable, or already resolved.
+            </p>
             <div className="mt-5">
               <RefundLeadCreditsForm />
             </div>

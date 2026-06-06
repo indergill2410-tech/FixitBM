@@ -16,7 +16,9 @@ export default async function AdminRevenuePage() {
         <div className="mt-5 grid gap-5 md:grid-cols-2">
           <Card variant="dark">
             <h2 className="text-xl font-black">Credit liability</h2>
-            <p className="mt-2 text-sm leading-6 text-white/70">Credits currently held by tradies across paid and launch bonus balances.</p>
+            <p className="mt-2 text-sm leading-6 text-white/70">
+              Credits currently held by Fixers across paid and 6-month starter bonus balances.
+            </p>
             <div className="mt-5 grid gap-3">
               <div className="rounded-xl border border-white/10 bg-white/5 p-4">
                 <p className="text-xs font-bold uppercase text-white/45">Paid credits</p>

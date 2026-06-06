@@ -9,7 +9,8 @@ export default function AdminCreditsPage() {
         <Card variant="dark">
           <h2 className="text-xl font-black">Credit refund review</h2>
           <p className="mt-2 text-sm leading-6 text-white/70">
-            Refund credits when the customer is unreachable, fake, or already booked before contact.
+            Refund credits when a request cannot be contacted, is not genuine, or was already resolved before first
+            contact.
           </p>
           <div className="mt-5 max-w-xl">
             <RefundLeadCreditsForm />

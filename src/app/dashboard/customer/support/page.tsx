@@ -50,7 +50,9 @@ export default async function CustomerSupportPage() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm leading-6 text-[var(--text2)]">Your support requests will appear here after you send one.</p>
+                  <p className="text-sm leading-6 text-[var(--text2)]">
+                    Send a support request to keep follow-up notes, status, and resolution history in one place.
+                  </p>
                 )}
               </div>
             </Card>

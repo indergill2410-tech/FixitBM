@@ -65,7 +65,7 @@ export default async function TradieSafetyChecksPage() {
               <Badge>Clear queue</Badge>
               <h2 className="mt-4 text-2xl font-black">No Safety Check appointments assigned yet.</h2>
               <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                When support assigns a member Safety Check to you, it will appear here with the report form.
+                Assigned member Safety Checks are shown here with the report form and readiness checklist.
               </p>
               <Button href="/dashboard/tradie/leads" className="mt-5">
                 View available requests

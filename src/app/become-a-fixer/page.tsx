@@ -52,10 +52,10 @@ export default function BecomeAFixerPage() {
           ))}
         </div>
         <Card className="mt-5">
-          <h2 className="text-xl font-black">Bad lead refund policy</h2>
+          <h2 className="text-xl font-black">Lead quality protection</h2>
           <p className="mt-3 leading-7 text-[var(--text2)]">
-            If a customer is unreachable, fake, or already booked before contact, credits can be returned after admin
-            review.
+            If a request cannot be contacted, is not genuine, or was already resolved before first contact, credits can be
+            returned after review.
           </p>
         </Card>
       </section>
