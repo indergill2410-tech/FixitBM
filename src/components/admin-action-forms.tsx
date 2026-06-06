@@ -6,7 +6,10 @@ import {
   assignTradieAction,
   refundLeadCreditsAction,
   reviewVerificationAction,
+  updateDisputeStatusAction,
   updateSafetyCheckStatusAction,
+  updateMembershipStatusAction,
+  updateSupportTicketStatusAction,
   updateJobStatusAction,
   type AdminActionState
 } from "@/app/admin/actions";
@@ -31,6 +34,9 @@ const statuses = [
 ];
 
 const safetyCheckStatuses = ["due", "booked", "assigned", "completed", "cancelled", "overdue"];
+const supportStatuses = ["open", "under_review", "resolved", "closed"];
+const disputeStatuses = ["open", "under_review", "resolved", "rejected", "closed"];
+const membershipStatuses = ["active", "pending_activation", "inactive", "cancelled"];
 
 export function JobStatusForm({ jobId }: { jobId: string }) {
   const [state, action, pending] = useActionState(updateJobStatusAction, initialState);
@@ -135,6 +141,78 @@ export function RefundLeadCreditsForm() {
         required
       />
       <Button disabled={pending}>Refund credits</Button>
+    </form>
+  );
+}
+
+export function SupportTicketStatusForm({ ticketId, currentStatus }: { ticketId: string; currentStatus?: string | null }) {
+  const [state, action, pending] = useActionState(updateSupportTicketStatusAction, initialState);
+
+  return (
+    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+      <FormMessage state={state} />
+      <input type="hidden" name="ticketId" value={ticketId} />
+      <select name="status" defaultValue={currentStatus ?? "open"} className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+        {supportStatuses.map((status) => (
+          <option key={status} value={status}>
+            {status.replaceAll("_", " ")}
+          </option>
+        ))}
+      </select>
+      <input
+        name="note"
+        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        placeholder="Internal note optional"
+      />
+      <Button disabled={pending}>Update ticket</Button>
+    </form>
+  );
+}
+
+export function DisputeStatusForm({ disputeId, currentStatus }: { disputeId: string; currentStatus?: string | null }) {
+  const [state, action, pending] = useActionState(updateDisputeStatusAction, initialState);
+
+  return (
+    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+      <FormMessage state={state} />
+      <input type="hidden" name="disputeId" value={disputeId} />
+      <select name="status" defaultValue={currentStatus ?? "open"} className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+        {disputeStatuses.map((status) => (
+          <option key={status} value={status}>
+            {status.replaceAll("_", " ")}
+          </option>
+        ))}
+      </select>
+      <input
+        name="note"
+        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        placeholder="Resolution note optional"
+      />
+      <Button disabled={pending}>Update dispute</Button>
+    </form>
+  );
+}
+
+export function MembershipStatusForm({ membershipId, currentStatus }: { membershipId: string; currentStatus?: string | null }) {
+  const [state, action, pending] = useActionState(updateMembershipStatusAction, initialState);
+
+  return (
+    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+      <FormMessage state={state} />
+      <input type="hidden" name="membershipId" value={membershipId} />
+      <select name="status" defaultValue={currentStatus ?? "pending_activation"} className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+        {membershipStatuses.map((status) => (
+          <option key={status} value={status}>
+            {status.replaceAll("_", " ")}
+          </option>
+        ))}
+      </select>
+      <input
+        name="note"
+        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        placeholder="Member note optional"
+      />
+      <Button disabled={pending}>Update membership</Button>
     </form>
   );
 }

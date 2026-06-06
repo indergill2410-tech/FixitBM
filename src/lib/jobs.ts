@@ -205,6 +205,48 @@ export type AdminAuditLog = {
   actor_id: string | null;
 };
 
+export type AdminSupportTicketRow = {
+  id: string;
+  subject?: string | null;
+  title?: string | null;
+  message?: string | null;
+  description?: string | null;
+  notes?: string | null;
+  status?: string | null;
+  priority?: string | null;
+  customer_id?: string | null;
+  job_id?: string | null;
+  created_at?: string | null;
+  customer_name: string;
+};
+
+export type AdminDisputeRow = {
+  id: string;
+  reason?: string | null;
+  type?: string | null;
+  description?: string | null;
+  notes?: string | null;
+  status?: string | null;
+  lead_claim_id?: string | null;
+  job_id?: string | null;
+  created_at?: string | null;
+};
+
+export type AdminMembershipRow = {
+  id: string;
+  customer_id: string | null;
+  customer_name: string;
+  customer_email: string | null;
+  plan?: string | null;
+  plan_code?: string | null;
+  price_cents?: number | null;
+  status?: string | null;
+  activation_start?: string | null;
+  activation_effective_at?: string | null;
+  current_period_end?: string | null;
+  created_at?: string | null;
+};
+
 export type AdminAssignableTradie = {
   id: string;
   business_name: string | null;
@@ -1296,37 +1338,68 @@ export async function getAdminRevenueSummary(): Promise<AdminRevenueSummary> {
 export async function getAdminSupportTickets() {
   noStore();
 
-  if (!isSupabaseServerConfigured()) return [];
+  if (!isSupabaseServerConfigured()) return [] as AdminSupportTicketRow[];
 
   const supabase = createSupabaseAdminClient();
-  if (!supabase) return [];
+  if (!supabase) return [] as AdminSupportTicketRow[];
 
   const { data } = await supabase.from("support_tickets").select("*").order("created_at", { ascending: false }).limit(40);
-  return data ?? [];
+  const tickets = (data ?? []) as (AdminSupportTicketRow & { customer_name?: string })[];
+  const customerIds = Array.from(new Set(tickets.map((ticket) => ticket.customer_id).filter(Boolean))) as string[];
+  const { data: customers } = customerIds.length
+    ? await supabase.from("users").select("id, email, first_name, last_name").in("id", customerIds)
+    : { data: [] };
+  const customerById = new Map((customers ?? []).map((customer) => [customer.id, customer]));
+
+  return tickets.map((ticket) => {
+    const customer = ticket.customer_id ? customerById.get(ticket.customer_id) : null;
+    return {
+      ...ticket,
+      customer_name: customer
+        ? [customer.first_name, customer.last_name].filter(Boolean).join(" ") || customer.email || "Customer"
+        : "Unlinked customer"
+    };
+  });
 }
 
 export async function getAdminDisputes() {
   noStore();
 
-  if (!isSupabaseServerConfigured()) return [];
+  if (!isSupabaseServerConfigured()) return [] as AdminDisputeRow[];
 
   const supabase = createSupabaseAdminClient();
-  if (!supabase) return [];
+  if (!supabase) return [] as AdminDisputeRow[];
 
   const { data } = await supabase.from("disputes").select("*").order("created_at", { ascending: false }).limit(40);
-  return data ?? [];
+  return (data ?? []) as AdminDisputeRow[];
 }
 
 export async function getAdminMemberships() {
   noStore();
 
-  if (!isSupabaseServerConfigured()) return [];
+  if (!isSupabaseServerConfigured()) return [] as AdminMembershipRow[];
 
   const supabase = createSupabaseAdminClient();
-  if (!supabase) return [];
+  if (!supabase) return [] as AdminMembershipRow[];
 
   const { data } = await supabase.from("memberships").select("*").order("created_at", { ascending: false }).limit(40);
-  return data ?? [];
+  const memberships = (data ?? []) as AdminMembershipRow[];
+  const customerIds = Array.from(new Set(memberships.map((membership) => membership.customer_id).filter(Boolean))) as string[];
+  const { data: customers } = customerIds.length
+    ? await supabase.from("users").select("id, email, first_name, last_name").in("id", customerIds)
+    : { data: [] };
+  const customerById = new Map((customers ?? []).map((customer) => [customer.id, customer]));
+
+  return memberships.map((membership) => {
+    const customer = membership.customer_id ? customerById.get(membership.customer_id) : null;
+    return {
+      ...membership,
+      customer_name: customer
+        ? [customer.first_name, customer.last_name].filter(Boolean).join(" ") || customer.email || "Customer"
+        : "Customer pending",
+      customer_email: customer?.email ?? null
+    };
+  });
 }
 
 export function statusLabel(status: JobStatus) {

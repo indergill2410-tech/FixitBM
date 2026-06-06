@@ -1,5 +1,5 @@
 import { Badge, Card, DashboardHeader } from "@/components/ui";
-import { RefundLeadCreditsForm } from "@/components/admin-action-forms";
+import { DisputeStatusForm, RefundLeadCreditsForm } from "@/components/admin-action-forms";
 import { getAdminDisputes } from "@/lib/jobs";
 
 export default async function AdminDisputesPage() {
@@ -16,12 +16,18 @@ export default async function AdminDisputesPage() {
               {disputes.length ? (
                 disputes.map((dispute) => (
                   <div key={dispute.id} className="rounded-xl border border-white/10 bg-white/5 p-4">
-                    <div className="flex flex-col gap-2 md:flex-row md:items-center">
+                    <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
                       <div>
-                        <p className="font-black">{dispute.reason ?? dispute.type ?? "Dispute"}</p>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <p className="font-black">{dispute.reason ?? dispute.type ?? "Dispute"}</p>
+                          <Badge tone={dispute.status === "resolved" || dispute.status === "closed" ? "green" : "gray"}>
+                            {dispute.status ?? "open"}
+                          </Badge>
+                        </div>
                         <p className="mt-1 text-sm text-white/65">{dispute.description ?? dispute.notes ?? "Awaiting admin review."}</p>
+                        {dispute.job_id ? <p className="mt-2 text-xs font-bold text-white/45">Request {dispute.job_id}</p> : null}
                       </div>
-                      <Badge tone="gray" className="md:ml-auto">{dispute.status ?? "open"}</Badge>
+                      <DisputeStatusForm disputeId={dispute.id} currentStatus={dispute.status} />
                     </div>
                   </div>
                 ))

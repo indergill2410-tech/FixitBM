@@ -46,6 +46,24 @@ const refundSchema = z.object({
   reason: z.string().min(3)
 });
 
+const supportTicketStatusSchema = z.object({
+  ticketId: z.string().uuid(),
+  status: z.enum(["open", "under_review", "resolved", "closed"]),
+  note: z.string().max(500).optional()
+});
+
+const disputeStatusSchema = z.object({
+  disputeId: z.string().uuid(),
+  status: z.enum(["open", "under_review", "resolved", "rejected", "closed"]),
+  note: z.string().max(500).optional()
+});
+
+const membershipStatusSchema = z.object({
+  membershipId: z.string().uuid(),
+  status: z.enum(["active", "pending_activation", "inactive", "cancelled"]),
+  note: z.string().max(500).optional()
+});
+
 const safetyCheckStatusSchema = z.object({
   safetyCheckId: z.string().uuid(),
   status: z.enum(["due", "booked", "assigned", "completed", "cancelled", "overdue"]),
@@ -284,6 +302,136 @@ export async function refundLeadCreditsAction(
   revalidatePath("/admin/disputes");
 
   return { ok: true, message: "Lead credits refunded." };
+}
+
+export async function updateSupportTicketStatusAction(
+  _state: AdminActionState,
+  formData: FormData
+): Promise<AdminActionState> {
+  const { user, supabase } = await getAdminClient();
+  if (!supabase) return configError();
+
+  const parsed = supportTicketStatusSchema.safeParse({
+    ticketId: formData.get("ticketId"),
+    status: formData.get("status"),
+    note: formData.get("note") || undefined
+  });
+
+  if (!parsed.success) {
+    return { ok: false, message: "Choose a valid support status." };
+  }
+
+  const { error } = await supabase
+    .from("support_tickets")
+    .update({ status: parsed.data.status })
+    .eq("id", parsed.data.ticketId);
+
+  if (error) return { ok: false, message: error.message };
+
+  await supabase.from("audit_logs").insert({
+    actor_id: user.id,
+    action: "update_support_ticket_status",
+    entity_type: "support_ticket",
+    entity_id: parsed.data.ticketId,
+    metadata: {
+      status: parsed.data.status,
+      note: parsed.data.note ?? null
+    }
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/support");
+
+  return { ok: true, message: "Support ticket updated." };
+}
+
+export async function updateDisputeStatusAction(
+  _state: AdminActionState,
+  formData: FormData
+): Promise<AdminActionState> {
+  const { user, supabase } = await getAdminClient();
+  if (!supabase) return configError();
+
+  const parsed = disputeStatusSchema.safeParse({
+    disputeId: formData.get("disputeId"),
+    status: formData.get("status"),
+    note: formData.get("note") || undefined
+  });
+
+  if (!parsed.success) {
+    return { ok: false, message: "Choose a valid dispute status." };
+  }
+
+  const { error } = await supabase
+    .from("disputes")
+    .update({ status: parsed.data.status })
+    .eq("id", parsed.data.disputeId);
+
+  if (error) return { ok: false, message: error.message };
+
+  await supabase.from("audit_logs").insert({
+    actor_id: user.id,
+    action: "update_dispute_status",
+    entity_type: "dispute",
+    entity_id: parsed.data.disputeId,
+    metadata: {
+      status: parsed.data.status,
+      note: parsed.data.note ?? null
+    }
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/disputes");
+
+  return { ok: true, message: "Dispute updated." };
+}
+
+export async function updateMembershipStatusAction(
+  _state: AdminActionState,
+  formData: FormData
+): Promise<AdminActionState> {
+  const { user, supabase } = await getAdminClient();
+  if (!supabase) return configError();
+
+  const parsed = membershipStatusSchema.safeParse({
+    membershipId: formData.get("membershipId"),
+    status: formData.get("status"),
+    note: formData.get("note") || undefined
+  });
+
+  if (!parsed.success) {
+    return { ok: false, message: "Choose a valid membership status." };
+  }
+
+  const patch: Record<string, string> = { status: parsed.data.status };
+  if (parsed.data.status === "active") {
+    patch.activation_effective_at = new Date().toISOString();
+  }
+
+  const { error } = await supabase
+    .from("memberships")
+    .update(patch)
+    .eq("id", parsed.data.membershipId);
+
+  if (error) return { ok: false, message: error.message };
+
+  await supabase.from("audit_logs").insert({
+    actor_id: user.id,
+    action: "update_membership_status",
+    entity_type: "membership",
+    entity_id: parsed.data.membershipId,
+    metadata: {
+      status: parsed.data.status,
+      note: parsed.data.note ?? null
+    }
+  });
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/memberships");
+  revalidatePath("/dashboard/customer");
+  revalidatePath("/dashboard/customer/membership");
+
+  return { ok: true, message: "Membership updated." };
 }
 
 export async function updateSafetyCheckStatusAction(
