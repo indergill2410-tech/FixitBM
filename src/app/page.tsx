@@ -1,9 +1,10 @@
-import { ArrowRight, Clock, Hammer, Home, MapPin, Radar, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock, Hammer, Home, MapPin, Radar, ShieldCheck, Zap } from "lucide-react";
 import { FixitSymbol, fixitSymbolSet } from "@/components/brand";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { Badge, Button, Card, IconTile, MobileBottomActionBar, PublicHeader, TrustStrip } from "@/components/ui";
 import { homeCategories, roadsideCategories, tradeCategories } from "@/lib/data";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
+import { safetyCheckDisclaimer } from "@/lib/safety-checks";
 
 export default function HomePage() {
   return (
@@ -24,7 +25,7 @@ export default function HomePage() {
             fast, and Fixit Plus gives your household peace of mind before the next emergency.
           </p>
           <p className="mt-3 text-sm font-black uppercase tracking-wide text-[var(--amber2)]">
-            Built for emergencies. Ready for any trade job.
+            Emergency help when things go wrong. Safety checks before they do.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Button href="/post-job">
@@ -90,7 +91,7 @@ export default function HomePage() {
           <h2 className="mt-4 text-3xl font-black tracking-tight">Peace of mind before panic starts.</h2>
           <p className="mt-4 leading-7 text-[var(--text2)]">
             Home from $29/month or Complete home + roadside support from $49/month. Membership gives priority access,
-            emergency coordination, saved profiles, and member support.
+            emergency coordination, saved profiles, member support, and 6-monthly Safety & Readiness Checks.
           </p>
           <Button href="/fixit-plus" className="mt-6">
             View memberships
@@ -108,6 +109,40 @@ export default function HomePage() {
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">$49/month for home + roadside peace of mind.</p>
           </Card>
         </div>
+      </section>
+
+      <section className="container grid gap-6 py-12 lg:grid-cols-[.82fr_1.18fr]">
+        <Card variant="membership">
+          <Badge>Included with Fixit Plus</Badge>
+          <h2 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">Your home checked every 6 months.</h2>
+          <p className="mt-4 leading-7 text-[var(--text2)]">
+            Fixit Plus does not just wait for emergencies. It helps you prepare for them. Members receive a visual Home
+            Safety & Readiness Check on signup, then every 6 months while active - helping you spot visible risks, save
+            key home details, and feel ready before the next leak, lockout, fault, storm, or breakdown.
+          </p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <Button href="/fixit-plus">Protect My Home</Button>
+            <Button href="/fixit-plus#safety-check" variant="ghost">See What&apos;s Checked</Button>
+          </div>
+        </Card>
+        <div className="grid gap-3 md:grid-cols-2">
+          {[
+            "Spot visible risks",
+            "Save key home details",
+            "Prepare before emergencies",
+            "Get recommended fixes",
+            "Book quotes from Fixers",
+            "Track your home protection score"
+          ].map((item) => (
+            <Card key={item}>
+              <CheckCircle2 className="text-[var(--green)]" />
+              <h3 className="mt-4 font-black">{item}</h3>
+            </Card>
+          ))}
+        </div>
+        <p className="lg:col-span-2 rounded-2xl border border-[var(--border)] bg-white p-4 text-xs leading-6 text-[var(--text3)]">
+          {safetyCheckDisclaimer}
+        </p>
       </section>
 
       <section className="container py-12">

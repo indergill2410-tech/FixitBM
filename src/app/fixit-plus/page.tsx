@@ -3,6 +3,7 @@ import { Check, Clock, Home, ShieldAlert, Star, Wrench } from "lucide-react";
 import { Badge, Button, Card, MobileBottomActionBar, PublicHeader } from "@/components/ui";
 import { CheckoutButton } from "@/components/billing-buttons";
 import { appUrl } from "@/lib/seo";
+import { activationCopy, safetyCheckChecklist, safetyCheckDisclaimer } from "@/lib/safety-checks";
 
 export const metadata: Metadata = {
   title: "Fixit Plus | Home and roadside emergency peace of mind",
@@ -27,6 +28,10 @@ const plans = [
     features: [
       "24/7 emergency request support",
       "Priority home emergency matching",
+      "First Home Safety & Readiness Check included",
+      "6-monthly Home Safety & Readiness Check",
+      "Home Protection Score",
+      "Recommended Fixes after each check",
       "Plumbing emergencies",
       "Electrical faults",
       "Lockouts",
@@ -47,6 +52,7 @@ const plans = [
     recommended: true,
     features: [
       "Everything in Home",
+      "Home + Road Readiness Check every 6 months",
       "Roadside emergency coordination",
       "Flat battery help",
       "Tyre change support",
@@ -55,6 +61,8 @@ const plans = [
       "Towing coordination",
       "Mechanic matching",
       "Saved vehicle profile",
+      "Vehicle readiness reminders",
+      "Roadside preparedness checklist",
       "Family vehicle records",
       "Home + road dashboard"
     ]
@@ -73,7 +81,8 @@ export default function FixitPlusPage() {
               Peace of mind before panic starts.
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text2)]">
-              Protect your home, your road moments, and your family from the stress of not knowing who to call.
+              Fixit Plus gives your household emergency support, saved home details, and a 6-monthly Safety & Readiness
+              Check - so when something leaks, locks, sparks, breaks, or leaves you stranded, you already have a plan.
             </p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Button href="/post-job">Get Help Now</Button>
@@ -94,7 +103,7 @@ export default function FixitPlusPage() {
       <section id="plans" className="container grid gap-5 pb-12 md:grid-cols-2">
         {plans.map((plan) => (
           <Card key={plan.name} variant={plan.recommended ? "membership" : "default"} className="relative">
-            {plan.recommended ? <Badge tone="amber">Recommended</Badge> : <Badge tone="gray">Home</Badge>}
+            {plan.recommended ? <Badge tone="amber">Best value</Badge> : <Badge tone="gray">Home</Badge>}
             <h2 className="mt-4 text-2xl font-black">{plan.name}</h2>
             <p className="mt-2 text-[var(--text2)]">{plan.note}</p>
             <div className="mt-5 flex items-end gap-1">
@@ -112,12 +121,34 @@ export default function FixitPlusPage() {
             <div className="mt-7">
               <CheckoutButton
                 planCode={plan.code}
-                label={plan.recommended ? "Start Complete $49" : "Start Home $29"}
+                label={plan.recommended ? "Protect Home + Road" : "Protect My Home"}
                 variant={plan.recommended ? "primary" : "ghost"}
               />
             </div>
           </Card>
         ))}
+      </section>
+
+      <section id="safety-check" className="container grid gap-5 pb-12 lg:grid-cols-[.9fr_1.1fr]">
+        <Card variant="membership">
+          <Badge>Included with Fixit Plus</Badge>
+          <h2 className="mt-4 text-3xl font-black tracking-tight">Included with Fixit Plus: your 6-monthly Safety Check.</h2>
+          <p className="mt-4 leading-7 text-[var(--text2)]">
+            Most people only think about home emergencies after something goes wrong. Fixit Plus helps you prepare earlier
+            with a visual readiness check, saved home details, emergency reminders, and recommended fixes.
+          </p>
+          <p className="mt-4 rounded-2xl border border-amber-200 bg-white p-4 text-sm leading-6 text-[var(--text2)]">
+            {activationCopy}
+          </p>
+        </Card>
+        <div className="grid gap-3 md:grid-cols-2">
+          {safetyCheckChecklist.map((item) => (
+            <Card key={item}>
+              <Check className="text-[var(--green)]" size={18} />
+              <h3 className="mt-4 font-black">{item}</h3>
+            </Card>
+          ))}
+        </div>
       </section>
 
       <section className="container grid gap-5 pb-12 md:grid-cols-3">
@@ -162,6 +193,13 @@ export default function FixitPlusPage() {
           <p className="mt-3 leading-7 text-[var(--text2)]">
             Keep property and vehicle details ready so urgent requests start with the information Fixers and support need.
           </p>
+        </Card>
+      </section>
+
+      <section className="container pb-12">
+        <Card variant="emergency">
+          <Badge tone="amber">Safety Check disclaimer</Badge>
+          <p className="mt-3 leading-7 text-[var(--text2)]">{safetyCheckDisclaimer}</p>
         </Card>
       </section>
 

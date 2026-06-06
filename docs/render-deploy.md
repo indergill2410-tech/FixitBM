@@ -87,9 +87,13 @@ curl -X POST "https://YOUR_RENDER_APP_URL/api/admin/bootstrap" \
 
 1. Open `/login` and sign in with a customer account.
 2. Post a test job and confirm it appears in `/dashboard/customer/jobs`.
-3. Sign in as a tradie and confirm 111 launch bonus credits are visible.
-4. Claim a lead and confirm credits decrease.
-5. Sign in as admin and confirm the job detail page shows status timeline, messages, audit activity, and assignment controls.
+3. Open `/dashboard/customer/safety-checks` and confirm the Safety Check eligibility state is honest.
+4. Open `/dashboard/customer/membership` and confirm Fixit Plus Home/Complete show Safety Check benefits.
+5. Sign in as a tradie and confirm 111 launch bonus credits are visible.
+6. Confirm the Fixer dashboard shows the Safety Check appointments preparation card.
+7. Claim a lead and confirm credits decrease.
+8. Sign in as admin and confirm the job detail page shows status timeline, messages, audit activity, and assignment controls.
+9. Open `/admin/safety-checks` and confirm it shows an operations shell without fake check data.
 
 ## Security notes
 

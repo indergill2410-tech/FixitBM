@@ -142,6 +142,16 @@ Future production fields:
 - `activation_effective_at`
 - `current_period_end`
 
+Safety Check membership rule:
+- Free users can post emergency requests, trade requests, and project quote requests.
+- Free users can access a digital safety checklist only.
+- Fixit Plus Home members receive a visual Home Safety & Readiness Check on signup, then every 6 months while active.
+- Fixit Plus Complete members receive a Home + Road Readiness Check every 6 months while active.
+- Safety Check booking should become available after the 72-hour activation period.
+- Safety Check reports and recommended fixes must not be faked before a real check is completed.
+
+See `docs/safety-check-schema.md` for the planned tables.
+
 ### tradie_profiles
 Internal Fixer business profiles.
 

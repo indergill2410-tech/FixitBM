@@ -1,14 +1,23 @@
 import type { LucideIcon } from "lucide-react";
-import { Car, Home, MessageSquare, Star, UserRound } from "lucide-react";
-import { Badge, Card, DashboardHeader, EmergencyCTA, StatCard } from "@/components/ui";
+import { Car, Home, MessageSquare, ShieldCheck, Star, UserRound, Wrench } from "lucide-react";
+import { Badge, Button, Card, DashboardHeader, EmergencyCTA, StatCard } from "@/components/ui";
 import { customerTimeline } from "@/lib/data";
 import { requireRole } from "@/lib/auth";
 import { formatJobLocation, getCustomerDashboardInsights, getCustomerJobs, requestLaneLabel, statusLabel } from "@/lib/jobs";
 import { CustomerJobCard } from "@/components/job-cards";
+import { getHomeProtectionSummary } from "@/lib/safety-checks";
+import {
+  HomeProfileReadinessCard,
+  HomeProtectionScoreCard,
+  ProtectionHeroCard,
+  RecommendedFixesCard,
+  SafetyCheckStatusCard,
+  VehicleProtectionCard
+} from "@/components/safety-check-cards";
 
 export default async function CustomerDashboardPage() {
   const user = await requireRole(["customer", "admin", "super_admin"]);
-  const [jobs, insights] = await Promise.all([getCustomerJobs(user), getCustomerDashboardInsights(user)]);
+  const [jobs, insights, protection] = await Promise.all([getCustomerJobs(user), getCustomerDashboardInsights(user), getHomeProtectionSummary(user)]);
   const activeJob = jobs.find((job) => !["completed", "reviewed", "closed", "cancelled"].includes(job.status));
   const activeJobs = jobs.filter((job) => !["completed", "reviewed", "closed", "cancelled"].includes(job.status)).length;
   const pendingQuotes = jobs.filter((job) => job.status === "quote_provided").length;
@@ -20,8 +29,19 @@ export default async function CustomerDashboardPage() {
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
         <DashboardHeader title={`Good evening, ${displayName}`} role="Customer dashboard" />
+        <p className="-mt-3 mb-6 max-w-2xl text-sm leading-6 text-[var(--text2)]">
+          Your home and road protection dashboard. Track requests, manage Fixit Plus, book your Safety Check, and keep
+          your household ready before the next emergency.
+        </p>
+        <div className="mb-5 grid gap-3 md:grid-cols-4">
+          <Button href="/post-job">Get Help Now</Button>
+          <Button href="/dashboard/customer/safety-checks/book" variant="ghost">Book My Safety Check</Button>
+          <Button href="/fixit-plus" variant="ghost">Join Fixit Plus</Button>
+          <Button href="/post-job" variant="ghost">Start a Trade Request</Button>
+        </div>
         <div className="grid gap-5 lg:grid-cols-[.68fr_.32fr]">
           <div className="grid gap-5">
+            <ProtectionHeroCard summary={protection} />
             <div className="grid gap-4 md:grid-cols-3">
               <StatCard label="Active requests" value={String(activeJobs)} detail={`${jobs.length} total requests`} />
               <StatCard label="Emergency history" value={String(emergencyRequests)} detail="Home and roadside" />
@@ -60,6 +80,10 @@ export default async function CustomerDashboardPage() {
               </Card>
             )}
             <div className="grid gap-4">
+              <div>
+                <Badge tone="gray">Recent requests</Badge>
+                <h2 className="mt-3 text-2xl font-black">Emergencies, trade jobs, projects, and completed work.</h2>
+              </div>
               {jobs.slice(0, 3).map((job) => (
                 <CustomerJobCard key={job.id} job={job} />
               ))}
@@ -101,17 +125,24 @@ export default async function CustomerDashboardPage() {
           </div>
           <aside className="grid gap-5">
             <EmergencyCTA />
+            <HomeProtectionScoreCard summary={protection} />
+            <SafetyCheckStatusCard summary={protection} />
+            <HomeProfileReadinessCard summary={protection} />
+            <VehicleProtectionCard summary={protection} />
+            <RecommendedFixesCard summary={protection} />
             <Card variant="membership">
-              <Badge>Fixit Plus</Badge>
-              <h2 className="mt-4 text-xl font-black">Protect your home before the next emergency.</h2>
+              <ShieldCheck className="text-[var(--amber2)]" />
+              <Badge className="mt-4">Fixit Plus</Badge>
+              <h2 className="mt-4 text-xl font-black">Peace of mind before panic starts.</h2>
               <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                Fixit Plus gives your household a plan when something breaks, leaks, locks, sparks, stalls, or leaves you stranded.
+                Emergency help when things go wrong. Safety checks before they do.
               </p>
             </Card>
             <Card>
               <div className="grid gap-3">
                 <DashboardLink icon={Home} label="Saved properties" />
                 <DashboardLink icon={Car} label="Saved vehicles" />
+                <DashboardLink icon={Wrench} label="Recommended fixes" />
                 <DashboardLink icon={UserRound} label="Payments" />
                 <a className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 text-sm font-bold" href="/dashboard/customer/claim">
                   Claim guest request

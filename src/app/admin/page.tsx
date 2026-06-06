@@ -1,6 +1,7 @@
 import { Badge, Card, DashboardHeader, StatCard } from "@/components/ui";
 import { AdminQueueItem } from "@/components/job-cards";
 import { getAdminQueue, requestLaneLabel } from "@/lib/jobs";
+import { SafetyCheckMiniOpsCard } from "@/components/safety-check-cards";
 
 export default async function AdminPage() {
   const queue = await getAdminQueue();
@@ -41,11 +42,14 @@ export default async function AdminPage() {
             <div className="mt-5 grid gap-3 text-sm text-white/75">
               <p>Assign Fixer</p>
               <p>Change status</p>
+              <p>Prepare Safety Check queue</p>
+              <p>View recommended fixes</p>
               <p>Approve verification</p>
               <p>Refund credits</p>
               <p>Create support ticket</p>
             </div>
           </Card>
+          <SafetyCheckMiniOpsCard />
         </div>
       </section>
     </main>

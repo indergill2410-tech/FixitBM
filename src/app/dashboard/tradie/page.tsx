@@ -2,6 +2,7 @@ import { Badge, Button, Card, DashboardHeader, StatCard } from "@/components/ui"
 import { requireRole } from "@/lib/auth";
 import { formatJobLocation, getTradieAssignedJobs, getTradieLeads, getTradieProfileForUser, getTradieWallet, statusLabel } from "@/lib/jobs";
 import { LeadCard } from "@/components/job-cards";
+import { CalendarCheck } from "lucide-react";
 
 export default async function TradieDashboardPage() {
   const user = await requireRole(["tradie", "admin", "super_admin"]);
@@ -52,6 +53,15 @@ export default async function TradieDashboardPage() {
             <Badge tone="green">No commission</Badge>
             <h2 className="mt-4 text-xl font-black">Keep 100% of the work value.</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Pay for leads, priority access, verification upgrades, and business tools.</p>
+          </Card>
+          <Card>
+            <CalendarCheck className="text-[var(--amber2)]" />
+            <Badge className="mt-4">Coming soon</Badge>
+            <h2 className="mt-4 text-xl font-black">Safety Check appointments</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
+              Help members prepare their homes and identify follow-up work before small issues become emergencies.
+            </p>
+            <Button href="/dashboard/tradie/jobs" variant="ghost" className="mt-5 w-full">View Safety Checks</Button>
           </Card>
           <Card variant="membership">
             <Badge>Signup bonus</Badge>
