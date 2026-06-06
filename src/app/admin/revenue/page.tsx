@@ -10,7 +10,7 @@ export default async function AdminRevenuePage() {
         <DashboardHeader title="Revenue" role="Admin" />
         <div className="grid gap-4 md:grid-cols-3">
           <StatCard label="Fixit Plus" value={String(revenue.active_memberships)} detail="Active memberships" />
-          <StatCard label="Tradie subs" value={String(revenue.active_tradie_subscriptions)} detail="Active plans" />
+          <StatCard label="Fixer plans" value={String(revenue.active_tradie_subscriptions)} detail="Active plans" />
           <StatCard label="Lead claims" value={String(revenue.lead_claims)} detail={`${revenue.credit_spend} credits spent`} />
         </div>
         <div className="mt-5 grid gap-5 md:grid-cols-2">

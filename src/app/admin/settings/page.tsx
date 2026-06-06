@@ -30,7 +30,7 @@ export default function AdminSettingsPage() {
     {
       label: "Stripe webhook secret",
       ready: Boolean(process.env.STRIPE_WEBHOOK_SECRET),
-      detail: "Webhook requests are signature-checked before future billing reconciliation work."
+      detail: "Billing events can be signature-checked before account reconciliation."
     }
   ];
 

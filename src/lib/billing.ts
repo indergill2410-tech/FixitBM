@@ -128,7 +128,7 @@ export async function stripeRequest<T>(path: string, init: RequestInit = {}) {
 
   const data = (await response.json()) as T & { error?: { message?: string } };
   if (!response.ok) {
-    throw new Error(data.error?.message ?? "Stripe request failed.");
+    throw new Error(data.error?.message ?? "Payment request failed.");
   }
 
   return data;
