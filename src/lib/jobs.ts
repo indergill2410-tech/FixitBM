@@ -972,7 +972,7 @@ export async function getAdminCommandMetrics(): Promise<AdminCommandMetrics> {
     supabase.from("tradie_profiles").select("id", { count: "exact", head: true }).eq("availability_status", "available"),
     supabase.from("memberships").select("id", { count: "exact", head: true }).eq("status", "active"),
     supabase.from("memberships").select("id", { count: "exact", head: true }).in("status", ["inactive", "pending_activation"]),
-    supabase.from("support_tickets").select("id", { count: "exact", head: true }).in("status", ["open", "under_review"]),
+    supabase.from("support_tickets").select("id", { count: "exact", head: true }).in("status", ["open", "waiting"]),
     supabase.from("disputes").select("id", { count: "exact", head: true }).in("status", ["open", "under_review"]),
     supabase.from("verification_documents").select("id", { count: "exact", head: true }).eq("status", "pending")
   ]);
