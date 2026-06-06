@@ -2,7 +2,7 @@ import { Badge, Button, Card, DashboardHeader, StatCard } from "@/components/ui"
 import { requireRole } from "@/lib/auth";
 import { formatJobLocation, getTradieAssignedJobs, getTradieLeads, getTradieProfileForUser, getTradieWallet, statusLabel } from "@/lib/jobs";
 import { LeadCard } from "@/components/job-cards";
-import { CalendarCheck } from "lucide-react";
+import { CalendarCheck, Headphones } from "lucide-react";
 import { getTradieAssignedSafetyChecks } from "@/lib/safety-checks";
 
 export default async function TradieDashboardPage() {
@@ -77,6 +77,16 @@ export default async function TradieDashboardPage() {
             </p>
             <Button href="/dashboard/tradie/wallet" className="mt-5 w-full">
               View wallet
+            </Button>
+          </Card>
+          <Card>
+            <Headphones className="text-[var(--amber2)]" />
+            <h2 className="mt-4 text-xl font-black">Need support?</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
+              Ask about leads, credits, verification, or assigned requests.
+            </p>
+            <Button href="/dashboard/tradie/support" variant="ghost" className="mt-5 w-full">
+              Contact support
             </Button>
           </Card>
         </div>

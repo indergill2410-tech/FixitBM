@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Car, Home, MessageSquare, ShieldCheck, Star, UserRound, Wrench } from "lucide-react";
+import { Car, Headphones, Home, MessageSquare, ShieldCheck, Star, UserRound, Wrench } from "lucide-react";
 import { Badge, Button, Card, DashboardHeader, EmergencyCTA, StatCard } from "@/components/ui";
 import { customerTimeline } from "@/lib/data";
 import { requireRole } from "@/lib/auth";
@@ -144,6 +144,7 @@ export default async function CustomerDashboardPage() {
                 <DashboardLink icon={Car} label="Saved vehicles" href="/dashboard/customer/vehicles" />
                 <DashboardLink icon={Wrench} label="Recommended fixes" href="/dashboard/customer/safety-checks" />
                 <DashboardLink icon={UserRound} label="Payments" href="/dashboard/customer/membership" />
+                <DashboardLink icon={Headphones} label="Support" href="/dashboard/customer/support" />
                 <a className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 text-sm font-bold" href="/dashboard/customer/claim">
                   Claim guest request
                 </a>

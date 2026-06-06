@@ -220,6 +220,17 @@ export type AdminSupportTicketRow = {
   customer_name: string;
 };
 
+export type UserSupportTicketRow = {
+  id: string;
+  subject?: string | null;
+  title?: string | null;
+  message?: string | null;
+  description?: string | null;
+  notes?: string | null;
+  status?: string | null;
+  created_at?: string | null;
+};
+
 export type AdminDisputeRow = {
   id: string;
   reason?: string | null;
@@ -1360,6 +1371,24 @@ export async function getAdminSupportTickets() {
         : "Unlinked customer"
     };
   });
+}
+
+export async function getUserSupportTickets(user: AppUser): Promise<UserSupportTicketRow[]> {
+  noStore();
+
+  if (!isSupabaseServerConfigured()) return [];
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return [];
+
+  const { data } = await supabase
+    .from("support_tickets")
+    .select("id, subject, title, message, description, notes, status, created_at")
+    .eq("customer_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(12);
+
+  return (data ?? []) as UserSupportTicketRow[];
 }
 
 export async function getAdminDisputes() {
