@@ -43,9 +43,9 @@ export async function submitSupportTicketAction(
   const { data: ticket, error } = await supabase
     .from("support_tickets")
     .insert({
-      customer_id: user.id,
+      user_id: user.id,
       subject: parsed.data.subject,
-      message: parsed.data.message,
+      body: parsed.data.message,
       status: "open"
     })
     .select("id")

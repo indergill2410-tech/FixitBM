@@ -107,6 +107,9 @@ async function reconcileCheckoutSession(session: StripeCheckoutSession | null, e
         status: "pending_activation",
         activation_start: now.toISOString(),
         activation_effective_at: activationEffectiveAt,
+        stripe_customer_id: session.customer ?? null,
+        stripe_subscription_id: session.subscription ?? null,
+        current_period_start: now.toISOString(),
         current_period_end: currentPeriodEnd
       },
       { onConflict: "customer_id,plan" }
@@ -137,6 +140,9 @@ async function reconcileCheckoutSession(session: StripeCheckoutSession | null, e
         tradie_id: tradie.id,
         plan: plan.code,
         status: "active",
+        stripe_customer_id: session.customer ?? null,
+        stripe_subscription_id: session.subscription ?? null,
+        current_period_start: now.toISOString(),
         current_period_end: currentPeriodEnd
       },
       { onConflict: "tradie_id" }

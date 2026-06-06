@@ -20,7 +20,7 @@ export default async function AdminDisputesPage() {
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
                           <p className="font-black">{dispute.reason ?? dispute.type ?? "Dispute"}</p>
-                          <Badge tone={dispute.status === "resolved" || dispute.status === "closed" ? "green" : "gray"}>
+                          <Badge tone={dispute.status?.startsWith("resolved") || dispute.status === "closed" ? "green" : "gray"}>
                             {dispute.status ?? "open"}
                           </Badge>
                         </div>

@@ -45,7 +45,7 @@ export default async function TradieSupportPage() {
                         </Badge>
                       </div>
                       <p className="mt-2 line-clamp-2 text-sm text-[var(--text2)]">
-                        {ticket.message ?? ticket.description ?? ticket.notes ?? "Support request saved."}
+                        {ticket.body ?? ticket.message ?? ticket.description ?? ticket.notes ?? "Support request saved."}
                       </p>
                     </div>
                   ))

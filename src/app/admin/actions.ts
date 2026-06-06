@@ -48,13 +48,13 @@ const refundSchema = z.object({
 
 const supportTicketStatusSchema = z.object({
   ticketId: z.string().uuid(),
-  status: z.enum(["open", "under_review", "resolved", "closed"]),
+  status: z.enum(["open", "waiting", "resolved", "closed"]),
   note: z.string().max(500).optional()
 });
 
 const disputeStatusSchema = z.object({
   disputeId: z.string().uuid(),
-  status: z.enum(["open", "under_review", "resolved", "rejected", "closed"]),
+  status: z.enum(["open", "under_review", "resolved_customer", "resolved_tradie", "closed"]),
   note: z.string().max(500).optional()
 });
 

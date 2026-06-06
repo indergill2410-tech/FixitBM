@@ -34,8 +34,8 @@ const statuses = [
 ];
 
 const safetyCheckStatuses = ["due", "booked", "assigned", "completed", "cancelled", "overdue"];
-const supportStatuses = ["open", "under_review", "resolved", "closed"];
-const disputeStatuses = ["open", "under_review", "resolved", "rejected", "closed"];
+const supportStatuses = ["open", "waiting", "resolved", "closed"];
+const disputeStatuses = ["open", "under_review", "resolved_customer", "resolved_tradie", "closed"];
 const membershipStatuses = ["active", "pending_activation", "inactive", "cancelled"];
 
 export function JobStatusForm({ jobId }: { jobId: string }) {

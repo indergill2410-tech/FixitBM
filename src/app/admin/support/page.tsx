@@ -5,7 +5,7 @@ import { getAdminSupportTickets } from "@/lib/jobs";
 export default async function AdminSupportPage() {
   const tickets = await getAdminSupportTickets();
   const open = tickets.filter((ticket) => (ticket.status ?? "open") === "open").length;
-  const underReview = tickets.filter((ticket) => ticket.status === "under_review").length;
+  const waiting = tickets.filter((ticket) => ticket.status === "waiting").length;
   const resolved = tickets.filter((ticket) => ["resolved", "closed"].includes(ticket.status ?? "")).length;
 
   return (
@@ -14,7 +14,7 @@ export default async function AdminSupportPage() {
         <DashboardHeader title="Support" role="Admin" />
         <div className="mb-5 grid gap-4 md:grid-cols-3">
           <StatCard label="Open" value={String(open)} detail="Needs first response" />
-          <StatCard label="In review" value={String(underReview)} detail="Being worked" />
+          <StatCard label="Waiting" value={String(waiting)} detail="Needs follow-up" />
           <StatCard label="Resolved" value={String(resolved)} detail="Closed or resolved" />
         </div>
         <Card variant="dark">
@@ -31,7 +31,9 @@ export default async function AdminSupportPage() {
                         <Badge tone="gray">{ticket.status ?? "open"}</Badge>
                       </div>
                       <p className="mt-2 text-sm font-bold text-white/55">{ticket.customer_name}</p>
-                      <p className="mt-1 text-sm text-white/65">{ticket.message ?? ticket.description ?? ticket.notes ?? "No message recorded."}</p>
+                      <p className="mt-1 text-sm text-white/65">
+                        {ticket.body ?? ticket.message ?? ticket.description ?? ticket.notes ?? "No message recorded."}
+                      </p>
                     </div>
                     <SupportTicketStatusForm ticketId={ticket.id} currentStatus={ticket.status} />
                   </div>

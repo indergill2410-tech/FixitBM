@@ -209,11 +209,13 @@ export type AdminSupportTicketRow = {
   id: string;
   subject?: string | null;
   title?: string | null;
+  body?: string | null;
   message?: string | null;
   description?: string | null;
   notes?: string | null;
   status?: string | null;
   priority?: string | null;
+  user_id?: string | null;
   customer_id?: string | null;
   job_id?: string | null;
   created_at?: string | null;
@@ -224,6 +226,7 @@ export type UserSupportTicketRow = {
   id: string;
   subject?: string | null;
   title?: string | null;
+  body?: string | null;
   message?: string | null;
   description?: string | null;
   notes?: string | null;
@@ -1356,19 +1359,20 @@ export async function getAdminSupportTickets() {
 
   const { data } = await supabase.from("support_tickets").select("*").order("created_at", { ascending: false }).limit(40);
   const tickets = (data ?? []) as (AdminSupportTicketRow & { customer_name?: string })[];
-  const customerIds = Array.from(new Set(tickets.map((ticket) => ticket.customer_id).filter(Boolean))) as string[];
-  const { data: customers } = customerIds.length
-    ? await supabase.from("users").select("id, email, first_name, last_name").in("id", customerIds)
+  const userIds = Array.from(new Set(tickets.map((ticket) => ticket.user_id ?? ticket.customer_id).filter(Boolean))) as string[];
+  const { data: users } = userIds.length
+    ? await supabase.from("users").select("id, email, first_name, last_name").in("id", userIds)
     : { data: [] };
-  const customerById = new Map((customers ?? []).map((customer) => [customer.id, customer]));
+  const userById = new Map((users ?? []).map((ticketUser) => [ticketUser.id, ticketUser]));
 
   return tickets.map((ticket) => {
-    const customer = ticket.customer_id ? customerById.get(ticket.customer_id) : null;
+    const linkedUserId = ticket.user_id ?? ticket.customer_id;
+    const linkedUser = linkedUserId ? userById.get(linkedUserId) : null;
     return {
       ...ticket,
-      customer_name: customer
-        ? [customer.first_name, customer.last_name].filter(Boolean).join(" ") || customer.email || "Customer"
-        : "Unlinked customer"
+      customer_name: linkedUser
+        ? [linkedUser.first_name, linkedUser.last_name].filter(Boolean).join(" ") || linkedUser.email || "User"
+        : "Unlinked user"
     };
   });
 }
@@ -1383,8 +1387,8 @@ export async function getUserSupportTickets(user: AppUser): Promise<UserSupportT
 
   const { data } = await supabase
     .from("support_tickets")
-    .select("id, subject, title, message, description, notes, status, created_at")
-    .eq("customer_id", user.id)
+    .select("id, subject, title, body, message, description, notes, status, created_at")
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(12);
 
