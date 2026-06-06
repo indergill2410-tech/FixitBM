@@ -436,7 +436,7 @@ export async function getTradieAssignedSafetyChecks(user: AppUser): Promise<Trad
     .from("safety_checks")
     .select(safetyCheckSelect)
     .eq("assigned_fixer_id", tradie.id)
-    .in("status", ["assigned", "booked"])
+    .in("status", ["assigned", "booked", "overdue"])
     .order("scheduled_at", { ascending: true, nullsFirst: false })
     .limit(20);
 

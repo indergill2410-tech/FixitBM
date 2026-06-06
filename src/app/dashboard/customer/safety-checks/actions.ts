@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { getCustomerMembershipSummary } from "@/lib/safety-checks";
@@ -17,6 +18,10 @@ const bookingSchema = z.object({
   propertyId: z.string().uuid(),
   preferredWindow: z.string().min(3).max(160),
   concerns: z.string().max(1000).optional()
+});
+
+const recommendationSchema = z.object({
+  recommendationId: z.string().uuid()
 });
 
 export async function bookSafetyCheckAction(
@@ -125,4 +130,123 @@ export async function bookSafetyCheckAction(
     message: "Safety Check booking requested. Fixit247 support can now assign a Fixer.",
     safetyCheckId: safetyCheck.id
   };
+}
+
+export async function convertRecommendationToRequestAction(formData: FormData) {
+  const user = await requireRole(["customer", "admin", "super_admin"]);
+
+  if (!isSupabaseServerConfigured()) {
+    throw new Error("Request saving is temporarily unavailable.");
+  }
+
+  const parsed = recommendationSchema.safeParse({
+    recommendationId: formData.get("recommendationId")
+  });
+
+  if (!parsed.success) {
+    throw new Error("Choose a recommended fix before starting a request.");
+  }
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) {
+    throw new Error("Request saving is temporarily unavailable.");
+  }
+
+  const { data: recommendation, error: recommendationError } = await supabase
+    .from("safety_check_recommendations")
+    .select("id, safety_check_id, customer_id, property_id, title, category, priority, description, estimated_trade_type, status, linked_job_id")
+    .eq("id", parsed.data.recommendationId)
+    .eq("customer_id", user.id)
+    .maybeSingle();
+
+  if (recommendationError || !recommendation) {
+    throw new Error("Recommended fix not found.");
+  }
+
+  if (recommendation.linked_job_id) {
+    redirect(`/dashboard/customer/jobs/${recommendation.linked_job_id}`);
+  }
+
+  const { data: property } = recommendation.property_id
+    ? await supabase
+        .from("saved_properties")
+        .select("id, address, suburb, postcode, state")
+        .eq("id", recommendation.property_id)
+        .eq("customer_id", user.id)
+        .maybeSingle()
+    : { data: null };
+
+  const isUrgent = recommendation.priority === "urgent" || recommendation.priority === "high";
+  const category = recommendation.category || recommendation.estimated_trade_type || "Recommended fix";
+  const description = [
+    "Request lane: standard trade job",
+    "Source: Safety Check recommendation",
+    `Priority: ${recommendation.priority}`,
+    "",
+    recommendation.description || "Recommended during a Fixit247 Safety Check."
+  ].join("\n");
+
+  const { data: job, error: jobError } = await supabase
+    .from("jobs")
+    .insert({
+      customer_id: user.id,
+      type: "scheduled",
+      category,
+      urgency: isUrgent ? "today" : "flexible",
+      title: recommendation.title,
+      description,
+      address: property?.address ?? null,
+      suburb: property?.suburb ?? null,
+      postcode: property?.postcode ?? null,
+      state: property?.state ?? null,
+      preferred_contact_method: "in_app",
+      consent_to_contact: true,
+      status: "received",
+      credit_cost: 50
+    })
+    .select("id, public_reference")
+    .single();
+
+  if (jobError || !job) {
+    throw new Error("We could not start that request yet. Please try again.");
+  }
+
+  await supabase.from("job_status_events").insert({
+    job_id: job.id,
+    status: "received",
+    title: "Safety Check recommendation converted",
+    note: "Customer started a trade request from a Safety Check recommendation.",
+    created_by: user.id
+  });
+
+  await supabase
+    .from("safety_check_recommendations")
+    .update({
+      status: "converted_to_request",
+      linked_job_id: job.id
+    })
+    .eq("id", recommendation.id);
+
+  await supabase.from("audit_logs").insert({
+    actor_id: user.id,
+    action: "convert_safety_check_recommendation",
+    entity_type: "job",
+    entity_id: job.id,
+    metadata: {
+      recommendationId: recommendation.id,
+      safetyCheckId: recommendation.safety_check_id,
+      reference: job.public_reference
+    }
+  });
+
+  revalidatePath("/dashboard/customer");
+  revalidatePath("/dashboard/customer/jobs");
+  revalidatePath(`/dashboard/customer/jobs/${job.id}`);
+  revalidatePath("/dashboard/customer/safety-checks");
+  if (recommendation.safety_check_id) {
+    revalidatePath(`/dashboard/customer/safety-checks/${recommendation.safety_check_id}`);
+  }
+  revalidatePath("/admin/requests");
+
+  redirect(`/dashboard/customer/jobs/${job.id}`);
 }

@@ -67,7 +67,7 @@ export default async function TradieDashboardPage() {
                 ? `${nextSafetyCheck.customer_name} - ${nextSafetyCheck.property_label}. ${nextSafetyCheck.preferred_window ? `Requested window: ${nextSafetyCheck.preferred_window}.` : nextSafetyCheck.property_location}`
                 : "Help members prepare their homes and identify follow-up work before small issues become emergencies."}
             </p>
-            <Button href="/dashboard/tradie/jobs" variant="ghost" className="mt-5 w-full">View assigned work</Button>
+            <Button href="/dashboard/tradie/safety-checks" variant="ghost" className="mt-5 w-full">View appointments</Button>
           </Card>
           <Card variant="membership">
             <Badge>Signup bonus</Badge>

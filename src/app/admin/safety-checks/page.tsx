@@ -1,5 +1,6 @@
 import { Badge, Card, DashboardHeader, StatCard } from "@/components/ui";
 import { AssignSafetyCheckFixerForm, SafetyCheckStatusForm } from "@/components/admin-action-forms";
+import { SafetyCheckReportForm } from "@/components/safety-check-report-form";
 import { SafetyCheckMiniOpsCard } from "@/components/safety-check-cards";
 import { getAvailableTradiesForAdmin } from "@/lib/jobs";
 import { getAdminSafetyCheckQueue } from "@/lib/safety-checks";
@@ -65,6 +66,15 @@ export default async function AdminSafetyChecksPage() {
                   <div className="grid gap-3">
                     <AssignSafetyCheckFixerForm safetyCheckId={check.id} tradies={fixers} />
                     <SafetyCheckStatusForm safetyCheckId={check.id} currentStatus={check.status} />
+                    {check.status !== "completed" && check.status !== "cancelled" ? (
+                      <div className="grid gap-3">
+                        <div>
+                          <Badge tone="blue">Report builder</Badge>
+                          <p className="mt-2 text-sm text-white/65">Publish checklist results, readiness score, and follow-up recommendations.</p>
+                        </div>
+                        <SafetyCheckReportForm safetyCheckId={check.id} />
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </Card>

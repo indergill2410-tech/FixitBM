@@ -1,4 +1,5 @@
 import { FileText, Wrench } from "lucide-react";
+import { convertRecommendationToRequestAction } from "@/app/dashboard/customer/safety-checks/actions";
 import { Badge, Button, Card, DashboardHeader } from "@/components/ui";
 import { SafetyCheckDisclaimer } from "@/components/safety-check-cards";
 import { requireRole } from "@/lib/auth";
@@ -51,10 +52,26 @@ export default async function SafetyCheckDetailPage({ params }: { params: Promis
             {safetyCheck?.recommendations.length ? (
               <Card>
                 <h2 className="text-xl font-black">Recommended fixes</h2>
-                <div className="mt-4 grid gap-2">
+                <div className="mt-4 grid gap-3">
                   {safetyCheck.recommendations.map((recommendation) => (
-                    <div key={recommendation.id} className="rounded-xl bg-[var(--bg)] p-3 text-sm font-semibold text-[var(--text2)]">
-                      {recommendation.title}
+                    <div key={recommendation.id} className="rounded-xl bg-[var(--bg)] p-3 text-sm text-[var(--text2)]">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="font-black text-[var(--text)]">{recommendation.title}</p>
+                        <Badge tone={recommendation.priority === "urgent" || recommendation.priority === "high" ? "red" : "amber"}>
+                          {recommendation.priority}
+                        </Badge>
+                      </div>
+                      {recommendation.description ? <p className="mt-2 leading-6">{recommendation.description}</p> : null}
+                      {recommendation.linked_job_id ? (
+                        <Button href={`/dashboard/customer/jobs/${recommendation.linked_job_id}`} variant="ghost" className="mt-3 w-full">
+                          View request
+                        </Button>
+                      ) : (
+                        <form action={convertRecommendationToRequestAction} className="mt-3">
+                          <input type="hidden" name="recommendationId" value={recommendation.id} />
+                          <Button className="w-full">Start quote request</Button>
+                        </form>
+                      )}
                     </div>
                   ))}
                 </div>
