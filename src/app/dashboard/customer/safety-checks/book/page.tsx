@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { CalendarClock, Home, Phone, ShieldCheck } from "lucide-react";
 import { Badge, Button, Card, DashboardHeader } from "@/components/ui";
 import { SafetyCheckDisclaimer } from "@/components/safety-check-cards";
+import { SafetyCheckBookingForm } from "@/components/safety-check-booking-form";
 import { requireRole } from "@/lib/auth";
 import { activationCopy, getHomeProtectionSummary } from "@/lib/safety-checks";
 
@@ -35,10 +36,14 @@ export default async function BookSafetyCheckPage() {
             ) : (
               <div className="mt-6 grid gap-4">
                 <ReadonlyField icon={Home} label="Property" value={summary.properties[0]?.label ?? summary.properties[0]?.address ?? "Add a saved property first"} />
-                <ReadonlyField icon={CalendarClock} label="Booking window" value="Select your preferred window once booking opens for your area" />
+                <ReadonlyField icon={CalendarClock} label="Booking window" value={summary.nextSafetyCheck?.preferred_window ?? "Choose the window that suits you"} />
                 <ReadonlyField icon={Phone} label="Contact phone" value={user.phone ?? "Use account phone or update your profile"} />
                 <ReadonlyField icon={ShieldCheck} label="Key concerns" value="Leaks, lockouts, switchboard access, smoke alarms, roof, gutters, hot water, or anything worrying you" />
-                <Button disabled variant="ghost">Booking support opens after activation</Button>
+                {summary.properties.length ? (
+                  <SafetyCheckBookingForm properties={summary.properties} />
+                ) : (
+                  <Button href="/dashboard/customer/properties">Add Saved Property</Button>
+                )}
               </div>
             )}
           </Card>

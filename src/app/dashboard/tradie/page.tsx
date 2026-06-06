@@ -3,17 +3,20 @@ import { requireRole } from "@/lib/auth";
 import { formatJobLocation, getTradieAssignedJobs, getTradieLeads, getTradieProfileForUser, getTradieWallet, statusLabel } from "@/lib/jobs";
 import { LeadCard } from "@/components/job-cards";
 import { CalendarCheck } from "lucide-react";
+import { getTradieAssignedSafetyChecks } from "@/lib/safety-checks";
 
 export default async function TradieDashboardPage() {
   const user = await requireRole(["tradie", "admin", "super_admin"]);
-  const [wallet, leads, jobs, profile] = await Promise.all([
+  const [wallet, leads, jobs, profile, safetyChecks] = await Promise.all([
     getTradieWallet(user),
     getTradieLeads(user),
     getTradieAssignedJobs(user),
-    getTradieProfileForUser(user)
+    getTradieProfileForUser(user),
+    getTradieAssignedSafetyChecks(user)
   ]);
   const activeJobs = jobs.filter((job) => !["completed", "reviewed", "closed", "cancelled"].includes(job.status));
   const topLead = leads[0];
+  const nextSafetyCheck = safetyChecks[0];
   const availableCredits = wallet?.total_available ?? 0;
 
   return (
@@ -22,11 +25,12 @@ export default async function TradieDashboardPage() {
         <DashboardHeader title="Fixer command centre" role="Fixer" />
         <div className="grid gap-5 lg:grid-cols-[.7fr_.3fr]">
           <div className="grid gap-5">
-            <div className="grid gap-4 md:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-5">
               <StatCard label="Availability" value={profile?.emergency_available ? "On" : "Off"} detail="Emergency requests" />
               <StatCard label="Wallet" value={String(availableCredits)} detail="Lead credits" />
               <StatCard label="Open leads" value={String(leads.length)} detail="Ready to claim" />
               <StatCard label="Active work" value={String(activeJobs.length)} detail={`${jobs.length} assigned total`} />
+              <StatCard label="Safety checks" value={String(safetyChecks.length)} detail="Assigned appointments" />
             </div>
             {topLead ? (
               <LeadCard lead={topLead} />
@@ -56,12 +60,14 @@ export default async function TradieDashboardPage() {
           </Card>
           <Card>
             <CalendarCheck className="text-[var(--amber2)]" />
-            <Badge className="mt-4">Member readiness</Badge>
+            <Badge className="mt-4">{nextSafetyCheck ? "Assigned" : "Member readiness"}</Badge>
             <h2 className="mt-4 text-xl font-black">Safety Check appointments</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-              Help members prepare their homes and identify follow-up work before small issues become emergencies.
+              {nextSafetyCheck
+                ? `${nextSafetyCheck.customer_name} - ${nextSafetyCheck.property_label}. ${nextSafetyCheck.preferred_window ? `Requested window: ${nextSafetyCheck.preferred_window}.` : nextSafetyCheck.property_location}`
+                : "Help members prepare their homes and identify follow-up work before small issues become emergencies."}
             </p>
-            <Button href="/dashboard/tradie/jobs" variant="ghost" className="mt-5 w-full">View available requests</Button>
+            <Button href="/dashboard/tradie/jobs" variant="ghost" className="mt-5 w-full">View assigned work</Button>
           </Card>
           <Card variant="membership">
             <Badge>Signup bonus</Badge>

@@ -1,6 +1,9 @@
-# Fixit Plus Safety Check Schema Plan
+# Fixit Plus Safety Check Schema
 
-This document describes the planned database support for Fixit Plus Safety & Readiness Checks.
+This document describes the database support for Fixit Plus Safety & Readiness Checks.
+
+Apply the additive migration in `supabase/migrations/20260606000000_add_safety_checks.sql` before enabling live booking
+in production.
 
 Do not rename existing backend tables such as `jobs`, `tradie_profiles`, `tradie_subscriptions`, or `tradie_credit_wallets`.
 Safety Check support should be added beside the current request system.
@@ -99,4 +102,3 @@ The Fixit247 Safety Check is a visual home safety and readiness check designed t
 6. Fixer completes visual checklist and photos.
 7. Report is published with score before/after.
 8. Recommended fixes can convert to normal `jobs` quote requests.
-

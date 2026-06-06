@@ -46,8 +46,19 @@ const refundSchema = z.object({
   reason: z.string().min(3)
 });
 
+const safetyCheckStatusSchema = z.object({
+  safetyCheckId: z.string().uuid(),
+  status: z.enum(["due", "booked", "assigned", "completed", "cancelled", "overdue"]),
+  note: z.string().optional()
+});
+
+const safetyCheckAssignSchema = z.object({
+  safetyCheckId: z.string().uuid(),
+  fixerId: z.string().uuid()
+});
+
 function configError(): AdminActionState {
-  return { ok: false, message: "Supabase server key is not configured." };
+  return { ok: false, message: "Admin database access is unavailable." };
 }
 
 async function getAdminClient() {
@@ -273,4 +284,84 @@ export async function refundLeadCreditsAction(
   revalidatePath("/admin/disputes");
 
   return { ok: true, message: "Lead credits refunded." };
+}
+
+export async function updateSafetyCheckStatusAction(
+  _state: AdminActionState,
+  formData: FormData
+): Promise<AdminActionState> {
+  const { user, supabase } = await getAdminClient();
+  if (!supabase) return configError();
+
+  const parsed = safetyCheckStatusSchema.safeParse({
+    safetyCheckId: formData.get("safetyCheckId"),
+    status: formData.get("status"),
+    note: formData.get("note") || undefined
+  });
+
+  if (!parsed.success) {
+    return { ok: false, message: "Choose a valid Safety Check status." };
+  }
+
+  const now = new Date().toISOString();
+  const patch: Record<string, string | null> = { status: parsed.data.status };
+  if (parsed.data.status === "completed") {
+    patch.completed_at = now;
+    patch.report_published_at = now;
+    patch.next_due_at = new Date(Date.now() + 1000 * 60 * 60 * 24 * 183).toISOString();
+  }
+
+  const { error } = await supabase.from("safety_checks").update(patch).eq("id", parsed.data.safetyCheckId);
+
+  if (error) return { ok: false, message: error.message };
+
+  await supabase.from("audit_logs").insert({
+    actor_id: user.id,
+    action: "change_safety_check_status",
+    entity_type: "safety_check",
+    entity_id: parsed.data.safetyCheckId,
+    metadata: { status: parsed.data.status, note: parsed.data.note ?? null }
+  });
+
+  revalidatePath("/admin/safety-checks");
+  revalidatePath("/dashboard/customer/safety-checks");
+
+  return { ok: true, message: "Safety Check status updated." };
+}
+
+export async function assignSafetyCheckFixerAction(
+  _state: AdminActionState,
+  formData: FormData
+): Promise<AdminActionState> {
+  const { user, supabase } = await getAdminClient();
+  if (!supabase) return configError();
+
+  const parsed = safetyCheckAssignSchema.safeParse({
+    safetyCheckId: formData.get("safetyCheckId"),
+    fixerId: formData.get("fixerId")
+  });
+
+  if (!parsed.success) {
+    return { ok: false, message: "Choose a valid Fixer." };
+  }
+
+  const { error } = await supabase
+    .from("safety_checks")
+    .update({ assigned_fixer_id: parsed.data.fixerId, status: "assigned" })
+    .eq("id", parsed.data.safetyCheckId);
+
+  if (error) return { ok: false, message: error.message };
+
+  await supabase.from("audit_logs").insert({
+    actor_id: user.id,
+    action: "assign_safety_check_fixer",
+    entity_type: "safety_check",
+    entity_id: parsed.data.safetyCheckId,
+    metadata: { fixerId: parsed.data.fixerId }
+  });
+
+  revalidatePath("/admin/safety-checks");
+  revalidatePath("/dashboard/tradie");
+
+  return { ok: true, message: "Fixer assigned to Safety Check." };
 }

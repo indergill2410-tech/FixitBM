@@ -89,13 +89,20 @@ export function HomeProtectionScoreCard({ summary }: { summary: HomeProtectionSu
 
 export function SafetyCheckStatusCard({ summary }: { summary: HomeProtectionSummary }) {
   const isActive = summary.membership?.status === "active";
+  const activeCheck = summary.nextSafetyCheck;
   const title = isActive
-    ? "Your next Safety Check is ready to book."
+    ? activeCheck
+      ? "Your Safety Check booking is in progress."
+      : "Your next Safety Check is ready to book."
     : summary.membership
       ? "Your Safety Check can be booked after activation."
       : "Unlock your first Safety Check.";
   const copy = isActive
-    ? "A visual readiness check helps spot visible risks, save key home details, and prepare before the next emergency."
+    ? activeCheck
+      ? activeCheck.preferred_window
+        ? `Requested window: ${activeCheck.preferred_window}.`
+        : "Fixit247 support can now assign a Fixer."
+      : "A visual readiness check helps spot visible risks, save key home details, and prepare before the next emergency."
     : summary.membership
       ? activationCopy
       : "Fixit Plus members get a Home Safety & Readiness Check on signup, then every 6 months while active.";
@@ -106,7 +113,7 @@ export function SafetyCheckStatusCard({ summary }: { summary: HomeProtectionSumm
       <Badge className="mt-4">{summary.nextDueLabel}</Badge>
       <h2 className="mt-4 text-xl font-black">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-[var(--text2)]">{copy}</p>
-      <Button href={isActive ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"} className="mt-5 w-full">
+      <Button href={activeCheck ? `/dashboard/customer/safety-checks/${activeCheck.id}` : isActive ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"} className="mt-5 w-full">
         {summary.safetyCheckCta}
       </Button>
     </Card>

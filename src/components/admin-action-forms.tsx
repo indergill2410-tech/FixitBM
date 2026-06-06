@@ -2,9 +2,11 @@
 
 import { useActionState } from "react";
 import {
+  assignSafetyCheckFixerAction,
   assignTradieAction,
   refundLeadCreditsAction,
   reviewVerificationAction,
+  updateSafetyCheckStatusAction,
   updateJobStatusAction,
   type AdminActionState
 } from "@/app/admin/actions";
@@ -27,6 +29,8 @@ const statuses = [
   "cancelled",
   "disputed"
 ];
+
+const safetyCheckStatuses = ["due", "booked", "assigned", "completed", "cancelled", "overdue"];
 
 export function JobStatusForm({ jobId }: { jobId: string }) {
   const [state, action, pending] = useActionState(updateJobStatusAction, initialState);
@@ -131,6 +135,51 @@ export function RefundLeadCreditsForm() {
         required
       />
       <Button disabled={pending}>Refund credits</Button>
+    </form>
+  );
+}
+
+export function SafetyCheckStatusForm({ safetyCheckId, currentStatus }: { safetyCheckId: string; currentStatus: string }) {
+  const [state, action, pending] = useActionState(updateSafetyCheckStatusAction, initialState);
+
+  return (
+    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+      <FormMessage state={state} />
+      <input type="hidden" name="safetyCheckId" value={safetyCheckId} />
+      <select name="status" defaultValue={currentStatus} className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+        {safetyCheckStatuses.map((status) => (
+          <option key={status} value={status}>
+            {status.replaceAll("_", " ")}
+          </option>
+        ))}
+      </select>
+      <input
+        name="note"
+        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        placeholder="Status note optional"
+      />
+      <Button disabled={pending}>Update Safety Check</Button>
+    </form>
+  );
+}
+
+export function AssignSafetyCheckFixerForm({ safetyCheckId, tradies = [] }: { safetyCheckId: string; tradies?: AdminAssignableTradie[] }) {
+  const [state, action, pending] = useActionState(assignSafetyCheckFixerAction, initialState);
+
+  return (
+    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+      <FormMessage state={state} />
+      <input type="hidden" name="safetyCheckId" value={safetyCheckId} />
+      <select name="fixerId" className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white" required>
+        <option value="">Choose Fixer</option>
+        {tradies.map((tradie) => (
+          <option key={tradie.id} value={tradie.id}>
+            {tradie.business_name || tradie.trade_category} - {tradie.trade_category}
+            {tradie.service_area ? ` - ${tradie.service_area}` : ""}
+          </option>
+        ))}
+      </select>
+      <Button disabled={pending}>Assign Safety Check</Button>
     </form>
   );
 }
