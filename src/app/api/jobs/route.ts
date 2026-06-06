@@ -68,7 +68,7 @@ export async function POST(request: Request) {
   if (!isSupabaseServerConfigured()) {
     return NextResponse.json(
       {
-        error: "Supabase server key is not configured yet. Add SUPABASE_SECRET_KEY to save guest jobs.",
+        error: "Request saving is temporarily unavailable. Please try again shortly.",
         configured: false
       },
       { status: 503 }
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
-    return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Request saving is temporarily unavailable. Please try again shortly." }, { status: 503 });
   }
 
   const data = payload.data;
@@ -128,7 +128,7 @@ export async function POST(request: Request) {
     .single();
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: "We could not save this request yet. Please try again." }, { status: 500 });
   }
 
   await supabase.from("job_status_events").insert({

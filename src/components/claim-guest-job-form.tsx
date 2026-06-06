@@ -24,7 +24,7 @@ export function ClaimGuestJobForm() {
         </div>
       ) : null}
       <label className="grid gap-2">
-        <span className="text-xs font-bold uppercase tracking-wide text-[var(--text3)]">Job reference</span>
+        <span className="text-xs font-bold uppercase tracking-wide text-[var(--text3)]">Request reference</span>
         <input
           name="reference"
           className="focus-ring min-h-12 rounded-xl border border-[var(--border)] bg-[var(--bg)] px-4"
@@ -43,7 +43,7 @@ export function ClaimGuestJobForm() {
       </label>
       <Button disabled={pending}>
         {pending ? <Loader2 size={17} className="animate-spin" /> : <CheckCircle2 size={17} />}
-        Claim guest job
+        Claim guest request
       </Button>
     </form>
   );

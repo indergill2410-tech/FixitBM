@@ -10,7 +10,7 @@ export default function LoginPage() {
           <Badge>Account access</Badge>
           <h1 className="mt-4 text-3xl font-black tracking-tight">Sign in to Fixit247</h1>
           <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
-            Sign in with Supabase Auth. Guest emergency posting still stays open before account creation.
+            Sign in securely to track requests, messages, photos, Fixit Plus, and saved home or road details.
           </p>
           <LoginForm />
           <div className="mt-5 grid gap-2">

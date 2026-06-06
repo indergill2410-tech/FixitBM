@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   if (!isSupabaseServerConfigured()) {
     return NextResponse.json({
       configured: false,
-      message: "Thanks. Newsletter storage will activate when Supabase server keys are configured."
+      message: "Thanks. You're on the list."
     });
   }
 

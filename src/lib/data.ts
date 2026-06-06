@@ -17,9 +17,9 @@ export type RequestLane = "emergency_home" | "emergency_road" | "standard_trade_
 export const requestLanes = [
   {
     value: "emergency_home",
-    title: "Emergency help now",
+    title: "Emergency home help",
     shortTitle: "Home emergency",
-    copy: "For urgent home problems where speed matters.",
+    copy: "Leaks, faults, lockouts, storm damage, and urgent repairs. Start now so the right Fixer can see the details fast.",
     backendType: "home",
     urgency: "emergency"
   },
@@ -27,23 +27,23 @@ export const requestLanes = [
     value: "emergency_road",
     title: "Roadside help now",
     shortTitle: "Roadside emergency",
-    copy: "For flat tyres, batteries, lockouts, fuel, towing, and breakdowns.",
+    copy: "Flat tyre, battery, lockout, fuel, towing, or breakdown. Share the location details and get the next step moving.",
     backendType: "road",
     urgency: "emergency"
   },
   {
     value: "standard_trade_job",
-    title: "A standard trade job",
+    title: "Book a trade request",
     shortTitle: "Trade request",
-    copy: "For repairs, maintenance, installations, and scheduled work.",
+    copy: "Repairs, maintenance, installations, and scheduled work. Add the details once and make it easy for Fixers to respond.",
     backendType: "scheduled",
     urgency: "flexible"
   },
   {
     value: "larger_project",
-    title: "A larger project or quote",
+    title: "Get project quotes",
     shortTitle: "Project quotes",
-    copy: "For renovations, upgrades, and bigger property work.",
+    copy: "Renovations, upgrades, and bigger property work. Describe the scope once so suitable Fixers can quote properly.",
     backendType: "scheduled",
     urgency: "flexible"
   }

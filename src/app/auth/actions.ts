@@ -35,7 +35,7 @@ const tradieRegistrationSchema = customerRegistrationSchema.extend({
 function envError(): AuthActionState {
   return {
     ok: false,
-    message: "Supabase keys are not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY to enable auth."
+    message: "Account access is temporarily unavailable. Please try again shortly."
   };
 }
 

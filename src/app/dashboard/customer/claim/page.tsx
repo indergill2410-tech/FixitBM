@@ -5,7 +5,7 @@ export default function ClaimGuestJobPage() {
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="Claim a guest job" role="Customer" />
+        <DashboardHeader title="Claim a guest request" role="Customer" />
         <Card className="max-w-xl">
           <Badge>Post first, account later</Badge>
           <h1 className="mt-4 text-2xl font-black">Link an emergency request to your account.</h1>

@@ -25,7 +25,7 @@ export async function claimGuestJobAction(
   if (!isSupabaseServerConfigured()) {
     return {
       ok: false,
-      message: "Supabase server key is not configured yet. Add SUPABASE_SECRET_KEY to claim guest jobs."
+      message: "Request claiming is temporarily unavailable. Please try again shortly."
     };
   }
 
@@ -35,12 +35,12 @@ export async function claimGuestJobAction(
   });
 
   if (!parsed.success) {
-    return { ok: false, message: "Enter the job reference and the phone number used when posting." };
+    return { ok: false, message: "Enter the request reference and the phone number used when posting." };
   }
 
   const supabase = createSupabaseAdminClient();
   if (!supabase) {
-    return { ok: false, message: "Supabase is not configured." };
+    return { ok: false, message: "Request claiming is temporarily unavailable. Please try again shortly." };
   }
 
   const normalizedReference = parsed.data.reference.trim().toUpperCase();
@@ -53,11 +53,11 @@ export async function claimGuestJobAction(
     .maybeSingle();
 
   if (findError || !job) {
-    return { ok: false, message: "No guest job was found for that reference." };
+    return { ok: false, message: "No guest request was found for that reference." };
   }
 
   if (job.customer_id) {
-    return { ok: false, message: "That job has already been claimed by an account." };
+    return { ok: false, message: "That request has already been claimed by an account." };
   }
 
   if (String(job.guest_phone ?? "").replace(/\s+/g, "") !== normalizedPhone) {
@@ -81,5 +81,5 @@ export async function claimGuestJobAction(
   revalidatePath("/dashboard/customer");
   revalidatePath("/dashboard/customer/jobs");
 
-  return { ok: true, message: `Job ${normalizedReference} is now linked to your account.` };
+  return { ok: true, message: `Request ${normalizedReference} is now linked to your account.` };
 }
