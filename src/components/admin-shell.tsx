@@ -31,9 +31,9 @@ const adminNav: { label: string; href: string; icon: LucideIcon; detail: string 
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#100d0a] text-white">
-      <div className="grid min-h-screen lg:grid-cols-[280px_1fr]">
-        <aside className="border-b border-white/10 bg-[#15100c] p-4 lg:sticky lg:top-0 lg:h-screen lg:border-b-0 lg:border-r">
+    <div className="min-h-dvh bg-[#100d0a] text-white">
+      <div className="grid min-h-dvh bg-[#100d0a] lg:grid-cols-[280px_1fr]">
+        <aside className="border-b border-white/10 bg-[#15100c] p-4 lg:sticky lg:top-0 lg:h-dvh lg:overflow-y-auto lg:border-b-0 lg:border-r">
           <Link href="/admin" className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
             <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--amber)] text-white shadow-[0_10px_30px_rgba(245,158,11,.3)]">
               <Wrench size={22} />
@@ -71,7 +71,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             })}
           </nav>
         </aside>
-        <div className="min-w-0">{children}</div>
+        <div className="min-w-0 bg-[#120f0c]">{children}</div>
       </div>
     </div>
   );
@@ -150,4 +150,3 @@ export const adminIcons = {
   Users,
   Wrench
 };
-
