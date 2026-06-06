@@ -219,6 +219,56 @@ export type AdminJobDetail = JobDetail & {
   audit_logs: AdminAuditLog[];
 };
 
+export type AdminCommandMetrics = {
+  activeRequests: number;
+  unassignedRequests: number;
+  emergencyRequests: number;
+  todayRequests: number;
+  activeCustomers: number;
+  activeFixers: number;
+  activeMemberships: number;
+  pendingMemberships: number;
+  supportOpen: number;
+  disputesOpen: number;
+  verificationPending: number;
+};
+
+export type AdminRequestFilters = {
+  lane?: RequestLaneLabel | "all";
+  status?: JobStatus | "all";
+  assignment?: "all" | "assigned" | "unassigned";
+};
+
+export type AdminCustomerDetail = AdminCustomerRow & {
+  jobs: JobSummary[];
+  properties: SavedProperty[];
+  vehicles: SavedVehicle[];
+  memberships: Record<string, unknown>[];
+  reviews: ReviewSummary[];
+};
+
+export type AdminFixerDirectoryRow = TradieProfileSummary & {
+  user_id: string | null;
+  assigned_count: number;
+  claimed_count: number;
+};
+
+export type AdminFixerDetail = TradieProfileSummary & {
+  user_id: string | null;
+  user_email: string | null;
+  user_phone: string | null;
+  subscription: TradieSubscriptionSummary | null;
+  wallet: Omit<TradieWalletSummary, "transactions"> | null;
+  assigned_jobs: JobSummary[];
+  lead_claims: {
+    id: string;
+    job_id: string;
+    credits_spent: number;
+    status: string;
+    created_at: string;
+  }[];
+};
+
 export type SavedProperty = {
   id: string;
   label: string | null;
@@ -819,6 +869,104 @@ export async function getAdminQueue() {
   };
 }
 
+const activeAdminStatuses: JobStatus[] = ["received", "matching", "tradie_accepted", "en_route", "on_site", "quote_provided", "work_in_progress"];
+
+export async function getAdminCommandMetrics(): Promise<AdminCommandMetrics> {
+  noStore();
+
+  const emptyMetrics = {
+    activeRequests: 0,
+    unassignedRequests: 0,
+    emergencyRequests: 0,
+    todayRequests: 0,
+    activeCustomers: 0,
+    activeFixers: 0,
+    activeMemberships: 0,
+    pendingMemberships: 0,
+    supportOpen: 0,
+    disputesOpen: 0,
+    verificationPending: 0
+  };
+
+  if (!isSupabaseServerConfigured()) {
+    return emptyMetrics;
+  }
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return emptyMetrics;
+
+  const [
+    activeRequests,
+    unassignedRequests,
+    emergencyRequests,
+    todayRequests,
+    activeCustomers,
+    activeFixers,
+    activeMemberships,
+    pendingMemberships,
+    supportOpen,
+    disputesOpen,
+    verificationPending
+  ] = await Promise.all([
+    supabase.from("jobs").select("id", { count: "exact", head: true }).in("status", activeAdminStatuses),
+    supabase.from("jobs").select("id", { count: "exact", head: true }).in("status", activeAdminStatuses).is("assigned_tradie_id", null),
+    supabase.from("jobs").select("id", { count: "exact", head: true }).in("status", activeAdminStatuses).eq("urgency", "emergency"),
+    supabase.from("jobs").select("id", { count: "exact", head: true }).in("status", activeAdminStatuses).eq("urgency", "today"),
+    supabase.from("users").select("id", { count: "exact", head: true }).eq("role", "customer").eq("status", "active"),
+    supabase.from("tradie_profiles").select("id", { count: "exact", head: true }).eq("availability_status", "available"),
+    supabase.from("memberships").select("id", { count: "exact", head: true }).eq("status", "active"),
+    supabase.from("memberships").select("id", { count: "exact", head: true }).in("status", ["inactive", "pending_activation"]),
+    supabase.from("support_tickets").select("id", { count: "exact", head: true }).in("status", ["open", "under_review"]),
+    supabase.from("disputes").select("id", { count: "exact", head: true }).in("status", ["open", "under_review"]),
+    supabase.from("verification_documents").select("id", { count: "exact", head: true }).eq("status", "pending")
+  ]);
+
+  return {
+    activeRequests: activeRequests.count ?? 0,
+    unassignedRequests: unassignedRequests.count ?? 0,
+    emergencyRequests: emergencyRequests.count ?? 0,
+    todayRequests: todayRequests.count ?? 0,
+    activeCustomers: activeCustomers.count ?? 0,
+    activeFixers: activeFixers.count ?? 0,
+    activeMemberships: activeMemberships.count ?? 0,
+    pendingMemberships: pendingMemberships.count ?? 0,
+    supportOpen: supportOpen.count ?? 0,
+    disputesOpen: disputesOpen.count ?? 0,
+    verificationPending: verificationPending.count ?? 0
+  };
+}
+
+export async function getAdminRequestQueue(filters: AdminRequestFilters = {}) {
+  noStore();
+
+  if (!isSupabaseServerConfigured()) return [] as JobSummary[];
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return [] as JobSummary[];
+
+  let query = supabase
+    .from("jobs")
+    .select("id, public_reference, type, category, urgency, title, description, suburb, postcode, state, status, credit_cost, guest_name, guest_phone, created_at, assigned_tradie_id")
+    .order("created_at", { ascending: false })
+    .limit(80);
+
+  if (filters.status && filters.status !== "all") {
+    query = query.eq("status", filters.status);
+  } else {
+    query = query.in("status", activeAdminStatuses);
+  }
+
+  if (filters.assignment === "assigned") query = query.not("assigned_tradie_id", "is", null);
+  if (filters.assignment === "unassigned") query = query.is("assigned_tradie_id", null);
+
+  const { data, error } = await query;
+  if (error) return [];
+
+  const jobs = (data ?? []) as JobSummary[];
+  if (!filters.lane || filters.lane === "all") return jobs;
+  return jobs.filter((job) => requestLaneLabel(job) === filters.lane);
+}
+
 export async function getAdminJobDetail(id: string): Promise<AdminJobDetail | null> {
   noStore();
 
@@ -931,6 +1079,162 @@ export async function getAdminCustomers() {
     ...customer,
     job_count: counts.get(customer.id) ?? 0
   })) as AdminCustomerRow[];
+}
+
+export async function getAdminCustomerDetail(id: string): Promise<AdminCustomerDetail | null> {
+  noStore();
+
+  if (!isSupabaseServerConfigured()) return null;
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return null;
+
+  const { data: customer, error } = await supabase
+    .from("users")
+    .select("id, email, phone, first_name, last_name, status, created_at")
+    .eq("id", id)
+    .eq("role", "customer")
+    .maybeSingle();
+
+  if (error || !customer) return null;
+
+  const [{ data: jobs }, { data: properties }, { data: vehicles }, { data: memberships }, { data: reviews }] =
+    await Promise.all([
+      supabase
+        .from("jobs")
+        .select("id, public_reference, type, category, urgency, title, description, suburb, postcode, state, status, credit_cost, guest_name, guest_phone, created_at, assigned_tradie_id")
+        .eq("customer_id", id)
+        .order("created_at", { ascending: false })
+        .limit(30),
+      supabase.from("saved_properties").select("id, label, address, suburb, postcode, state, is_default").eq("customer_id", id),
+      supabase.from("saved_vehicles").select("id, label, make, model, year, registration, fuel_type, is_default").eq("customer_id", id),
+      supabase.from("memberships").select("*").eq("customer_id", id).order("created_at", { ascending: false }).limit(5),
+      supabase.from("reviews").select("id, job_id, rating, comment, created_at").eq("reviewer_id", id).order("created_at", { ascending: false }).limit(10)
+    ]);
+
+  const reviewJobIds = (reviews ?? []).map((review) => review.job_id).filter(Boolean) as string[];
+  const { data: reviewJobs } = reviewJobIds.length
+    ? await supabase.from("jobs").select("id, title, public_reference").in("id", reviewJobIds)
+    : { data: [] };
+  const reviewJobById = new Map((reviewJobs ?? []).map((job) => [job.id, job]));
+
+  return {
+    ...customer,
+    job_count: jobs?.length ?? 0,
+    jobs: (jobs ?? []) as JobSummary[],
+    properties: (properties ?? []) as SavedProperty[],
+    vehicles: (vehicles ?? []) as SavedVehicle[],
+    memberships: (memberships ?? []) as Record<string, unknown>[],
+    reviews: (reviews ?? []).map((review) => {
+      const job = review.job_id ? reviewJobById.get(review.job_id) : null;
+      return {
+        id: review.id,
+        job_id: review.job_id,
+        rating: review.rating,
+        comment: review.comment,
+        created_at: review.created_at,
+        job_title: job?.title ?? "Completed request",
+        job_reference: job?.public_reference ?? "Review"
+      };
+    }) as ReviewSummary[]
+  } as AdminCustomerDetail;
+}
+
+export async function getAdminFixers(): Promise<AdminFixerDirectoryRow[]> {
+  noStore();
+
+  if (!isSupabaseServerConfigured()) return [];
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return [];
+
+  const { data: profiles } = await supabase
+    .from("tradie_profiles")
+    .select("id, user_id, business_name, abn, trade_category, licence_number, service_area, emergency_available, availability_status, verification_status, profile_health, rating, total_reviews, response_rate")
+    .order("business_name", { ascending: true })
+    .limit(80);
+
+  const fixerIds = (profiles ?? []).map((profile) => profile.id as string);
+  const [{ data: assigned }, { data: claims }] = fixerIds.length
+    ? await Promise.all([
+        supabase.from("jobs").select("assigned_tradie_id").in("assigned_tradie_id", fixerIds),
+        supabase.from("lead_claims").select("tradie_id").in("tradie_id", fixerIds)
+      ])
+    : [{ data: [] }, { data: [] }];
+
+  const assignedCounts = new Map<string, number>();
+  (assigned ?? []).forEach((row) => {
+    if (row.assigned_tradie_id) assignedCounts.set(row.assigned_tradie_id, (assignedCounts.get(row.assigned_tradie_id) ?? 0) + 1);
+  });
+
+  const claimedCounts = new Map<string, number>();
+  (claims ?? []).forEach((row) => {
+    if (row.tradie_id) claimedCounts.set(row.tradie_id, (claimedCounts.get(row.tradie_id) ?? 0) + 1);
+  });
+
+  return (profiles ?? []).map((profile) => ({
+    ...(profile as TradieProfileSummary & { user_id: string | null }),
+    assigned_count: assignedCounts.get(profile.id) ?? 0,
+    claimed_count: claimedCounts.get(profile.id) ?? 0
+  }));
+}
+
+export async function getAdminFixerDetail(id: string): Promise<AdminFixerDetail | null> {
+  noStore();
+
+  if (!isSupabaseServerConfigured()) return null;
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return null;
+
+  const { data: profile, error } = await supabase
+    .from("tradie_profiles")
+    .select("id, user_id, business_name, abn, trade_category, licence_number, service_area, emergency_available, availability_status, verification_status, profile_health, rating, total_reviews, response_rate")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error || !profile) return null;
+
+  const [{ data: user }, { data: subscription }, { data: wallet }, { data: assignedJobs }, { data: leadClaims }] =
+    await Promise.all([
+      profile.user_id ? supabase.from("users").select("email, phone").eq("id", profile.user_id).maybeSingle() : Promise.resolve({ data: null }),
+      supabase.from("tradie_subscriptions").select("plan, status, current_period_end").eq("tradie_id", id).maybeSingle(),
+      supabase
+        .from("tradie_credit_wallets")
+        .select("id, balance, bonus_balance, bonus_monthly_amount, bonus_months_total, bonus_months_granted, bonus_next_renewal_at, bonus_expires_at, signup_bonus_granted_at, lifetime_purchased, lifetime_used")
+        .eq("tradie_id", id)
+        .maybeSingle(),
+      supabase
+        .from("jobs")
+        .select("id, public_reference, type, category, urgency, title, description, suburb, postcode, state, status, credit_cost, guest_name, guest_phone, created_at, assigned_tradie_id")
+        .eq("assigned_tradie_id", id)
+        .order("created_at", { ascending: false })
+        .limit(20),
+      supabase
+        .from("lead_claims")
+        .select("id, job_id, credits_spent, status, created_at")
+        .eq("tradie_id", id)
+        .order("created_at", { ascending: false })
+        .limit(20)
+    ]);
+
+  const bonusIsValid = wallet?.bonus_expires_at ? new Date(wallet.bonus_expires_at).getTime() > Date.now() : false;
+
+  return {
+    ...(profile as TradieProfileSummary & { user_id: string | null }),
+    user_email: user?.email ?? null,
+    user_phone: user?.phone ?? null,
+    subscription: subscription as TradieSubscriptionSummary | null,
+    wallet: wallet
+      ? {
+          ...wallet,
+          bonus_is_valid: bonusIsValid,
+          total_available: wallet.balance + (bonusIsValid ? wallet.bonus_balance : 0)
+        }
+      : null,
+    assigned_jobs: (assignedJobs ?? []) as JobSummary[],
+    lead_claims: (leadClaims ?? []) as AdminFixerDetail["lead_claims"]
+  };
 }
 
 export async function getAdminVerificationQueue() {

@@ -1,14 +1,11 @@
 import { Badge, Card, DashboardHeader } from "@/components/ui";
 import { AdminQueueItem } from "@/components/job-cards";
-import { getAdminQueue, requestLaneLabel } from "@/lib/jobs";
+import { getAdminCommandMetrics, getAdminRequestQueue } from "@/lib/jobs";
 import { SafetyCheckMiniOpsCard } from "@/components/safety-check-cards";
 import { AdminPriorityCard, AdminStatCard, adminIcons } from "@/components/admin-shell";
 
 export default async function AdminPage() {
-  const queue = await getAdminQueue();
-  const emergencyCount = queue.jobs.filter((job) => requestLaneLabel(job).includes("emergency")).length;
-  const tradeCount = queue.jobs.filter((job) => requestLaneLabel(job) === "Trade request").length;
-  const projectCount = queue.jobs.filter((job) => requestLaneLabel(job) === "Project quote").length;
+  const [metrics, jobs] = await Promise.all([getAdminCommandMetrics(), getAdminRequestQueue()]);
 
   return (
     <main className="min-h-screen bg-[#120f0c] text-white">
@@ -20,15 +17,15 @@ export default async function AdminPage() {
         </p>
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <AdminStatCard icon={adminIcons.AlertTriangle} label="Emergency queue" value={String(emergencyCount)} detail="Home and roadside requests needing speed." tone="red" />
-          <AdminStatCard icon={adminIcons.ClipboardList} label="Trade requests" value={String(tradeCount)} detail="Standard jobs ready for Fixer access." tone="blue" />
-          <AdminStatCard icon={adminIcons.Wrench} label="Project quotes" value={String(projectCount)} detail="Quote-first larger property work." tone="purple" />
-          <AdminStatCard icon={adminIcons.Users} label="Fixers online" value={String(queue.onlineTradies)} detail="Available providers in the network." tone="green" />
+          <AdminStatCard icon={adminIcons.AlertTriangle} label="Emergency queue" value={String(metrics.emergencyRequests)} detail="Home and roadside requests needing speed." tone="red" />
+          <AdminStatCard icon={adminIcons.ClipboardList} label="Unassigned" value={String(metrics.unassignedRequests)} detail="Requests waiting for a Fixer." tone="amber" />
+          <AdminStatCard icon={adminIcons.Wrench} label="Active requests" value={String(metrics.activeRequests)} detail="Live operational workload." tone="purple" />
+          <AdminStatCard icon={adminIcons.Users} label="Fixers online" value={String(metrics.activeFixers)} detail="Available providers in the network." tone="green" />
         </div>
 
         <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <AdminStatCard icon={adminIcons.CheckCircle2} label="Verification" value={String(queue.verificationPending)} detail="Fixer documents awaiting review." tone="amber" />
-          <AdminStatCard icon={adminIcons.CreditCard} label="Disputes" value={String(queue.disputesOpen)} detail="Lead-quality and credit reviews." tone="red" />
+          <AdminStatCard icon={adminIcons.CheckCircle2} label="Verification" value={String(metrics.verificationPending)} detail="Fixer documents awaiting review." tone="amber" />
+          <AdminStatCard icon={adminIcons.CreditCard} label="Disputes" value={String(metrics.disputesOpen)} detail="Lead-quality and credit reviews." tone="red" />
         </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -46,8 +43,8 @@ export default async function AdminPage() {
               This list is pulled from the live `jobs` request table and filtered to active operational statuses.
             </p>
             <div className="mt-5 grid gap-3">
-              {queue.jobs.length ? (
-                queue.jobs.map((job) => <AdminQueueItem key={job.id} job={job} />)
+              {jobs.length ? (
+                jobs.slice(0, 8).map((job) => <AdminQueueItem key={job.id} job={job} />)
               ) : (
                 <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-white/70">
                   No live requests in the queue.

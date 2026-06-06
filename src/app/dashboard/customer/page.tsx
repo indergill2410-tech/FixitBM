@@ -140,10 +140,10 @@ export default async function CustomerDashboardPage() {
             </Card>
             <Card>
               <div className="grid gap-3">
-                <DashboardLink icon={Home} label="Saved properties" />
-                <DashboardLink icon={Car} label="Saved vehicles" />
-                <DashboardLink icon={Wrench} label="Recommended fixes" />
-                <DashboardLink icon={UserRound} label="Payments" />
+                <DashboardLink icon={Home} label="Saved properties" href="/dashboard/customer/properties" />
+                <DashboardLink icon={Car} label="Saved vehicles" href="/dashboard/customer/vehicles" />
+                <DashboardLink icon={Wrench} label="Recommended fixes" href="/dashboard/customer/safety-checks" />
+                <DashboardLink icon={UserRound} label="Payments" href="/dashboard/customer/membership" />
                 <a className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 text-sm font-bold" href="/dashboard/customer/claim">
                   Claim guest request
                 </a>
@@ -156,11 +156,11 @@ export default async function CustomerDashboardPage() {
   );
 }
 
-function DashboardLink({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
+function DashboardLink({ icon: Icon, label, href }: { icon: LucideIcon; label: string; href: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 text-sm font-bold">
+    <a href={href} className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 text-sm font-bold transition hover:border-[var(--amber2)] hover:bg-white">
       <Icon size={17} className="text-[var(--amber2)]" />
       {label}
-    </div>
+    </a>
   );
 }
