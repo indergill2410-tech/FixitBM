@@ -1,7 +1,17 @@
+import { redirect } from "next/navigation";
 import { BriefcaseBusiness, Home } from "lucide-react";
 import { Badge, Button, Card, PublicHeader } from "@/components/ui";
+import { getCurrentAppUser, roleHome } from "@/lib/auth";
 
-export default function RegisterPage() {
+export const dynamic = "force-dynamic";
+
+export default async function RegisterPage() {
+  const user = await getCurrentAppUser();
+
+  if (user) {
+    redirect(roleHome(user.role));
+  }
+
   return (
     <main className="premium-shell">
       <PublicHeader />

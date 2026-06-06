@@ -5,6 +5,24 @@ import { homeCategories, roadsideCategories, tradeCategories } from "@/lib/data"
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 
 export default function HomePage() {
+  const urgentRequestCategories = [
+    homeCategories.find((item) => item.label === "Burst pipe"),
+    homeCategories.find((item) => item.label === "Electrical fault"),
+    homeCategories.find((item) => item.label === "Lockout"),
+    roadsideCategories.find((item) => item.label === "Flat tyre"),
+    roadsideCategories.find((item) => item.label === "Battery"),
+    roadsideCategories.find((item) => item.label === "Fuel emergency")
+  ].filter((item): item is (typeof homeCategories)[number] => Boolean(item));
+
+  const plannedRequestCategories = [
+    tradeCategories.find((item) => item.label === "Plumbing"),
+    tradeCategories.find((item) => item.label === "Roofing"),
+    tradeCategories.find((item) => item.label === "Painting"),
+    tradeCategories.find((item) => item.label === "Carpentry"),
+    tradeCategories.find((item) => item.label === "Landscaping"),
+    tradeCategories.find((item) => item.label === "Concreting")
+  ].filter((item): item is (typeof tradeCategories)[number] => Boolean(item));
+
   return (
     <main className="premium-shell pb-24">
       <PublicHeader />
@@ -141,39 +159,54 @@ export default function HomePage() {
       </section>
 
       <section className="container py-12">
-        <div className="mb-6 flex items-end justify-between gap-4">
-          <div>
-            <Badge tone="gray">Emergency categories</Badge>
-            <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">One place when things break.</h2>
+        <div className="mb-7 grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+          <div className="max-w-3xl">
+            <Badge tone="gray">Any repair, one request</Badge>
+            <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">
+              Urgent or planned, Fixit247 gets the right help moving.
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-[var(--text2)] md:text-base">
+              From burst pipes, lockouts, flat tyres, and electrical faults to painting, roofing, landscaping, and
+              bigger property work, start once and we shape the request for the right Fixer.
+            </p>
           </div>
-          <Button href="/post-job" variant="ghost" className="hidden md:inline-flex">
-            Start a request
+          <Button href="/post-job">
+            Start any request
+            <ArrowRight size={17} />
           </Button>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5">
-          {[...homeCategories.slice(0, 6), ...roadsideCategories].map((item) => (
-            <IconTile key={item.label} icon={item.icon} label={item.label} />
-          ))}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div>
+            <div className="mb-3">
+              <h3 className="text-sm font-black uppercase tracking-wide text-[var(--red)]">Need help now</h3>
+              <p className="mt-1 text-sm text-[var(--text2)]">Fast starters for home and roadside emergencies.</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {urgentRequestCategories.map((item) => (
+                <IconTile key={item.label} icon={item.icon} label={item.label} />
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="mb-3">
+              <h3 className="text-sm font-black uppercase tracking-wide text-[var(--amber2)]">Planning work</h3>
+              <p className="mt-1 text-sm text-[var(--text2)]">Repairs, maintenance, installs, and project requests.</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {plannedRequestCategories.map((item) => (
+                <IconTile key={item.label} icon={item.icon} label={item.label} />
+              ))}
+            </div>
+          </div>
         </div>
-      </section>
-
-      <section className="container py-12">
-        <div className="mb-6 max-w-2xl">
-          <Badge tone="gray">All trade jobs</Badge>
-          <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">Not an emergency? Fixit247 can still help.</h2>
-          <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
-            From small repairs and maintenance to installations, painting, roofing, landscaping, and larger property
-            projects, you can start any trade request in one place.
-          </p>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <Button href="/post-job" variant="ghost">
+            Tell us what needs fixing
+          </Button>
+          <Button href="/all-trade-jobs" variant="ghost">
+            Browse every trade
+          </Button>
         </div>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5">
-          {tradeCategories.slice(0, 15).map((item) => (
-            <IconTile key={item.label} icon={item.icon} label={item.label} />
-          ))}
-        </div>
-        <Button href="/all-trade-jobs" variant="ghost" className="mt-6">
-          Start a Trade Request
-        </Button>
       </section>
 
       <section className="container grid gap-4 py-12 md:grid-cols-3">

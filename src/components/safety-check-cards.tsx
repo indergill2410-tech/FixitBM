@@ -1,5 +1,6 @@
 import { CalendarCheck, Car, CheckCircle2, Gauge, Home, ShieldCheck, Wrench } from "lucide-react";
 import { activationCopy, recommendedFixExamples, safetyCheckDisclaimer, type HomeProtectionSummary } from "@/lib/safety-checks";
+import type { PropertySafeSummary } from "@/lib/propertysafe";
 import { Badge, Button, Card } from "@/components/ui";
 
 export function SafetyCheckDisclaimer() {
@@ -49,6 +50,31 @@ export function ProtectionHeroCard({ summary }: { summary: HomeProtectionSummary
           {isComplete ? "Manage Protection" : isActive ? "Upgrade to Complete" : "See What’s Included"}
         </Button>
       </div>
+    </Card>
+  );
+}
+
+export function PropertySafeStatusCard({ summary }: { summary: PropertySafeSummary }) {
+  const hasLiveAssessment = Boolean(summary.latestAssessment);
+
+  return (
+    <Card variant={hasLiveAssessment ? "membership" : undefined}>
+      <ShieldCheck className="text-[var(--amber2)]" />
+      <Badge className="mt-4" tone={hasLiveAssessment ? "green" : "amber"}>{summary.statusLabel}</Badge>
+      <h2 className="mt-4 text-xl font-black">{summary.headline}</h2>
+      <p className="mt-2 text-sm leading-6 text-[var(--text2)]">{summary.copy}</p>
+      <div className="mt-5 grid grid-cols-2 gap-3">
+        <div className="rounded-xl border border-[var(--border)] bg-white p-3">
+          <p className="text-2xl font-black">{summary.activeProfileCount}</p>
+          <p className="mt-1 text-[10px] font-bold uppercase text-[var(--text3)]">Protected homes</p>
+        </div>
+        <div className="rounded-xl border border-[var(--border)] bg-white p-3">
+          <p className="text-2xl font-black">{summary.openRecommendationCount}</p>
+          <p className="mt-1 text-[10px] font-bold uppercase text-[var(--text3)]">Next fixes</p>
+        </div>
+      </div>
+      <p className="mt-4 text-xs font-bold uppercase text-[var(--text3)]">{summary.nextReviewLabel}</p>
+      <Button href={summary.ctaHref} className="mt-5 w-full">{summary.ctaLabel}</Button>
     </Card>
   );
 }

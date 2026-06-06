@@ -53,7 +53,11 @@ export async function requireRole(roles: Role[]) {
     redirect("/login");
   }
 
-  if (user.status === "suspended" || !roles.includes(user.role)) {
+  if (user.status === "suspended") {
+    redirect("/");
+  }
+
+  if (!roles.includes(user.role)) {
     redirect(roleHome(user.role));
   }
 

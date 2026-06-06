@@ -7,7 +7,7 @@ type StripeEvent = {
   id?: string;
   type?: string;
   data?: {
-    object?: StripeCheckoutSession;
+    object?: StripeCheckoutSession | StripeSubscription | StripeInvoice;
   };
 };
 
@@ -19,6 +19,22 @@ type StripeCheckoutSession = {
   subscription?: string | null;
   client_reference_id?: string | null;
   metadata?: Record<string, string | undefined> | null;
+};
+
+type StripeSubscription = {
+  id?: string;
+  status?: string;
+  customer?: string | null;
+  current_period_start?: number | null;
+  current_period_end?: number | null;
+  metadata?: Record<string, string | undefined> | null;
+};
+
+type StripeInvoice = {
+  id?: string;
+  customer?: string | null;
+  subscription?: string | null;
+  status?: string | null;
 };
 
 export async function POST(request: Request) {
@@ -52,7 +68,19 @@ export async function POST(request: Request) {
 
   let reconciled = false;
   if (event.type === "checkout.session.completed") {
-    const result = await reconcileCheckoutSession(event.data?.object ?? null, event.id ?? null);
+    const result = await reconcileCheckoutSession(event.data?.object as StripeCheckoutSession | null, event.id ?? null);
+    if (!result.ok) {
+      return NextResponse.json({ error: result.message }, { status: result.status });
+    }
+    reconciled = result.reconciled;
+  } else if (event.type === "customer.subscription.updated" || event.type === "customer.subscription.deleted") {
+    const result = await reconcileSubscriptionEvent(event.data?.object as StripeSubscription | null, event.type, event.id ?? null);
+    if (!result.ok) {
+      return NextResponse.json({ error: result.message }, { status: result.status });
+    }
+    reconciled = result.reconciled;
+  } else if (event.type === "invoice.payment_succeeded" || event.type === "invoice.payment_failed") {
+    const result = await reconcileInvoiceEvent(event.data?.object as StripeInvoice | null, event.type, event.id ?? null);
     if (!result.ok) {
       return NextResponse.json({ error: result.message }, { status: result.status });
     }
@@ -66,6 +94,131 @@ export async function POST(request: Request) {
     reconciled,
     message: reconciled ? "Billing event reconciled." : "Billing event accepted."
   });
+}
+
+async function reconcileSubscriptionEvent(subscription: StripeSubscription | null, eventType: string, eventId: string | null) {
+  if (!subscription?.id) {
+    return { ok: true, reconciled: false, message: "No subscription supplied.", status: 200 };
+  }
+
+  if (!isSupabaseServerConfigured()) {
+    return { ok: false, reconciled: false, message: "Billing reconciliation is temporarily unavailable.", status: 503 };
+  }
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) {
+    return { ok: false, reconciled: false, message: "Billing reconciliation is temporarily unavailable.", status: 503 };
+  }
+
+  const planCode = subscription.metadata?.plan_code;
+  const plan = planCode ? getBillingPlan(planCode) : null;
+  const productType = subscription.metadata?.product_type ?? plan?.type ?? null;
+  const mappedStatus = eventType === "customer.subscription.deleted" ? "cancelled" : mapStripeSubscriptionStatus(subscription.status);
+  const periodStart = stripeTimestamp(subscription.current_period_start);
+  const periodEnd = stripeTimestamp(subscription.current_period_end);
+  const commonPatch = {
+    status: mappedStatus,
+    stripe_customer_id: subscription.customer ?? null,
+    current_period_start: periodStart,
+    current_period_end: periodEnd
+  };
+
+  if (productType === "customer_membership") {
+    const { data: membership } = await supabase
+      .from("memberships")
+      .select("id, activation_effective_at")
+      .eq("stripe_subscription_id", subscription.id)
+      .maybeSingle();
+    const membershipStatus = preserveActivationWindow(mappedStatus, membership?.activation_effective_at ?? null);
+    const { data: updatedMemberships, error } = await supabase
+      .from("memberships")
+      .update({
+        ...commonPatch,
+        status: membershipStatus,
+        ...(membershipStatus === "cancelled" ? { cancelled_at: new Date().toISOString() } : {})
+      })
+      .eq("stripe_subscription_id", subscription.id)
+      .select("id");
+
+    if (error) return { ok: false, reconciled: false, message: error.message, status: 500 };
+    await writeBillingAudit(subscription.metadata?.user_id ?? null, `stripe_${eventType}`, "membership", subscription.id, {
+      eventId,
+      stripeStatus: subscription.status ?? null,
+      mappedStatus: membershipStatus,
+      planCode
+    });
+    return { ok: true, reconciled: Boolean(updatedMemberships?.length), message: "Membership subscription reconciled.", status: 200 };
+  }
+
+  if (productType === "tradie_subscription") {
+    const { data: updatedSubscriptions, error } = await supabase
+      .from("tradie_subscriptions")
+      .update(commonPatch)
+      .eq("stripe_subscription_id", subscription.id)
+      .select("id");
+
+    if (error) return { ok: false, reconciled: false, message: error.message, status: 500 };
+    await writeBillingAudit(subscription.metadata?.user_id ?? null, `stripe_${eventType}`, "tradie_subscription", subscription.id, {
+      eventId,
+      stripeStatus: subscription.status ?? null,
+      mappedStatus,
+      planCode
+    });
+    return { ok: true, reconciled: Boolean(updatedSubscriptions?.length), message: "Fixer subscription reconciled.", status: 200 };
+  }
+
+  return { ok: true, reconciled: false, message: "Subscription product type was not recognised.", status: 200 };
+}
+
+async function reconcileInvoiceEvent(invoice: StripeInvoice | null, eventType: string, eventId: string | null) {
+  if (!invoice?.subscription) {
+    return { ok: true, reconciled: false, message: "Invoice has no subscription.", status: 200 };
+  }
+
+  if (!isSupabaseServerConfigured()) {
+    return { ok: false, reconciled: false, message: "Billing reconciliation is temporarily unavailable.", status: 503 };
+  }
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) {
+    return { ok: false, reconciled: false, message: "Billing reconciliation is temporarily unavailable.", status: 503 };
+  }
+
+  const mappedStatus = eventType === "invoice.payment_succeeded" ? "active" : "past_due";
+  const patch = {
+    status: mappedStatus,
+    stripe_customer_id: invoice.customer ?? null
+  };
+  const { data: membership } = await supabase
+    .from("memberships")
+    .select("id, activation_effective_at")
+    .eq("stripe_subscription_id", invoice.subscription)
+    .maybeSingle();
+  const membershipStatus = preserveActivationWindow(mappedStatus, membership?.activation_effective_at ?? null);
+  const [membershipResult, subscriptionResult] = await Promise.all([
+    supabase
+      .from("memberships")
+      .update({ ...patch, status: membershipStatus })
+      .eq("stripe_subscription_id", invoice.subscription)
+      .select("id"),
+    supabase.from("tradie_subscriptions").update(patch).eq("stripe_subscription_id", invoice.subscription).select("id")
+  ]);
+
+  if (membershipResult.error) return { ok: false, reconciled: false, message: membershipResult.error.message, status: 500 };
+  if (subscriptionResult.error) return { ok: false, reconciled: false, message: subscriptionResult.error.message, status: 500 };
+
+  await writeBillingAudit(null, `stripe_${eventType}`, "subscription_payment", invoice.subscription, {
+    eventId,
+    invoiceId: invoice.id ?? null,
+    mappedStatus
+  });
+
+  return {
+    ok: true,
+    reconciled: Boolean((membershipResult.data?.length ?? 0) + (subscriptionResult.data?.length ?? 0)),
+    message: "Invoice subscription state reconciled.",
+    status: 200
+  };
 }
 
 async function reconcileCheckoutSession(session: StripeCheckoutSession | null, eventId: string | null) {
@@ -255,7 +408,7 @@ async function getOrCreateWallet(tradieId: string) {
 }
 
 async function writeBillingAudit(
-  actorId: string,
+  actorId: string | null,
   action: string,
   entityType: string,
   entityId: string,
@@ -266,11 +419,31 @@ async function writeBillingAudit(
 
   await supabase.from("audit_logs").insert({
     actor_id: actorId,
-    action,
+    action: "update",
     entity_type: entityType,
-    entity_id: entityId,
-    metadata
+    entity_id: null,
+    metadata: {
+      ...metadata,
+      billing_action: action,
+      external_entity_id: entityId
+    }
   });
+}
+
+function mapStripeSubscriptionStatus(status?: string | null) {
+  if (status === "active" || status === "trialing") return "active";
+  if (status === "past_due" || status === "unpaid" || status === "incomplete") return "past_due";
+  if (status === "canceled" || status === "cancelled" || status === "incomplete_expired") return "cancelled";
+  return "inactive";
+}
+
+function preserveActivationWindow(status: string, activationEffectiveAt?: string | null) {
+  if (status !== "active" || !activationEffectiveAt) return status;
+  return new Date(activationEffectiveAt).getTime() > Date.now() ? "pending_activation" : "active";
+}
+
+function stripeTimestamp(timestamp?: number | null) {
+  return timestamp ? new Date(timestamp * 1000).toISOString() : null;
 }
 
 async function verifyStripeSignature(payload: string, signatureHeader: string, secret: string) {

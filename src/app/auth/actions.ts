@@ -60,16 +60,74 @@ export async function signInAction(_state: AuthActionState, formData: FormData):
     return { ok: false, message: error.message };
   }
 
-  const { data: claimsData } = await supabase.auth.getClaims();
+  const [{ data: claimsData }, { data: authUserData }] = await Promise.all([supabase.auth.getClaims(), supabase.auth.getUser()]);
   const authId = claimsData?.claims?.sub;
 
   if (!authId) {
     return { ok: false, message: "Signed in, but the session could not be confirmed." };
   }
 
-  const { data: user } = await supabase.from("users").select("role").eq("auth_id", authId).maybeSingle();
+  const userRole = await resolveSignedInUserRole(
+    supabase,
+    authId,
+    authUserData.user?.email ?? parsed.data.email,
+    authUserData.user?.user_metadata
+  );
 
-  redirect(roleHome((user?.role as Role | undefined) ?? "customer"));
+  if (!userRole) {
+    return { ok: false, message: "Account profile could not be prepared. Please contact Fixit247 support." };
+  }
+
+  redirect(roleHome(userRole));
+}
+
+async function resolveSignedInUserRole(
+  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+  authId: string,
+  email: string,
+  metadata?: Record<string, unknown> | null
+): Promise<Role | null> {
+  const { data: linkedUser } = await supabase.from("users").select("role").eq("auth_id", authId).maybeSingle();
+  if (linkedUser?.role) return linkedUser.role as Role;
+
+  if (!isSupabaseServerConfigured()) return null;
+
+  const admin = createSupabaseAdminClient();
+  if (!admin) return null;
+
+  const { data: existingByEmail } = await admin
+    .from("users")
+    .select("id, role, auth_id")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (existingByEmail) {
+    if (existingByEmail.auth_id !== authId) {
+      await admin.from("users").update({ auth_id: authId }).eq("id", existingByEmail.id);
+    }
+    return existingByEmail.role as Role;
+  }
+
+  const firstName = typeof metadata?.first_name === "string" ? metadata.first_name : null;
+  const lastName = typeof metadata?.last_name === "string" ? metadata.last_name : null;
+  const { data: createdUser, error } = await admin
+    .from("users")
+    .insert({
+      auth_id: authId,
+      email,
+      first_name: firstName,
+      last_name: lastName,
+      role: "customer",
+      status: "active"
+    })
+    .select("id, role")
+    .single();
+
+  if (error || !createdUser) return null;
+
+  await admin.from("customer_profiles").upsert({ user_id: createdUser.id }, { onConflict: "user_id" });
+
+  return createdUser.role as Role;
 }
 
 export async function registerCustomerAction(

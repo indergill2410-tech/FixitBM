@@ -152,6 +152,18 @@ Safety Check membership rule:
 
 See `docs/safety-check-schema.md` for the planned tables.
 
+### PropertySafe
+PropertySafe is a separate product layer beside Safety Checks.
+
+Backend tables:
+- `propertysafe_profiles`
+- `propertysafe_assessments`
+- `propertysafe_findings`
+- `propertysafe_recommendations`
+- `propertysafe_events`
+
+PropertySafe should be built from real saved properties, active memberships, completed Safety Check reports, and customer-approved recommended fixes. It should not rename or replace the Safety Check tables. See `docs/propertysafe-schema.md`.
+
 ### tradie_profiles
 Internal Fixer business profiles.
 

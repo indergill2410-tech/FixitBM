@@ -1,7 +1,17 @@
+import { redirect } from "next/navigation";
 import { Badge, Button, Card, PublicHeader } from "@/components/ui";
 import { LoginForm } from "@/components/auth-forms";
+import { getCurrentAppUser, roleHome } from "@/lib/auth";
 
-export default function LoginPage() {
+export const dynamic = "force-dynamic";
+
+export default async function LoginPage() {
+  const user = await getCurrentAppUser();
+
+  if (user) {
+    redirect(roleHome(user.role));
+  }
+
   return (
     <main className="premium-shell">
       <PublicHeader />

@@ -77,8 +77,8 @@ export function PublicHeader() {
           <Button href="/become-a-fixer" variant="ghost" className="min-h-9 px-4">
             Become a Fixer
           </Button>
-          <Button href="/login" variant="ghost" className="min-h-9 px-4">
-            Login
+          <Button href="/dashboard" variant="ghost" className="min-h-9 px-4">
+            Account
           </Button>
           <Button href="/post-job" variant="ghost" className="min-h-9 px-4">
             Start Request
@@ -100,8 +100,8 @@ export function PublicHeader() {
             <Link href="/become-a-fixer" className="rounded-xl bg-[var(--bg)] px-4 py-3 text-sm font-bold text-[var(--text2)]">
               Become a Fixer
             </Link>
-            <Link href="/login" className="rounded-xl bg-[var(--bg)] px-4 py-3 text-sm font-bold text-[var(--text2)]">
-              Login
+            <Link href="/dashboard" className="rounded-xl bg-[var(--bg)] px-4 py-3 text-sm font-bold text-[var(--text2)]">
+              Account
             </Link>
             <Button href="/post-job" className="w-full">
               Get Help Now

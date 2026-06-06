@@ -6,9 +6,11 @@ import { requireRole } from "@/lib/auth";
 import { formatJobLocation, getCustomerDashboardInsights, getCustomerJobs, requestLaneLabel, statusLabel } from "@/lib/jobs";
 import { CustomerJobCard } from "@/components/job-cards";
 import { getHomeProtectionSummary } from "@/lib/safety-checks";
+import { getCustomerPropertySafeSummary } from "@/lib/propertysafe";
 import {
   HomeProfileReadinessCard,
   HomeProtectionScoreCard,
+  PropertySafeStatusCard,
   ProtectionHeroCard,
   RecommendedFixesCard,
   SafetyCheckStatusCard,
@@ -17,7 +19,12 @@ import {
 
 export default async function CustomerDashboardPage() {
   const user = await requireRole(["customer", "admin", "super_admin"]);
-  const [jobs, insights, protection] = await Promise.all([getCustomerJobs(user), getCustomerDashboardInsights(user), getHomeProtectionSummary(user)]);
+  const [jobs, insights, protection, propertySafe] = await Promise.all([
+    getCustomerJobs(user),
+    getCustomerDashboardInsights(user),
+    getHomeProtectionSummary(user),
+    getCustomerPropertySafeSummary(user)
+  ]);
   const activeJob = jobs.find((job) => !["completed", "reviewed", "closed", "cancelled"].includes(job.status));
   const activeJobs = jobs.filter((job) => !["completed", "reviewed", "closed", "cancelled"].includes(job.status)).length;
   const pendingQuotes = jobs.filter((job) => job.status === "quote_provided").length;
@@ -125,6 +132,7 @@ export default async function CustomerDashboardPage() {
           </div>
           <aside className="grid gap-5">
             <EmergencyCTA />
+            <PropertySafeStatusCard summary={propertySafe} />
             <HomeProtectionScoreCard summary={protection} />
             <SafetyCheckStatusCard summary={protection} />
             <HomeProfileReadinessCard summary={protection} />

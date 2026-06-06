@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { getTradieProfileForUser } from "@/lib/jobs";
+import { syncPropertySafeFromSafetyCheckReport } from "@/lib/propertysafe";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
 
@@ -65,7 +66,7 @@ export async function submitSafetyCheckReportAction(
 
   const { data: safetyCheck, error: checkError } = await supabase
     .from("safety_checks")
-    .select("id, customer_id, property_id, assigned_fixer_id, status")
+    .select("id, customer_id, membership_id, property_id, assigned_fixer_id, status")
     .eq("id", parsed.data.safetyCheckId)
     .maybeSingle();
 
@@ -152,6 +153,20 @@ export async function submitSafetyCheckReportAction(
       scoreAfter: parsed.data.scoreAfter,
       recommendationCount: recommendations.length
     }
+  });
+
+  await syncPropertySafeFromSafetyCheckReport({
+    safetyCheckId: safetyCheck.id,
+    customerId: safetyCheck.customer_id,
+    propertyId: safetyCheck.property_id,
+    membershipId: safetyCheck.membership_id,
+    scoreBefore: parsed.data.scoreBefore,
+    scoreAfter: parsed.data.scoreAfter,
+    summary: parsed.data.summary,
+    items,
+    recommendations,
+    publishedAt: now,
+    nextReviewAt: nextDue
   });
 
   revalidatePath("/admin/safety-checks");

@@ -28,6 +28,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Sign in before starting checkout." }, { status: 401 });
   }
 
+  const roleError = checkoutRoleError(user.role, plan.type);
+  if (roleError) {
+    return NextResponse.json({ error: roleError }, { status: 403 });
+  }
+
   if (isSupabaseServerConfigured()) {
     await recordPendingPlan(user.id, plan.code);
   }
@@ -79,6 +84,18 @@ export async function POST(request: Request) {
       { status: 502 }
     );
   }
+}
+
+function checkoutRoleError(role: string, productType: string) {
+  if (productType === "customer_membership" && role !== "customer") {
+    return "Fixit Plus memberships must be purchased from a customer account.";
+  }
+
+  if ((productType === "tradie_subscription" || productType === "credit_pack") && role !== "tradie") {
+    return "Fixer plans and lead credits must be purchased from a Fixer account.";
+  }
+
+  return null;
 }
 
 async function recordPendingPlan(userId: string, planCode: string) {
