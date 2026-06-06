@@ -47,7 +47,7 @@ export default async function CustomerJobDetailPage({ params }: { params: Promis
                       </div>
                     ))
                   ) : (
-                    <p className="text-sm leading-6 text-[var(--text2)]">Messages will appear here when a Fixer or support agent replies.</p>
+                    <p className="text-sm leading-6 text-[var(--text2)]">Replies from support or a Fixer are saved here.</p>
                   )}
                 </div>
                 <JobMessageForm jobId={job.id} />

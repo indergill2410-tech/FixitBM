@@ -39,17 +39,19 @@ export default async function SafetyChecksOverviewPage() {
               <FileText className="text-[var(--amber2)]" />
               <h2 className="mt-4 text-xl font-black">Last Safety Check Report</h2>
               <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                Your report will appear after your first completed Safety Check. It will show summary notes, readiness
-                changes, findings, and recommended fixes.
+                After your first completed Safety Check, this report area shows summary notes, readiness changes, findings,
+                and recommended fixes.
               </p>
-              <Button href="/dashboard/customer/safety-checks/preview" variant="ghost" className="mt-5">View Report</Button>
+              <Button href={active ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"} variant="ghost" className="mt-5">
+                {active ? "Book My First Check" : "Unlock Safety Checks"}
+              </Button>
             </Card>
             <Card>
               <Wrench className="text-[var(--purple)]" />
               <h2 className="mt-4 text-xl font-black">Recommended fixes</h2>
               <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                Recommended fixes will appear after a completed check. This is where small issues can become quote
-                requests before they turn into bigger problems.
+                After a completed check, recommended fixes can become quote requests before small issues turn into bigger
+                problems.
               </p>
               <div className="mt-4 grid gap-2 md:grid-cols-2">
                 {recommendedFixExamples.slice(0, 6).map((fix) => (
@@ -79,4 +81,3 @@ export default async function SafetyChecksOverviewPage() {
     </main>
   );
 }
-

@@ -48,7 +48,7 @@ export default function BlogPage() {
         <Card variant="membership" className="max-w-2xl">
           <Badge>Newsletter</Badge>
           <h2 className="mt-4 text-2xl font-black">Get home emergency checklists and Fixit Plus updates.</h2>
-          <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Useful, calm, practical. No public demo credentials or fake offers.</p>
+          <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Useful, calm, practical guidance for Australian households.</p>
           <div className="mt-5">
             <NewsletterForm source="blog" />
           </div>

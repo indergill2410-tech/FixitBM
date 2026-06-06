@@ -27,14 +27,14 @@ export default function PrivacyPage() {
             <p className="mt-2">
               Relevant request and contact details may be shared with Fixers, support staff, payment providers, infrastructure
               providers, and verification partners where needed to operate the service. Private request photos and verification
-              files are stored in restricted Supabase storage buckets.
+              files are stored in restricted storage.
             </p>
           </section>
           <section>
             <h2 className="text-xl font-black text-[var(--text)]">Control and support</h2>
             <p className="mt-2">
               Customers and Fixers can request help with account information, request history, support records, and verification
-              material through Fixit247 support. Production legal review should be completed before a public commercial launch.
+              material through Fixit247 support.
             </p>
           </section>
         </div>

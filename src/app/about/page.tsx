@@ -12,8 +12,8 @@ export default function AboutPage() {
         <Card className="mt-8 max-w-3xl">
           <p className="leading-8 text-[var(--text2)]">
             Fixit247 is designed for the moments when panic usually starts: leaks, lockouts, flat tyres, dead batteries,
-            late-night repairs, and urgent household problems. The platform is launching suburb by suburb with a focus on
-            calm customer experience, clear tradie economics, and responsible operations.
+            late-night repairs, and urgent household problems. It brings request details, Fixers, tracking, support, and
+            home readiness into one calm place for Australian households.
           </p>
         </Card>
       </section>

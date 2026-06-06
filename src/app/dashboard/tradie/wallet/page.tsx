@@ -48,7 +48,7 @@ export default async function TradieWalletPage() {
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-[var(--text2)]">Credit transactions will appear after signup bonus grants and lead claims.</p>
+                <p className="text-sm text-[var(--text2)]">Your signup bonuses and lead claims are tracked here.</p>
               )}
             </div>
           </Card>

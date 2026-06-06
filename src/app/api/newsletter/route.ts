@@ -35,7 +35,7 @@ export async function POST(request: Request) {
 
   const supabase = createSupabaseAdminClient();
   if (!supabase) {
-    return NextResponse.json({ error: "Newsletter storage is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Newsletter signup is temporarily unavailable." }, { status: 503 });
   }
 
   const { error } = await supabase.from("newsletter_subscribers").upsert(

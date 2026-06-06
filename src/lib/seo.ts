@@ -76,7 +76,7 @@ export const blogPosts: BlogPost[] = [
       },
       {
         heading: "Fixit247 supports both",
-        body: "You can start with one request and choose whether it is urgent, scheduled, or a larger project. The backend still stores this safely as a job while the customer experience becomes request-led."
+        body: "You can start with one request and choose whether it is urgent, scheduled, or a larger project. The customer experience stays request-led while Fixit247 routes the right details to the right workflow."
       }
     ]
   }

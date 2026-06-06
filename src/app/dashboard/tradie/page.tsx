@@ -56,12 +56,12 @@ export default async function TradieDashboardPage() {
           </Card>
           <Card>
             <CalendarCheck className="text-[var(--amber2)]" />
-            <Badge className="mt-4">Coming soon</Badge>
+            <Badge className="mt-4">Member readiness</Badge>
             <h2 className="mt-4 text-xl font-black">Safety Check appointments</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
               Help members prepare their homes and identify follow-up work before small issues become emergencies.
             </p>
-            <Button href="/dashboard/tradie/jobs" variant="ghost" className="mt-5 w-full">View Safety Checks</Button>
+            <Button href="/dashboard/tradie/jobs" variant="ghost" className="mt-5 w-full">View available requests</Button>
           </Card>
           <Card variant="membership">
             <Badge>Signup bonus</Badge>

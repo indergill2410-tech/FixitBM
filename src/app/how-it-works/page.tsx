@@ -10,8 +10,8 @@ export default function HowItWorksPage() {
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {[
             ["Tell us what happened", "Choose home, road, or scheduled work and share only what matters."],
-            ["We prepare the match", "Fixit247 structures the request for local providers and ops visibility."],
-            ["Track through resolution", "Timeline, chat, quotes, reviews, and support all live around the job."]
+            ["We prepare the match", "Fixit247 structures the request with the details suitable Fixers and support need."],
+            ["Track through resolution", "Timeline, chat, quotes, reviews, and support all live around the request."]
           ].map(([title, copy], index) => (
             <Card key={title}>
               <span className="text-4xl font-black text-[var(--amber)]">{index + 1}</span>

@@ -11,8 +11,8 @@ export default function AdminSafetyChecksPage() {
             <Badge>Operations shell</Badge>
             <h1 className="mt-4 text-2xl font-black">Safety Check queue</h1>
             <p className="mt-3 leading-7 text-white/70">
-              Safety Checks help members prepare before emergencies and create follow-up repair opportunities. Live due,
-              booked, overdue, completed, and recommendation counts will appear after the Safety Check tables are added.
+              Safety Checks help members prepare before emergencies and create follow-up repair opportunities. Track due
+              checks, bookings, overdue reviews, completed reports, and recommendations from this queue.
             </p>
             <div className="mt-5 grid gap-3 md:grid-cols-2">
               {["Due checks", "Booked checks", "Overdue checks", "Completed reports", "Assign Fixer", "Recommended Fixes"].map((item) => (
@@ -28,4 +28,3 @@ export default function AdminSafetyChecksPage() {
     </main>
   );
 }
-

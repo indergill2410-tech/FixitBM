@@ -1,10 +1,8 @@
-import { ArrowRight, CheckCircle2, Clock, Hammer, Home, MapPin, Radar, ShieldCheck, Zap } from "lucide-react";
-import { FixitSymbol, fixitSymbolSet } from "@/components/brand";
+import { ArrowRight, CheckCircle2, Hammer, Home, MapPin, Radar, ShieldCheck, Zap } from "lucide-react";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { Badge, Button, Card, IconTile, MobileBottomActionBar, PublicHeader, TrustStrip } from "@/components/ui";
 import { homeCategories, roadsideCategories, tradeCategories } from "@/lib/data";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
-import { safetyCheckDisclaimer } from "@/lib/safety-checks";
 
 export default function HomePage() {
   return (
@@ -68,13 +66,13 @@ export default function HomePage() {
               <Card>
                 <ShieldCheck className="text-[var(--green)]" />
                 <h3 className="mt-4 font-black">Verified Fixers</h3>
-                <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Verified tradies and service providers behind the scenes.</p>
+                <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Verified Fixers and service providers prepared for urgent requests.</p>
               </Card>
             </div>
             <Card variant="dark">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <Badge tone="amber">Live dispatch status</Badge>
+                  <Badge tone="amber">Request status</Badge>
                   <h3 className="mt-4 text-xl font-black">Matching the right help</h3>
                   <p className="mt-2 text-sm leading-6 text-white/70">Built for calm tracking, chat, quotes, and resolution.</p>
                 </div>
@@ -140,9 +138,6 @@ export default function HomePage() {
             </Card>
           ))}
         </div>
-        <p className="lg:col-span-2 rounded-2xl border border-[var(--border)] bg-white p-4 text-xs leading-6 text-[var(--text3)]">
-          {safetyCheckDisclaimer}
-        </p>
       </section>
 
       <section className="container py-12">
@@ -181,26 +176,11 @@ export default function HomePage() {
         </Button>
       </section>
 
-      <section className="container py-12">
-        <div className="mb-6 max-w-2xl">
-          <Badge tone="gray">Fixit symbols</Badge>
-          <h2 className="mt-3 text-3xl font-black tracking-tight md:text-4xl">A calm system for urgent moments.</h2>
-          <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
-            Simple service marks for the core Fixit247 experience: repairs, road help, protection, urgency, and Fixer credits.
-          </p>
-        </div>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
-          {fixitSymbolSet.map((symbol) => (
-            <FixitSymbol key={symbol.name} name={symbol.name} label={symbol.label} tone={symbol.tone} />
-          ))}
-        </div>
-      </section>
-
       <section className="container grid gap-4 py-12 md:grid-cols-3">
         {[
           ["Tell us what happened", "A fast guided flow captures urgency, location, photos, and safe contact details."],
           ["We prepare the right request", "Home, roadside, trade, and project requests are organised for suitable Fixers."],
-          ["Track, chat, and resolve", "Customers, Fixers, and ops get a shared timeline from request to completion."]
+          ["Track, chat, and resolve", "Customers, Fixers, and support get a shared timeline from request to completion."]
         ].map(([title, copy], index) => (
           <Card key={title}>
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--amber-dim)] text-sm font-black text-[var(--amber2)]">

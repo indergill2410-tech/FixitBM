@@ -30,7 +30,7 @@ export function ProtectionHeroCard({ summary }: { summary: HomeProtectionSummary
       ? "Your household has peace of mind for the two places life breaks down most often - home and road."
       : isActive
         ? "Your household has home emergency peace of mind, saved home details, and a 6-monthly Safety Check to help you stay ready."
-        : "Membership status will appear here when billing is connected. Safety Check booking becomes available after membership activation.";
+        : "Your membership is in its activation window. You can still start urgent requests free, and Safety Check booking unlocks after activation.";
 
   return (
     <Card variant="membership" className="relative overflow-hidden">
@@ -119,7 +119,7 @@ export function RecommendedFixesCard({ summary }: { summary: HomeProtectionSumma
       <Wrench className="text-[var(--purple)]" />
       <h2 className="mt-4 text-xl font-black">Recommended fixes</h2>
       <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-        Recommended fixes will appear after a completed Safety Check. They can become quote requests when you approve them.
+        After a completed Safety Check, recommended fixes can show visible issues, notes, and next steps. Approve one when you want quotes from Fixers.
       </p>
       <div className="mt-4 grid gap-2">
         {(summary.recommendedFixes.length ? summary.recommendedFixes : recommendedFixExamples.slice(0, 4)).map((fix) => (
@@ -197,6 +197,5 @@ export function SafetyCheckMiniOpsCard() {
 }
 
 export function SafetyCheckMetricCard() {
-  return <Card><Gauge className="text-[var(--green)]" /><h2 className="mt-4 font-black">Safety Check data</h2><p className="mt-2 text-sm leading-6 text-[var(--text2)]">Operational counts will appear once Safety Check tables are connected.</p></Card>;
+  return <Card><Gauge className="text-[var(--green)]" /><h2 className="mt-4 font-black">Safety Check readiness</h2><p className="mt-2 text-sm leading-6 text-[var(--text2)]">Operational counts show due checks, bookings, reports, and recommendations as the Safety Check workflow grows.</p></Card>;
 }
-

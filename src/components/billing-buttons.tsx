@@ -32,7 +32,7 @@ export function CheckoutButton({
       return;
     }
 
-    setMessage(data.message ?? data.error ?? "Checkout is not configured yet.");
+    setMessage(data.message ?? data.error ?? "Checkout is temporarily unavailable.");
     setLoading(false);
   }
 
@@ -63,7 +63,7 @@ export function PortalButton() {
       return;
     }
 
-    setMessage(data.message ?? data.error ?? "Customer portal is not configured yet.");
+    setMessage(data.message ?? data.error ?? "Billing management is temporarily unavailable.");
     setLoading(false);
   }
 

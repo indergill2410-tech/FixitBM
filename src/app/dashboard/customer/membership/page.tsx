@@ -59,10 +59,10 @@ export default async function CustomerMembershipPage() {
               <ShieldCheck className="text-[var(--amber2)]" />
               <h2 className="mt-4 text-xl font-black">Safety Check eligibility</h2>
               <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                {isActive
-                  ? "Your Safety Check booking area is available. Your report will appear after your first completed check."
-                  : membership
-                    ? "Safety Check booking will appear once your membership is active."
+              {isActive
+                ? "Your Safety Check booking area is available. After your first completed check, your report area shows findings and recommended fixes."
+                : membership
+                    ? "Safety Check booking unlocks once your membership is active."
                     : "Safety Checks are included with Fixit Plus. Free users can still use the digital safety checklist and start requests free."}
               </p>
               <div className="mt-5 flex flex-col gap-3 sm:flex-row">

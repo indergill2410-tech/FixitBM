@@ -7,10 +7,10 @@ export default function BillingStatusPage() {
       <section className="container py-14">
         <Card className="max-w-2xl">
           <Badge>Billing status</Badge>
-          <h1 className="mt-4 text-3xl font-black">Billing setup is ready for Stripe keys.</h1>
+          <h1 className="mt-4 text-3xl font-black">Billing is not available yet.</h1>
           <p className="mt-3 leading-7 text-[var(--text2)]">
-            Checkout will create Stripe sessions when the secret key and product price IDs are configured. Customer portal
-            and webhook reconciliation remain gated until Stripe customer records and verified webhook handling are finalised.
+            Membership checkout and billing management will be available once payments are fully enabled. You can still
+            start a free request.
           </p>
         </Card>
       </section>

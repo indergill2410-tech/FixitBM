@@ -8,7 +8,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         configured: false,
-        message: "Stripe webhook secret is not configured yet."
+        message: "Webhook verification is temporarily unavailable."
       },
       { status: 503 }
     );

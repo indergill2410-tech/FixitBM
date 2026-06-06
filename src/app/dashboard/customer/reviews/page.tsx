@@ -23,7 +23,7 @@ export default async function CustomerReviewsPage() {
           ) : (
             <Card>
               <h2 className="font-black">No reviews submitted yet</h2>
-              <p className="mt-2 text-[var(--text2)]">Completed job reviews will appear here.</p>
+              <p className="mt-2 text-[var(--text2)]">Completed requests can be reviewed from this page.</p>
             </Card>
           )}
         </div>

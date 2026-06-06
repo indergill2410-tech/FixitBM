@@ -61,7 +61,7 @@ export default async function TradieProfilePage() {
                         </div>
                       ))
                     ) : (
-                      <p className="text-sm leading-6 text-[var(--text2)]">Uploaded documents will appear here.</p>
+                      <p className="text-sm leading-6 text-[var(--text2)]">Your uploaded documents are tracked here after submission.</p>
                     )}
                   </div>
                 </Card>

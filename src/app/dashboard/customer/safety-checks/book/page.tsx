@@ -35,10 +35,10 @@ export default async function BookSafetyCheckPage() {
             ) : (
               <div className="mt-6 grid gap-4">
                 <ReadonlyField icon={Home} label="Property" value={summary.properties[0]?.label ?? summary.properties[0]?.address ?? "Add a saved property first"} />
-                <ReadonlyField icon={CalendarClock} label="Preferred date" value="Booking form will connect after Safety Check tables are added" />
+                <ReadonlyField icon={CalendarClock} label="Booking window" value="Select your preferred window once booking opens for your area" />
                 <ReadonlyField icon={Phone} label="Contact phone" value={user.phone ?? "Use account phone or update your profile"} />
                 <ReadonlyField icon={ShieldCheck} label="Key concerns" value="Leaks, lockouts, switchboard access, smoke alarms, roof, gutters, hot water, or anything worrying you" />
-                <Button disabled variant="ghost">Booking persistence coming soon</Button>
+                <Button disabled variant="ghost">Booking support opens after activation</Button>
               </div>
             )}
           </Card>

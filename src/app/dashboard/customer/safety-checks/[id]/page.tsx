@@ -15,10 +15,10 @@ export default async function SafetyCheckDetailPage({ params }: { params: Promis
           <Card>
             <Badge tone="gray">No completed report yet</Badge>
             <FileText className="mt-5 text-[var(--amber2)]" />
-            <h1 className="mt-4 text-3xl font-black">Your report will appear after your first Safety Check.</h1>
+            <h1 className="mt-4 text-3xl font-black">Your report is not ready yet.</h1>
             <p className="mt-3 leading-7 text-[var(--text2)]">
-              Completed reports will show status, checklist items, score changes, summary notes, photos if available,
-              and recommended fixes. No fake report data is shown before a real check is completed.
+              After a completed Safety Check, this page shows checklist results, score changes, summary notes, photos if
+              available, and recommended fixes.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Button href="/dashboard/customer/safety-checks/book">Book My Safety Check</Button>
@@ -42,4 +42,3 @@ export default async function SafetyCheckDetailPage({ params }: { params: Promis
     </main>
   );
 }
-

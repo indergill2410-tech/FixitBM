@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   if (!isStripeConfigured(plan)) {
     return NextResponse.json({
       configured: false,
-      message: `${plan.name} is ready, but Stripe is not configured yet. Add STRIPE_SECRET_KEY and ${plan.stripePriceEnv}.`
+      message: `Checkout for ${plan.name} is temporarily unavailable. Please try again shortly.`
     });
   }
 

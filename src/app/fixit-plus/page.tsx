@@ -26,22 +26,10 @@ const plans = [
     note: "Peace of mind for home emergencies.",
     recommended: false,
     features: [
-      "24/7 emergency request support",
-      "Priority home emergency matching",
-      "First Home Safety & Readiness Check included",
+      "Priority emergency request support",
+      "Saved home details and emergency history",
       "6-monthly Home Safety & Readiness Check",
-      "Home Protection Score",
-      "Recommended Fixes after each check",
-      "Plumbing emergencies",
-      "Electrical faults",
-      "Lockouts",
-      "Leaks and urgent repairs",
-      "Roof and storm issues",
-      "Glass breakage",
-      "Saved property profile",
-      "Emergency history",
-      "Maintenance reminders",
-      "Member support"
+      "Member dashboard, reminders, and recommended fixes"
     ]
   },
   {
@@ -52,19 +40,10 @@ const plans = [
     recommended: true,
     features: [
       "Everything in Home",
-      "Home + Road Readiness Check every 6 months",
-      "Roadside emergency coordination",
-      "Flat battery help",
-      "Tyre change support",
-      "Vehicle lockout support",
-      "Fuel emergency support",
-      "Towing coordination",
-      "Mechanic matching",
-      "Saved vehicle profile",
-      "Vehicle readiness reminders",
-      "Roadside preparedness checklist",
-      "Family vehicle records",
-      "Home + road dashboard"
+      "Home + road emergency request support",
+      "Saved home and vehicle details",
+      "6-monthly home + road readiness check",
+      "Member dashboard, roadside reminders, and recommended fixes"
     ]
   }
 ];
@@ -91,10 +70,10 @@ export default function FixitPlusPage() {
           </div>
           <Card variant="emergency">
             <Clock className="text-[var(--amber2)]" />
-            <h2 className="mt-4 text-xl font-black">72-hour activation period</h2>
+            <h2 className="mt-4 text-xl font-black">Fair-use activation</h2>
             <p className="mt-2 leading-7 text-[var(--text2)]">
-              Fixit Plus membership benefits apply after a 72-hour activation period. Existing emergencies can still be
-              posted free and handled as pay-as-you-go requests.
+              To keep Fixit Plus fair for every member, benefits activate after 72 hours. Existing emergencies can still be
+              started free and handled as pay-as-you-go requests.
             </p>
           </Card>
         </div>
@@ -206,8 +185,8 @@ export default function FixitPlusPage() {
       <section className="container grid gap-4 pb-16 md:grid-cols-3">
         {[
           ["Does Fixit Plus include free repairs?", "No. Repairs, labour, parts, towing, and specialist services are quoted separately unless specifically included."],
-          ["Can I post an emergency without membership?", "Yes. Existing emergencies can be posted free and handled as pay-as-you-go requests."],
-          ["Why the activation period?", "The 72-hour activation period protects the membership from being used only after an emergency has already happened."]
+          ["Can I start an emergency without membership?", "Yes. Existing emergencies can be started free and handled as pay-as-you-go requests."],
+          ["Why the activation period?", "The 72-hour activation period keeps the membership fair and protects every member from misuse after an emergency has already happened."]
         ].map(([question, answer]) => (
           <Card key={question}>
             <h3 className="font-black">{question}</h3>

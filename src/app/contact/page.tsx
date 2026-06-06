@@ -9,8 +9,7 @@ export default function ContactPage() {
         <h1 className="mt-5 text-[40px] font-black tracking-tight md:text-[56px]">Talk to Fixit247.</h1>
         <Card className="mt-8 max-w-2xl">
           <p className="leading-7 text-[var(--text2)]">
-            For launch enquiries, Fixer onboarding, partnerships, or support, use the product flows while contact
-            operations are being configured.
+            For help, partnerships, or Fixer onboarding, choose the fastest path below.
           </p>
           <div className="mt-6 flex gap-3">
             <Button href="/post-job">Start a request</Button>

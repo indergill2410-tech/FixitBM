@@ -11,12 +11,12 @@ export async function POST() {
   if (!process.env.STRIPE_SECRET_KEY) {
     return NextResponse.json({
       configured: false,
-      message: "Stripe customer portal is not configured yet. Add STRIPE_SECRET_KEY and connect Stripe customer IDs."
+      message: "Billing management is temporarily unavailable."
     });
   }
 
   return NextResponse.json({
     configured: false,
-    message: "Stripe portal is prepared, but live portal links need stored Stripe customer IDs first."
+    message: "Billing management is temporarily unavailable."
   });
 }

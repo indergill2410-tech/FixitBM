@@ -8,7 +8,7 @@ export const safetyCheckDisclaimer =
   "The Fixit247 Safety Check is a visual home safety and readiness check designed to help identify visible risks, maintenance needs, and emergency preparation gaps. It is not a building inspection, electrical certificate, gas compliance certificate, pest inspection, insurance assessment, or mechanical inspection. Specialist inspections, compliance certificates, repairs, parts, labour, towing, trade work, renovations, and specialist services are quoted separately unless specifically included.";
 
 export const activationCopy =
-  "To keep Fixit Plus fair for every member, benefits activate after 72 hours. Existing emergencies can still be posted free and handled as pay-as-you-go requests.";
+  "To keep Fixit Plus fair for every member, benefits activate after 72 hours. Existing emergencies can still be started free and handled as pay-as-you-go requests.";
 
 export const safetyCheckChecklist = [
   "Water shutoff and visible leak readiness",

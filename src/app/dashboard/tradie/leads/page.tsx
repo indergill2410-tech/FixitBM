@@ -9,7 +9,7 @@ const claimMessages: Record<string, { tone: "green" | "red" | "amber"; message: 
   full: { tone: "red", message: "That request has reached its Fixer claim limit." },
   unavailable: { tone: "amber", message: "That lead is no longer available." },
   profile: { tone: "red", message: "Complete your Fixer profile before claiming leads." },
-  config: { tone: "red", message: "Lead claiming is not configured yet." },
+  config: { tone: "red", message: "Lead claiming is temporarily unavailable." },
   error: { tone: "red", message: "Lead claim failed. Please try again." },
   denied: { tone: "red", message: "Fixer access required to claim leads." }
 };
@@ -39,9 +39,9 @@ export default async function TradieLeadsPage({ searchParams }: { searchParams: 
             leads.map((lead) => <LeadCard key={lead.id} lead={lead} />)
           ) : (
             <Card>
-              <h2 className="font-black">No live leads yet</h2>
+              <h2 className="font-black">Your available request feed is clear right now</h2>
               <p className="mt-2 text-[var(--text2)]">
-                Emergency, trade, and project requests will appear here when they are ready for Fixer access.
+                Keep your profile, service area, and availability current so the right emergency, trade, and project requests can reach you.
               </p>
             </Card>
           )}

@@ -73,7 +73,7 @@ export default async function CustomerDashboardPage() {
             ) : (
               <Card>
                 <Badge tone="gray">No active requests</Badge>
-                <h2 className="mt-4 text-2xl font-black">Your protection timeline will appear here.</h2>
+                <h2 className="mt-4 text-2xl font-black">Your protection timeline starts here.</h2>
                 <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
                   Start an emergency request, trade request, or project quote free.
                 </p>
@@ -101,7 +101,7 @@ export default async function CustomerDashboardPage() {
                       </a>
                     ))
                   ) : (
-                    <p className="text-sm leading-6 text-[var(--text2)]">Request conversations appear here as soon as messages are added.</p>
+                    <p className="text-sm leading-6 text-[var(--text2)]">Request conversations are saved here as support or Fixers reply.</p>
                   )}
                 </div>
               </Card>
@@ -117,7 +117,7 @@ export default async function CustomerDashboardPage() {
                       </a>
                     ))
                   ) : (
-                    <p className="text-sm leading-6 text-[var(--text2)]">Review prompts appear after completed jobs.</p>
+                    <p className="text-sm leading-6 text-[var(--text2)]">Completed requests can be reviewed from here.</p>
                   )}
                 </div>
               </Card>
