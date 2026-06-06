@@ -84,7 +84,7 @@ export default function PostJobPage() {
     setForm((current) => ({
       ...current,
       serviceLane: value,
-      type: nextLane.backendType,
+      type: nextLane.requestType,
       category: nextCategories[0]?.label ?? current.category,
       timing: value === "emergency_home" || value === "emergency_road" ? "Now" : value === "larger_project" ? "Need quote first" : "This week"
     }));

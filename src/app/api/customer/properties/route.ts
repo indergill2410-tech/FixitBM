@@ -22,7 +22,7 @@ export async function POST(request: Request) {
   }
 
   if (!isSupabaseServerConfigured()) {
-    return NextResponse.json({ error: "Supabase server key is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Property saving is temporarily unavailable." }, { status: 503 });
   }
 
   const formData = await request.formData();
@@ -40,7 +40,7 @@ export async function POST(request: Request) {
   }
 
   const supabase = createSupabaseAdminClient();
-  if (!supabase) return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
+  if (!supabase) return NextResponse.json({ error: "Property saving is temporarily unavailable." }, { status: 503 });
 
   if (parsed.data.isDefault) {
     await supabase.from("saved_properties").update({ is_default: false }).eq("customer_id", user.id);

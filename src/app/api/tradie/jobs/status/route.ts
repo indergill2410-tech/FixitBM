@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   }
 
   if (!isSupabaseServerConfigured()) {
-    return NextResponse.json({ error: "Supabase server key is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Request updates are temporarily unavailable." }, { status: 503 });
   }
 
   const parsed = statusSchema.safeParse(await request.json().catch(() => null));
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   }
 
   const supabase = createSupabaseAdminClient();
-  if (!supabase) return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
+  if (!supabase) return NextResponse.json({ error: "Request updates are temporarily unavailable." }, { status: 503 });
 
   const { data: tradie } = await supabase.from("tradie_profiles").select("id").eq("user_id", user.id).maybeSingle();
   if (!tradie) return NextResponse.json({ error: "Fixer profile not found." }, { status: 404 });

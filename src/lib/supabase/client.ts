@@ -5,7 +5,7 @@ import { supabasePublishableKey, supabaseUrl } from "./config";
 
 export function createSupabaseBrowserClient() {
   if (!supabaseUrl || !supabasePublishableKey) {
-    throw new Error("Supabase public environment variables are not configured.");
+    throw new Error("Account access is temporarily unavailable.");
   }
 
   return createBrowserClient(supabaseUrl, supabasePublishableKey);

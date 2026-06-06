@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   }
 
   if (!isSupabaseServerConfigured()) {
-    return NextResponse.json({ error: "Supabase server key is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Profile saving is temporarily unavailable." }, { status: 503 });
   }
 
   const formData = await request.formData();
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   }
 
   const supabase = createSupabaseAdminClient();
-  if (!supabase) return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
+  if (!supabase) return NextResponse.json({ error: "Profile saving is temporarily unavailable." }, { status: 503 });
 
   const profileHealth = calculateProfileHealth(parsed.data);
 

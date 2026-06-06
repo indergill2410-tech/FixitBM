@@ -4,7 +4,7 @@ import { supabasePublishableKey, supabaseUrl } from "./config";
 
 export async function createSupabaseServerClient() {
   if (!supabaseUrl || !supabasePublishableKey) {
-    throw new Error("Supabase public environment variables are not configured.");
+    throw new Error("Account access is temporarily unavailable.");
   }
 
   const cookieStore = await cookies();

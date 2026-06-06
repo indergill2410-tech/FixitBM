@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   }
 
   if (!isSupabaseServerConfigured()) {
-    return NextResponse.json({ error: "Supabase server key is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Photo upload is temporarily unavailable." }, { status: 503 });
   }
 
   const formData = await request.formData();
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
 
   const supabase = createSupabaseAdminClient();
   if (!supabase) {
-    return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Photo upload is temporarily unavailable." }, { status: 503 });
   }
 
   const { data: job } = await supabase

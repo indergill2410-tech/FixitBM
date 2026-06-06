@@ -13,11 +13,11 @@ const bootstrapSchema = z.object({
 
 export async function POST(request: Request) {
   if (!process.env.ADMIN_BOOTSTRAP_SECRET) {
-    return NextResponse.json({ error: "Admin bootstrap is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Admin setup is unavailable." }, { status: 503 });
   }
 
   if (!isSupabaseServerConfigured()) {
-    return NextResponse.json({ error: "Supabase server key is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Admin setup is unavailable." }, { status: 503 });
   }
 
   const parsed = bootstrapSchema.safeParse(await request.json());
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
-    return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Admin setup is unavailable." }, { status: 503 });
   }
 
   const { data: existingUser } = await supabase

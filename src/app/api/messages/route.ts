@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   }
 
   if (!isSupabaseServerConfigured()) {
-    return NextResponse.json({ error: "Supabase server key is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Messaging is temporarily unavailable." }, { status: 503 });
   }
 
   const payload = await request.json().catch(() => null);
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
   const supabase = createSupabaseAdminClient();
   if (!supabase) {
-    return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Messaging is temporarily unavailable." }, { status: 503 });
   }
 
   const { data: job } = await supabase

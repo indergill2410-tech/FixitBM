@@ -116,7 +116,7 @@ export function isStripeConfigured(plan?: BillingPlan | null) {
 
 export async function stripeRequest<T>(path: string, init: RequestInit = {}) {
   const secretKey = process.env.STRIPE_SECRET_KEY;
-  if (!secretKey) throw new Error("Stripe secret key is not configured.");
+  if (!secretKey) throw new Error("Checkout is temporarily unavailable.");
 
   const response = await fetch(`https://api.stripe.com/v1${path}`, {
     ...init,

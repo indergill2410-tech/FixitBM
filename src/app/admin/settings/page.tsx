@@ -3,17 +3,17 @@ import { Badge, Card, DashboardHeader } from "@/components/ui";
 export default function AdminSettingsPage() {
   const checks = [
     {
-      label: "Supabase public URL",
+      label: "Database public URL",
       ready: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
-      detail: "Browser auth and customer/Fixer flows can reach the project."
+      detail: "Browser auth and customer/Fixer flows can reach the app data service."
     },
     {
-      label: "Supabase publishable key",
+      label: "Database publishable key",
       ready: Boolean(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY),
-      detail: "Client auth uses the public publishable key only."
+      detail: "Client auth uses the public app key only."
     },
     {
-      label: "Supabase server key",
+      label: "Database server key",
       ready: Boolean(process.env.SUPABASE_SECRET_KEY),
       detail: "Server actions, admin dashboards, uploads, and seed tooling can write safely."
     },
@@ -25,7 +25,7 @@ export default function AdminSettingsPage() {
     {
       label: "Stripe secret key",
       ready: Boolean(process.env.STRIPE_SECRET_KEY),
-      detail: "Checkout sessions can be created when the matching price IDs are also configured."
+      detail: "Checkout sessions can be created when matching price IDs are available."
     },
     {
       label: "Stripe webhook secret",

@@ -25,12 +25,12 @@ export async function POST() {
 
 async function renewBonusCredits(actorId: string | null) {
   if (!isSupabaseServerConfigured()) {
-    return NextResponse.json({ error: "Supabase server key is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Bonus renewal is temporarily unavailable." }, { status: 503 });
   }
 
   const supabase = createSupabaseAdminClient();
   if (!supabase) {
-    return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
+    return NextResponse.json({ error: "Bonus renewal is temporarily unavailable." }, { status: 503 });
   }
 
   const now = new Date().toISOString();
