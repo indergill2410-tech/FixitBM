@@ -515,15 +515,6 @@ export async function registerTradieAction(
   redirect("/dashboard/tradie");
 }
 
-export async function signOutAction() {
-  if (isSupabasePublicConfigured()) {
-    const supabase = await createSupabaseServerClient();
-    await supabase.auth.signOut();
-  }
-
-  redirect("/");
-}
-
 function safeRedirectPath(value: FormDataEntryValue | null) {
   if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//")) return null;
   return value;

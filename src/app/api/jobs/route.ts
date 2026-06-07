@@ -83,7 +83,10 @@ export async function POST(request: Request) {
 
   const data = payload.data;
   const title = data.title || `${data.category} request`;
-  const isCustomerAccount = user?.role === "customer" || user?.role === "agency";
+  const isCustomerAccount = user?.role === "customer";
+  const isAgencyAccount = user?.role === "agency";
+  const isSignedInRequester = isCustomerAccount || isAgencyAccount;
+  const agencyContactName = [user?.first_name, user?.last_name].filter(Boolean).join(" ").trim();
   const lane = data.serviceLane ?? (data.type === "road" ? "emergency_road" : data.type === "scheduled" ? "standard_trade_job" : "emergency_home");
   const isProject = lane === "larger_project";
   const isStandard = lane === "standard_trade_job";
@@ -116,9 +119,9 @@ export async function POST(request: Request) {
       road_name: data.roadName || null,
       road_direction: data.roadDirection || null,
       landmark: data.landmark || null,
-      guest_name: isCustomerAccount ? null : data.firstName,
+      guest_name: isCustomerAccount ? null : isAgencyAccount ? agencyContactName || data.firstName : data.firstName,
       guest_phone: isCustomerAccount ? null : data.phone,
-      guest_email: isCustomerAccount ? null : data.email || null,
+      guest_email: isCustomerAccount ? null : isAgencyAccount ? user.email ?? (data.email || null) : data.email || null,
       preferred_contact_method: data.contact,
       consent_to_contact: data.consent,
       status: "received",
@@ -135,8 +138,12 @@ export async function POST(request: Request) {
     job_id: job.id,
     status: "received",
     title: isProject ? "Project quote request posted" : isStandard ? "Trade request posted" : "Emergency request posted",
-    note: isCustomerAccount ? "Customer request received by Fixit247." : "Guest request received by Fixit247.",
-    created_by: isCustomerAccount ? user.id : null
+    note: isAgencyAccount
+      ? "Agency request received by Fixit247."
+      : isCustomerAccount
+        ? "Customer request received by Fixit247."
+        : "Guest request received by Fixit247.",
+    created_by: isSignedInRequester ? user.id : null
   });
 
   if (files.length) {
@@ -168,20 +175,20 @@ export async function POST(request: Request) {
   await notifyRequestReceived({
     requestId: job.id,
     reference: job.public_reference,
-    recipientEmail: isCustomerAccount ? user.email : data.email || null,
-    firstName: isCustomerAccount ? user.first_name : data.firstName,
+    recipientEmail: isCustomerAccount || isAgencyAccount ? user.email : data.email || null,
+    firstName: isCustomerAccount || isAgencyAccount ? user.first_name ?? data.firstName : data.firstName,
     title,
     lane,
     category: data.category,
     location: [data.suburb, data.postcode, data.state].filter(Boolean).join(" ") || data.address || data.roadName || null,
     phone: data.phone,
     contactMethod: data.contact,
-    dashboardUrl: isCustomerAccount ? `/dashboard/customer/jobs/${job.id}` : null
+    dashboardUrl: isCustomerAccount ? `/dashboard/customer/jobs/${job.id}` : isAgencyAccount ? "/dashboard/agency" : null
   });
 
   return NextResponse.json({
     reference: job.public_reference,
     photoCount: files.length,
-    dashboardUrl: isCustomerAccount ? `/dashboard/customer/jobs/${job.id}` : null
+    dashboardUrl: isCustomerAccount ? `/dashboard/customer/jobs/${job.id}` : isAgencyAccount ? "/dashboard/agency" : null
   });
 }

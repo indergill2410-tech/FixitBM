@@ -1,8 +1,9 @@
 import { clsx } from "clsx";
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { ArrowRight, Bell, LayoutDashboard, LogOut, Menu, ShieldCheck, UserCircle, Zap } from "lucide-react";
+import { ArrowRight, Bell, LayoutDashboard, Menu, ShieldCheck, UserCircle, Zap } from "lucide-react";
 import { FixitMark } from "@/components/brand";
+import { SignOutForm } from "@/components/sign-out-form";
 
 type ButtonProps = {
   href?: string;
@@ -332,12 +333,7 @@ export function DashboardHeader({ title, role }: { title: string; role: string }
               <LayoutDashboard size={16} className="text-[var(--amber2)]" />
               Dashboard home
             </Link>
-            <form action="/auth/signout" method="post">
-              <button className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-bold text-[var(--red)] hover:bg-[var(--red-light)]">
-                <LogOut size={16} />
-                Sign out
-              </button>
-            </form>
+            <SignOutForm />
           </div>
         </details>
         <FixitMark shape="circle" />
