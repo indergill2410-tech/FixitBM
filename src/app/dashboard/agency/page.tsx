@@ -1,13 +1,18 @@
+import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
   Building2,
   CheckCircle2,
   ClipboardCheck,
+  Gauge,
   Home,
   KeyRound,
   LineChart,
+  LockKeyhole,
   MailCheck,
+  MapPinned,
   ShieldCheck,
+  Sparkles,
   Users,
   Wrench
 } from "lucide-react";
@@ -17,9 +22,14 @@ import {
   AgencyProfileForm,
   AgencyRulesForm
 } from "@/components/agency-dashboard-forms";
-import { Badge, Button, Card, DashboardHeader, StatCard } from "@/components/ui";
+import { Badge, Button, Card, DashboardHeader } from "@/components/ui";
 import { requireRole } from "@/lib/auth";
-import { getAgencyDashboard, type AgencyDashboardSummary, type AgencyManagedProperty, type AgencyOwnerInvite } from "@/lib/agency";
+import {
+  getAgencyDashboard,
+  type AgencyDashboardSummary,
+  type AgencyManagedProperty,
+  type AgencyOwnerInvite
+} from "@/lib/agency";
 
 export const dynamic = "force-dynamic";
 
@@ -28,146 +38,185 @@ export default async function AgencyDashboardPage() {
   const summary = await getAgencyDashboard(user);
   const canManage = summary.memberRole !== "viewer";
   const displayName = summary.agency?.name ?? "PropertySafe agency workspace";
+  const commandQueue = buildCommandQueue(summary);
 
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title={summary.agency ? displayName : "PropertySafe agency dashboard"} role="Agency command" />
+        <DashboardHeader title={summary.agency ? displayName : "PropertySafe agency workspace"} role="Agency command" />
 
-        <section className="grid gap-5 lg:grid-cols-[1fr_.42fr]">
-          <Card variant="dark" className="overflow-hidden">
-            <Badge>PropertySafe for agencies</Badge>
-            <div className="mt-5 grid gap-8 lg:grid-cols-[1fr_.55fr] lg:items-end">
+        <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
+          <Card variant="dark" className="overflow-hidden p-6 md:p-8">
+            <Badge>{summary.stats.operatingMode}</Badge>
+            <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_260px] lg:items-end">
               <div>
-                <h2 className="max-w-3xl text-3xl font-black leading-tight tracking-tight md:text-5xl">
-                  {summary.agency ? "Owners see the record. Your team keeps control." : "Set up the agency workspace before the first onboarding call."}
+                <h2 className="max-w-4xl text-4xl font-black leading-tight tracking-tight md:text-5xl">
+                  Less chasing. Cleaner records. One controlled workspace for every managed property.
                 </h2>
-                <p className="mt-5 max-w-2xl leading-7 text-white/70">
-                  PropertySafe keeps urgent requests, managed properties, owner access, Safety Check history, and next
-                  fixes connected without replacing the current Fixit247 request flow.
+                <p className="mt-5 max-w-2xl leading-7 text-white/72">
+                  PropertySafe keeps requests moving through Fixit247 while the useful property record stays together:
+                  portfolio maintenance notes, compliance-ready Safety Check records, follow-up work, and permission-based
+                  access.
                 </p>
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                  <Button href="/post-job">
-                    Start maintenance request
+                <p className="mt-3 max-w-2xl text-sm font-bold leading-6 text-[var(--amber)]">
+                  Built for agency control first, then clear updates when the record is ready to share.
+                </p>
+                <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                  <Button href={summary.stats.nextActionHref}>
+                    {summary.stats.nextActionLabel}
                     <ArrowRight size={17} />
                   </Button>
-                  <Button href="/propertysafe/onboarding">
+                  <Button href="/propertysafe/onboarding" variant="light">
                     Book walkthrough
                   </Button>
                 </div>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/8 p-4">
-                <p className="text-xs font-black uppercase tracking-wide text-white/50">Portfolio readiness</p>
-                <p className="mt-2 text-6xl font-black tracking-tight">{summary.stats.readinessScore}</p>
-                <p className="mt-2 text-sm leading-6 text-white/65">
-                  Score improves as the agency profile, managed properties, owner access, and rules are completed.
+              <div className="rounded-2xl border border-white/10 bg-white/8 p-5">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-xs font-black uppercase tracking-wide text-white/50">Setup health</p>
+                  <Gauge size={18} className="text-[var(--amber)]" />
+                </div>
+                <p className="mt-4 text-6xl font-black tracking-tight">{summary.stats.readinessScore}%</p>
+                <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+                  <div
+                    className="h-full rounded-full bg-[var(--amber)]"
+                    style={{ width: `${summary.stats.readinessScore}%` }}
+                  />
+                </div>
+                <p className="mt-4 text-sm leading-6 text-white/62">
+                  The score stays honest: profile, property records, sharing rules, maintenance rules, and current attention all
+                  matter.
                 </p>
               </div>
             </div>
           </Card>
 
-          <Card variant="membership">
-            <ShieldCheck className="text-[var(--green)]" />
-            <Badge tone="green" className="mt-4">Tomorrow-ready</Badge>
-            <h2 className="mt-4 text-2xl font-black">Best first onboarding story.</h2>
-            <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
-              Show the agency a controlled workspace: properties, owner visibility, attention status, and the rules that
-              make maintenance feel organised.
-            </p>
-            <Button href="/propertysafe" variant="ghost" className="mt-5 w-full">
-              View public PropertySafe page
-            </Button>
+          <Card variant="membership" className="p-6">
+            <Sparkles className="text-[var(--amber2)]" />
+            <Badge tone="green" className="mt-4">
+              Next best action
+            </Badge>
+            <h2 className="mt-4 text-2xl font-black tracking-tight">{summary.stats.nextActionLabel}</h2>
+            <p className="mt-3 text-sm leading-6 text-[var(--text2)]">{summary.stats.nextActionDetail}</p>
+            <div className="mt-6 grid gap-3">
+              <Button href={summary.stats.nextActionHref} className="w-full">
+                Do this next
+                <ArrowRight size={16} />
+              </Button>
+              <Button href="/post-job" variant="ghost" className="w-full">
+                Start request
+              </Button>
+            </div>
           </Card>
         </section>
 
-        <section className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-          <StatCard label="Readiness" value={`${summary.stats.readinessScore}%`} detail="Agency setup strength" />
-          <StatCard label="Properties" value={String(summary.stats.propertyCount)} detail={`${summary.stats.activeProperties} active`} />
-          <StatCard label="Owner access" value={String(summary.stats.ownerVisible)} detail={`${summary.stats.pendingInvites} pending`} />
-          <StatCard label="Needs review" value={String(summary.stats.needsReview)} detail="Watch and follow-up work" />
-          <StatCard label="Urgent" value={String(summary.stats.urgent)} detail="Needs fast triage" />
+        <section className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+          <AgencyMetric
+            icon={Gauge}
+            label="Readiness"
+            value={`${summary.stats.readinessScore}%`}
+            detail={`${summary.stats.setupProgress}% setup path`}
+            tone={summary.stats.readinessScore >= 70 ? "green" : summary.stats.readinessScore >= 40 ? "amber" : "gray"}
+          />
+          <AgencyMetric
+            icon={Home}
+            label="Properties"
+            value={String(summary.stats.propertyCount)}
+            detail={`${summary.stats.activeProperties} active records`}
+            tone={summary.stats.propertyCount ? "green" : "gray"}
+          />
+          <AgencyMetric
+            icon={LockKeyhole}
+            label="Sharing"
+            value={String(summary.stats.ownerVisible)}
+            detail={`${summary.stats.pendingInvites} pending invites`}
+            tone={summary.stats.ownerVisible ? "green" : "gray"}
+          />
+          <AgencyMetric
+            icon={ClipboardCheck}
+            label="Review queue"
+            value={String(summary.stats.needsReview)}
+            detail="Watch and follow-up work"
+            tone={summary.stats.needsReview ? "amber" : "green"}
+          />
+          <AgencyMetric
+            icon={ShieldCheck}
+            label="Urgent"
+            value={String(summary.stats.urgent)}
+            detail="Needs fast triage"
+            tone={summary.stats.urgent ? "red" : "green"}
+          />
         </section>
 
-        <section className="mt-5 grid gap-5 lg:grid-cols-[.42fr_.58fr]">
+        <section className="mt-5 grid gap-5 xl:grid-cols-[.62fr_.38fr]">
           <Card>
+            <ClipboardCheck className="text-[var(--green)]" />
+            <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h2 className="text-2xl font-black tracking-tight">Guided setup path</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text2)]">
+                  One ordered path keeps onboarding calm: profile, first property, sharing rules, then maintenance
+                  rules.
+                </p>
+              </div>
+              <Badge tone={summary.stats.setupProgress === 100 ? "green" : "amber"}>{summary.stats.setupProgress}% complete</Badge>
+            </div>
+            <SetupRail steps={summary.setupSteps} />
+          </Card>
+
+          <Card>
+            <MapPinned className="text-[var(--amber2)]" />
+            <h2 className="mt-4 text-2xl font-black tracking-tight">Command queue</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
+              A short action list for the next agency call. No scattered tasks, no generic dashboard noise.
+            </p>
+            <div className="mt-5 grid gap-3">
+              {commandQueue.map((item) => (
+                <a
+                  key={item.title}
+                  href={item.href}
+                  className="focus-ring rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4 transition hover:-translate-y-0.5 hover:border-amber-200 hover:bg-white hover:shadow-[var(--shadow)]"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-black">{item.title}</p>
+                      <p className="mt-1 text-sm leading-6 text-[var(--text2)]">{item.detail}</p>
+                    </div>
+                    <Badge tone={item.tone}>{item.state}</Badge>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </Card>
+        </section>
+
+        <section className="mt-5 grid gap-5 xl:grid-cols-[.36fr_.64fr]">
+          <Card id="agency-profile">
             <Building2 className="text-[var(--amber2)]" />
             <div className="mt-4 flex items-start justify-between gap-3">
               <div>
-                <h2 className="text-2xl font-black">{summary.agency ? "Agency profile" : "Create agency workspace"}</h2>
+                <h2 className="text-2xl font-black tracking-tight">{summary.agency ? "Agency profile" : "Create agency workspace"}</h2>
                 <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                  This anchors the portfolio, owner access, and maintenance rules to the signed-in account.
+                  This is the anchor for properties, sharing settings, and maintenance rules.
                 </p>
               </div>
-              {summary.agency ? <Badge tone={summary.agency.status === "active" ? "green" : "amber"}>{labelize(summary.agency.status)}</Badge> : null}
+              {summary.agency ? (
+                <Badge tone={summary.agency.status === "active" ? "green" : "amber"}>{labelize(summary.agency.status)}</Badge>
+              ) : null}
             </div>
             <div className="mt-5">
               <AgencyProfileForm agency={summary.agency} />
             </div>
           </Card>
 
-          <Card>
-            <LineChart className="text-[var(--amber2)]" />
-            <h2 className="mt-4 text-2xl font-black">Portfolio readiness signals</h2>
-            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-              A quick, practical view of whether the agency has enough structure to onboard owners and route work cleanly.
-            </p>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              {summary.graph.map((item) => (
-                <div key={item.label} className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <span className={`mt-1 h-3 w-3 rounded-full ${signalTone(item.tone)}`} />
-                    <Badge tone={item.tone === "red" ? "red" : item.tone === "green" ? "green" : item.tone === "blue" ? "blue" : "amber"}>
-                      {item.label}
-                    </Badge>
-                  </div>
-                  <p className="mt-5 text-4xl font-black tracking-tight">
-                    {item.value}
-                    <span className="text-xl text-[var(--text3)]">%</span>
-                  </p>
-                  <p className="mt-2 text-xs font-bold uppercase tracking-wide text-[var(--text3)]">{signalCopy(item.label)}</p>
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 rounded-2xl border border-amber-200 bg-[var(--amber-light)] p-4">
-              <p className="text-sm font-black">What this means on a walkthrough</p>
-              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                Start with the lowest signal. If owner access is low, set sharing rules. If records are not connected,
-                attach the first properties before inviting owners.
-              </p>
-            </div>
-          </Card>
-        </section>
-
-        <section className="mt-5 grid gap-5 xl:grid-cols-[.35fr_.65fr]">
-          <Card>
-            <ClipboardCheck className="text-[var(--green)]" />
-            <h2 className="mt-4 text-2xl font-black">Setup path</h2>
-            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-              Keep the first agency onboarding focused. Finish each layer before promising deeper automation.
-            </p>
-            <div className="mt-5 grid gap-3">
-              {summary.setupSteps.map((step) => (
-                <div key={step.label} className="flex gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3">
-                  <span className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${stepTone(step.status)}`}>
-                    {step.status === "done" ? <CheckCircle2 size={16} /> : step.status === "next" ? <ArrowRight size={16} /> : <ShieldCheck size={16} />}
-                  </span>
-                  <div>
-                    <p className="text-sm font-black">{step.label}</p>
-                    <p className="mt-1 text-xs leading-5 text-[var(--text2)]">{step.detail}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card>
+          <Card id="properties">
             <Home className="text-[var(--amber2)]" />
             <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
               <div>
-                <h2 className="text-2xl font-black">Managed property register</h2>
+                <h2 className="text-2xl font-black tracking-tight">Managed property workspace</h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text2)]">
-                  Add the properties the agency wants to organise first. Owner access and future PropertySafe records can
-                  attach to these rows.
+                  Start with one recognisable property. Each record can carry request history, compliance-ready check notes,
+                  access context, and next recommended fixes.
                 </p>
               </div>
               <Badge tone={summary.properties.length ? "green" : "gray"}>{summary.properties.length || "No"} properties</Badge>
@@ -179,13 +228,13 @@ export default async function AgencyDashboardPage() {
           </Card>
         </section>
 
-        <section className="mt-5 grid gap-5 xl:grid-cols-[.52fr_.48fr]">
-          <Card>
+        <section className="mt-5 grid gap-5 xl:grid-cols-[.48fr_.52fr]">
+          <Card id="owner-access">
             <MailCheck className="text-[var(--amber2)]" />
-            <h2 className="mt-4 text-2xl font-black">Owner access</h2>
+            <h2 className="mt-4 text-2xl font-black tracking-tight">Agency-approved sharing</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-              Prepare owner visibility from the agency side. Existing Fixit247 accounts become active access; new owners
-              receive a clear email path.
+              Keep this inside the agency workflow. Prepare narrow sharing only after the property record is clear enough
+              to be useful.
             </p>
             <div className="mt-5">
               <AgencyOwnerInviteForm properties={summary.properties} disabled={!summary.agency || !canManage} />
@@ -194,41 +243,57 @@ export default async function AgencyDashboardPage() {
 
           <Card>
             <Users className="text-[var(--green)]" />
-            <h2 className="mt-4 text-2xl font-black">Visibility map</h2>
+            <h2 className="mt-4 text-2xl font-black tracking-tight">Sharing map</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-              Owner access should be useful, calm, and controlled. This list shows who can see which property record.
+              Permission is the product logic: the agency controls the workflow, owners see only the right record, and
+              Fixers receive better repair context.
             </p>
+            <AccessModel />
             <OwnerAccessList invites={summary.ownerInvites} properties={summary.properties} />
           </Card>
         </section>
 
-        <section className="mt-5 grid gap-5 xl:grid-cols-[.46fr_.54fr]">
+        <section className="mt-5 grid gap-5 xl:grid-cols-[.44fr_.56fr]">
           <Card variant="dark">
             <KeyRound className="text-[var(--amber)]" />
-            <Badge className="mt-4">Business logic</Badge>
-            <h2 className="mt-4 text-3xl font-black tracking-tight">Agency controlled. Owner visible. Permission based.</h2>
-            <p className="mt-4 leading-7 text-white/70">
-              PropertySafe should make the agency look organised, not exposed. The owner sees the useful record when the
-              agency is ready, while maintenance requests still move through Fixit247.
+            <Badge className="mt-4">Agency operating logic</Badge>
+            <h2 className="mt-4 text-3xl font-black tracking-tight">Controlled first. Shareable later. Useful always.</h2>
+            <p className="mt-4 leading-7 text-white/72">
+              PropertySafe should make the agency look organised, not exposed. It helps keep rental maintenance history,
+              Safety Check notes, compliance-ready evidence, and follow-up work in one place while the agency stays in
+              charge of the workflow.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
-              {["Controlled access", "Useful history", "Clear next step"].map((item) => (
-                <div key={item} className="rounded-xl border border-white/10 bg-white/8 p-3 text-sm font-black text-white/80">
+              {["Triage calmly", "Record clearly", "Share deliberately"].map((item) => (
+                <div key={item} className="rounded-xl border border-white/10 bg-white/8 p-3 text-sm font-black text-white/82">
                   {item}
                 </div>
               ))}
             </div>
           </Card>
 
-          <Card>
+          <Card id="rules">
             <Wrench className="text-[var(--amber2)]" />
-            <h2 className="mt-4 text-2xl font-black">Maintenance rules</h2>
+            <h2 className="mt-4 text-2xl font-black tracking-tight">Maintenance rules</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-              Set the default rules before volume grows. These notes guide urgent contact, owner updates, and Fixer context.
+              Set the agency defaults before volume grows: urgent contact, after-hours notes, preferred Fixers, and
+              update preferences for rental safety and maintenance records.
             </p>
             <div className="mt-5">
               <AgencyRulesForm rules={summary.rules} disabled={!summary.agency || !canManage} />
             </div>
+          </Card>
+        </section>
+
+        <section className="mt-5">
+          <Card>
+            <LineChart className="text-[var(--amber2)]" />
+            <h2 className="mt-4 text-2xl font-black tracking-tight">Portfolio signals</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
+              A quiet health view for the portfolio. It shows where the next call should focus without turning the page
+              into a noisy analytics wall.
+            </p>
+            <PortfolioSignals summary={summary} />
           </Card>
         </section>
       </section>
@@ -236,13 +301,105 @@ export default async function AgencyDashboardPage() {
   );
 }
 
+function AgencyMetric({
+  icon: Icon,
+  label,
+  value,
+  detail,
+  tone
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  detail: string;
+  tone: "green" | "amber" | "red" | "gray";
+}) {
+  return (
+    <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow)]">
+      <div className="flex items-start justify-between gap-3">
+        <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${metricTone(tone)}`}>
+          <Icon size={18} />
+        </div>
+        <p className="text-xs font-black uppercase tracking-wide text-[var(--text3)]">{label}</p>
+      </div>
+      <p className="mt-5 text-4xl font-black tracking-tight">{value}</p>
+      <p className="mt-1 text-sm leading-6 text-[var(--text2)]">{detail}</p>
+    </div>
+  );
+}
+
+function SetupRail({ steps }: { steps: AgencyDashboardSummary["setupSteps"] }) {
+  return (
+    <div className="mt-5 grid gap-3 lg:grid-cols-4">
+      {steps.map((step, index) => (
+        <a
+          key={step.label}
+          href={stepHref(step.label)}
+          className="focus-ring rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4 transition hover:-translate-y-0.5 hover:border-amber-200 hover:bg-white hover:shadow-[var(--shadow)]"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <span className={`flex h-9 w-9 items-center justify-center rounded-xl text-sm font-black ${stepTone(step.status)}`}>
+              {step.status === "done" ? <CheckCircle2 size={17} /> : index + 1}
+            </span>
+            <Badge tone={step.status === "done" ? "green" : step.status === "next" ? "amber" : "gray"}>
+              {step.status === "done" ? "Ready" : step.status === "next" ? "Next" : "Later"}
+            </Badge>
+          </div>
+          <p className="mt-4 font-black">{step.label}</p>
+          <p className="mt-2 text-sm leading-6 text-[var(--text2)]">{step.detail}</p>
+        </a>
+      ))}
+    </div>
+  );
+}
+
+function PortfolioSignals({ summary }: { summary: AgencyDashboardSummary }) {
+  return (
+    <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {summary.graph.map((item) => (
+        <div key={item.label} className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4">
+          <div className="flex items-start justify-between gap-3">
+            <p className="font-black">{item.label}</p>
+            <Badge tone={item.tone === "red" ? "red" : item.tone === "green" ? "green" : item.tone === "blue" ? "blue" : "amber"}>
+              {item.value}%
+            </Badge>
+          </div>
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-white">
+            <div className={`h-full rounded-full ${signalTone(item.tone)}`} style={{ width: `${item.value}%` }} />
+          </div>
+          <p className="mt-3 text-xs font-bold uppercase tracking-wide text-[var(--text3)]">{signalCopy(item.label)}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AccessModel() {
+  const items = [
+    ["Agency", "Controls workflow, rules, property records, and access timing."],
+    ["Owner", "Receives the useful property record only when sharing is prepared."],
+    ["Fixer", "Gets location, context, priority, and notes before quoting or attending."]
+  ];
+
+  return (
+    <div className="mt-5 grid gap-3 md:grid-cols-3">
+      {items.map(([title, detail]) => (
+        <div key={title} className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4">
+          <p className="font-black">{title}</p>
+          <p className="mt-2 text-xs leading-5 text-[var(--text2)]">{detail}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function PropertyAttentionList({ properties }: { properties: AgencyManagedProperty[] }) {
   if (!properties.length) {
     return (
-      <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4">
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-5">
         <p className="font-black">No properties yet.</p>
         <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-          Start with one property the agency can recognise immediately in the onboarding call.
+          Add one real property first. The first record makes the agency demo feel concrete immediately.
         </p>
       </div>
     );
@@ -265,7 +422,7 @@ function PropertyAttentionList({ properties }: { properties: AgencyManagedProper
           </div>
           <div className="mt-3 flex flex-wrap gap-2 text-xs font-bold text-[var(--text3)]">
             <span>{labelize(property.management_status)}</span>
-            {property.owner_email ? <span>{property.owner_email}</span> : <span>Owner access not set</span>}
+            {property.owner_email ? <span>{property.owner_email}</span> : <span>Owner sharing not prepared</span>}
           </div>
         </div>
       ))}
@@ -282,10 +439,10 @@ function OwnerAccessList({
 }) {
   if (!invites.length) {
     return (
-      <div className="mt-5 rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4">
-        <p className="font-black">No owner access yet.</p>
+      <div className="mt-5 rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-5">
+        <p className="font-black">No owner sharing prepared.</p>
         <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-          Prepare owner access after the first property is added. Keep access narrow at first.
+          Keep access closed until a property record is useful enough to share.
         </p>
       </div>
     );
@@ -307,7 +464,7 @@ function OwnerAccessList({
               <Badge tone={invite.status === "active" ? "green" : "amber"}>{labelize(invite.status)}</Badge>
             </div>
             <p className="mt-3 text-xs font-bold uppercase tracking-wide text-[var(--text3)]">
-              {labelize(invite.access_level)} · {invite.owner_email}
+              {labelize(invite.access_level)} - {invite.owner_email}
             </p>
           </div>
         );
@@ -316,8 +473,45 @@ function OwnerAccessList({
   );
 }
 
+function buildCommandQueue(summary: AgencyDashboardSummary) {
+  const items = [
+    {
+      title: summary.stats.nextActionLabel,
+      detail: summary.stats.nextActionDetail,
+      href: summary.stats.nextActionHref,
+      state: "Priority",
+      tone: "amber" as const
+    },
+    {
+      title: "Keep the first rollout small",
+      detail: summary.stats.propertyCount
+        ? "Use the first records to prove the maintenance path before inviting every owner."
+        : "One recognisable property is enough for tomorrow's agency walkthrough.",
+      href: "#properties",
+      state: "Calm path",
+      tone: "green" as const
+    },
+    {
+      title: "Protect the compliance story",
+      detail: "Use PropertySafe to organise Safety Check notes, repair history, and follow-up evidence. It supports records, not legal overclaims.",
+      href: "#rules",
+      state: "Evidence",
+      tone: "blue" as const
+    }
+  ];
+
+  return items;
+}
+
 function labelize(value: string) {
   return value.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function metricTone(tone: "green" | "amber" | "red" | "gray") {
+  if (tone === "green") return "bg-[var(--green-light)] text-[var(--green)]";
+  if (tone === "red") return "bg-[var(--red-light)] text-[var(--red)]";
+  if (tone === "amber") return "bg-[var(--amber-dim)] text-[var(--amber2)]";
+  return "bg-[var(--bg2)] text-[var(--text3)]";
 }
 
 function signalTone(tone: AgencyDashboardSummary["graph"][number]["tone"]) {
@@ -329,14 +523,22 @@ function signalTone(tone: AgencyDashboardSummary["graph"][number]["tone"]) {
 
 function signalCopy(label: string) {
   if (label === "Clear properties") return "active and ready to manage";
-  if (label === "Owner access ready") return "owners can be invited or active";
+  if (label === "Sharing ready") return "sharing rules are prepared";
   if (label === "Records connected") return "linked to saved records or PropertySafe";
-  if (label === "Needs attention") return "triage before owner rollout";
+  if (label === "Needs attention") return "triage before broader rollout";
   return "portfolio setup signal";
 }
 
 function stepTone(status: AgencyDashboardSummary["setupSteps"][number]["status"]) {
   if (status === "done") return "bg-[var(--green-light)] text-[var(--green)]";
   if (status === "next") return "bg-[var(--amber-dim)] text-[var(--amber2)]";
-  return "bg-[var(--bg2)] text-[var(--text3)]";
+  return "bg-white text-[var(--text3)]";
+}
+
+function stepHref(label: string) {
+  if (label === "Agency profile") return "#agency-profile";
+  if (label === "Managed properties") return "#properties";
+  if (label === "Sharing rules") return "#owner-access";
+  if (label === "Maintenance rules") return "#rules";
+  return "#agency-profile";
 }

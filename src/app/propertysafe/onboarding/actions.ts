@@ -19,7 +19,7 @@ const onboardingSchema = z.object({
   agencyName: z.string().min(2).max(120),
   role: z.enum(["principal", "property_manager", "landlord", "owner", "operations", "other"]),
   portfolioSize: z.enum(["1-10", "11-50", "51-150", "151-500", "500+"]),
-  priority: z.enum(["tenant_maintenance", "owner_visibility", "safety_checks", "repair_history", "portfolio_growth"]),
+  priority: z.enum(["tenant_maintenance", "property_updates", "safety_checks", "repair_history", "portfolio_growth"]),
   suburb: z.string().max(120).optional(),
   message: z.string().max(900).optional(),
   consent: z.literal("on")

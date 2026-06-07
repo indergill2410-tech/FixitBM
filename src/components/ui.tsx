@@ -222,15 +222,18 @@ export function MobileBottomActionBar() {
 
 export function Card({
   children,
+  id,
   className,
   variant = "default"
 }: {
   children: React.ReactNode;
+  id?: string;
   className?: string;
   variant?: "default" | "elevated" | "emergency" | "membership" | "dark";
 }) {
   return (
     <div
+      id={id}
       className={clsx(
         "rounded-2xl border p-5 transition",
         variant === "dark"

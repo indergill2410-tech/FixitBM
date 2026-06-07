@@ -23,7 +23,7 @@ const portfolioOptions = ["1-10", "11-50", "51-150", "151-500", "500+"];
 
 const priorityOptions = [
   ["tenant_maintenance", "Reduce tenant maintenance chasing"],
-  ["owner_visibility", "Improve owner confidence"],
+  ["property_updates", "Prepare clearer property updates"],
   ["safety_checks", "Make Safety Check history useful"],
   ["repair_history", "Create cleaner repair records"],
   ["portfolio_growth", "Strengthen the agency service offer"]
@@ -62,7 +62,7 @@ export function PropertySafeOnboardingForm() {
         <textarea
           name="message"
           className="focus-ring min-h-28 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-4 font-medium"
-          placeholder="Example: We manage 80 rentals. Tenant repair calls become hard to track and owners want clearer updates after urgent work."
+          placeholder="Example: We manage 80 rentals. Tenant repair calls become hard to track and property updates take too long after urgent work."
         />
       </label>
       <label className="flex gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 text-sm font-semibold text-[var(--text2)]">

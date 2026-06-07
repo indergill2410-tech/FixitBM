@@ -373,7 +373,7 @@ export async function notifyAgencyRegistered(input: {
       eyebrow: "Agency account ready",
       title: `Welcome${input.firstName ? `, ${input.firstName}` : ""}.`,
       intro:
-        "Your PropertySafe agency account is ready. Start with the agency profile, add the first managed property, then prepare owner visibility only when the record is ready.",
+        "Your PropertySafe agency account is ready. Start with the agency profile, add the first managed property, then prepare agency-approved sharing only when the record is ready.",
       sections: [
         {
           label: input.agencyName,
@@ -675,7 +675,7 @@ export async function notifyPropertySafeWalkthroughRequested(input: {
       eyebrow: "PropertySafe onboarding",
       title: "We have your PropertySafe walkthrough request.",
       intro:
-        "The walkthrough is for understanding your portfolio, owner visibility needs, maintenance flow, and how PropertySafe can sit beside your current agency process.",
+        "The walkthrough is for understanding your property portfolio, sharing rules, maintenance flow, and how PropertySafe can sit beside your current agency process.",
       sections: [
         {
           label: input.agencyName,

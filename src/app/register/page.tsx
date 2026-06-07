@@ -29,7 +29,7 @@ export default async function RegisterPage() {
             <Card>
               <Building2 className="text-[var(--amber2)]" />
               <h2 className="mt-4 text-xl font-black">I manage properties</h2>
-              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Create a PropertySafe agency account for managed properties, owner visibility, and maintenance rules.</p>
+              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Create a PropertySafe agency account for managed properties, sharing rules, and maintenance records.</p>
               <Button href="/agency/register" variant="ghost" className="mt-5 w-full">Agency account</Button>
             </Card>
             <Card>

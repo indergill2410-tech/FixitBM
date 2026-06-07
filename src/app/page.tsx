@@ -41,7 +41,7 @@ export default function HomePage() {
             roadside help, trade work, and PropertySafe records from one calm request path.
           </p>
           <p className="mt-3 text-sm font-black uppercase tracking-wide text-[var(--amber2)]">
-            Move the repair now. Keep the property memory for later.
+            Free to post a request. Move the repair now. Keep the property memory for later.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Button href="/post-job">
@@ -107,7 +107,7 @@ export default function HomePage() {
         <Card variant="dark">
           <Building2 className="text-[var(--amber)]" />
           <Badge className="mt-4">Owners, landlords, and agencies</Badge>
-          <h2 className="mt-4 text-3xl font-black tracking-tight">Owners see confidence. Agencies keep control. Repairs move with context.</h2>
+          <h2 className="mt-4 text-3xl font-black tracking-tight">Agencies keep control. Repairs move with context. Property records stay clear.</h2>
           <p className="mt-4 leading-7 text-white/70">
             PropertySafe helps homeowners, landlords, and rental teams move urgent issues and routine maintenance through
             one request path, then keep the useful record property by property.
@@ -120,9 +120,9 @@ export default function HomePage() {
         <div className="grid gap-4 md:grid-cols-2">
           {[
             ["Tenant calls become clearer requests", "Burst pipes, lockouts, faults, leaks, and urgent maintenance start with the details your team needs."],
-            ["Owners can see their record", "Investment property checks and next fixes can be shared through the managing agency with controlled access."],
+            ["Records stay agency-led", "Investment property checks and next fixes can be prepared for the right person with agency-approved sharing."],
             ["Fixers get better briefs", "Routine repairs and larger work can be prepared with location, photos, priority, and trade context."],
-            ["Owners see cleaner next steps", "Maintenance recommendations and quote opportunities are easier to explain and act on."]
+            ["Next steps are easier to explain", "Maintenance recommendations and quote opportunities become clearer to review and act on."]
           ].map(([title, copy]) => (
             <Card key={title}>
               <CheckCircle2 className="text-[var(--green)]" />

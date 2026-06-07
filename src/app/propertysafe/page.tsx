@@ -6,11 +6,11 @@ import { appUrl } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "PropertySafe | Property records for owners, landlords, and agencies",
   description:
-    "PropertySafe helps homeowners, landlords, property managers, and real estate agencies keep clearer maintenance records, owner visibility, Safety Check history, and next fixes for every property.",
+    "PropertySafe helps homeowners, landlords, property managers, and real estate agencies keep clearer maintenance records, Safety Check history, agency-approved sharing, and next fixes for every property.",
   alternates: { canonical: "/propertysafe" },
   openGraph: {
     title: "PropertySafe for owners, landlords, and property teams",
-    description: "Owner-visible, agency-controlled maintenance records for owned and managed properties.",
+    description: "Agency-controlled maintenance records for owned and managed properties.",
     url: `${appUrl}/propertysafe`,
     type: "website"
   }
@@ -19,18 +19,18 @@ export const metadata: Metadata = {
 const agencyBenefits = [
   {
     icon: Home,
-    title: "Protect owner trust",
-    copy: "Owners and landlords can see real checks, recommended fixes, and repair history for the property they own."
+    title: "Protect trust",
+    copy: "Keep real checks, recommended fixes, and repair history organised before questions become follow-up loops."
   },
   {
     icon: ClipboardCheck,
-    title: "Support compliance-ready records",
-    copy: "Keep Safety Check history, repair notes, owner updates, and follow-up evidence together where rental safety and maintenance obligations apply."
+    title: "Manage compliance-ready records",
+    copy: "Keep Safety Check history, repair notes, approval context, and follow-up evidence together where rental safety and maintenance obligations apply."
   },
   {
     icon: Users,
     title: "Give managers a cleaner handover",
-    copy: "Property managers keep tenant issues, maintenance requests, and owner updates connected to the same property record."
+    copy: "Property managers keep tenant issues, maintenance requests, approval notes, and repair history connected to the same property record."
   },
   {
     icon: Wrench,
@@ -39,8 +39,8 @@ const agencyBenefits = [
   },
   {
     icon: ShieldCheck,
-    title: "Keep access controlled",
-    copy: "Owners see records they are allowed to see. Agencies keep control of managed workflows and property access."
+    title: "Use agency-approved sharing",
+    copy: "Agencies decide what is shared, when it is shared, and which property record it belongs to."
   }
 ];
 
@@ -62,11 +62,12 @@ export default function PropertySafePage() {
             Less chasing. More confidence. One useful record for every property.
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text2)]">
-            PropertySafe helps homeowners, landlords, property managers, and real estate agencies turn urgent repairs,
-            tenant maintenance, Safety Check history, and recommended fixes into a controlled property record.
+            PropertySafe helps homeowners, landlords, property managers, and real estate agencies manage their property
+            portfolio by turning urgent repairs, tenant maintenance, Safety Check history, and recommended fixes into a
+            controlled property record.
           </p>
           <p className="mt-3 max-w-2xl text-sm font-bold leading-6 text-[var(--amber2)]">
-            Owners see the record. Agencies manage the workflow. Fixers get the context.
+            Agencies manage the workflow. Check records stay organised. Fixers get the context.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Button href="/propertysafe/onboarding">
@@ -87,7 +88,7 @@ export default function PropertySafePage() {
           <h2 className="mt-4 text-2xl font-black">Requests move. Records remain. Access stays controlled.</h2>
           <p className="mt-3 leading-7 text-white/70">
             Emergency repairs and maintenance still move through Fixit247 requests. PropertySafe keeps the useful record
-            around them, then lets the right owner or agency user view the right property history.
+            around them, then uses agency-approved sharing for the right person and the right property history.
           </p>
         </Card>
       </section>
@@ -106,7 +107,7 @@ export default function PropertySafePage() {
         <Card variant="membership">
           <Home className="text-[var(--amber2)]" />
           <Badge className="mt-4">For owned and managed property</Badge>
-          <h2 className="mt-4 text-3xl font-black tracking-tight">Built for the moment a tenant, owner, or manager needs clarity.</h2>
+          <h2 className="mt-4 text-3xl font-black tracking-tight">Built for the moment a tenant, owner, or manager needs a clear next step.</h2>
           <p className="mt-4 leading-7 text-[var(--text2)]">
             A tenant needs help. An owner wants confidence. A manager needs a clean next step. A Fixer needs the right
             brief. PropertySafe connects those moving parts without exposing private records broadly.
@@ -131,8 +132,8 @@ export default function PropertySafePage() {
           <ClipboardCheck className="text-[var(--green)]" />
           <h2 className="mt-4 text-xl font-black">Real check history</h2>
           <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-            PropertySafe is built from completed Safety & Readiness Checks and repair activity. It helps keep evidence
-            clearer, without pretending to replace specialist certificates or statutory inspections.
+            PropertySafe is built from completed Safety & Readiness Checks and repair activity. It helps agencies manage
+            compliance-ready check records without pretending to replace specialist certificates or statutory inspections.
           </p>
         </Card>
         <Card>
@@ -144,9 +145,9 @@ export default function PropertySafePage() {
         </Card>
         <Card>
           <Building2 className="text-[var(--blue)]" />
-          <h2 className="mt-4 text-xl font-black">Owner and agency setup</h2>
+          <h2 className="mt-4 text-xl font-black">Sharing and agency setup</h2>
           <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-            Start with a walkthrough so property permissions, owner visibility, agency contacts, and maintenance rules are handled properly.
+            Start with a walkthrough so property permissions, agency contacts, and maintenance rules are handled properly.
           </p>
         </Card>
       </section>

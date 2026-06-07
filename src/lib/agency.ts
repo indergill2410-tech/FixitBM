@@ -84,12 +84,17 @@ export type AgencyDashboardSummary = {
   rules: AgencyMaintenanceRules | null;
   stats: {
     readinessScore: number;
+    setupProgress: number;
     propertyCount: number;
     activeProperties: number;
     ownerVisible: number;
     needsReview: number;
     urgent: number;
     pendingInvites: number;
+    nextActionLabel: string;
+    nextActionDetail: string;
+    nextActionHref: string;
+    operatingMode: string;
   };
   setupSteps: Array<{
     label: string;
@@ -243,15 +248,25 @@ function buildAgencyDashboardSummary({
     profile: Boolean(agency?.name && agency?.service_area && agency?.phone),
     properties: properties.length > 0,
     owners: ownerInvites.length > 0,
-    rules: Boolean(rules),
-    ready: Boolean(agency?.status === "active" || agency?.onboarding_stage === "ready")
+    rules: Boolean(rules)
   };
-  const readinessScore =
-    (setup.profile ? 25 : 8) +
-    Math.min(properties.length * 12, 25) +
-    Math.min(ownerVisible * 10, 20) +
-    (setup.rules ? 20 : 4) +
-    (setup.ready ? 10 : 0);
+  const profileScore = setup.profile ? 20 : agency ? 8 : 0;
+  const propertyScore = setup.properties ? Math.min(15 + properties.length * 5, 25) : 0;
+  const ownerScore = setup.owners ? Math.min(10 + ownerVisible * 5, 20) : 0;
+  const rulesScore = setup.rules ? 15 : 0;
+  const workflowScore = setup.properties && setup.rules ? 10 : 0;
+  const attentionScore = setup.properties && urgent === 0 && needsReview === 0 ? 5 : 0;
+  const readinessScore = profileScore + propertyScore + ownerScore + rulesScore + workflowScore + attentionScore;
+  const setupProgress =
+    [setup.profile, setup.properties, setup.owners, setup.rules].filter(Boolean).length * 25;
+  const nextAction = getAgencyNextAction({
+    agency,
+    setup,
+    urgent,
+    needsReview,
+    properties,
+    pendingInvites
+  });
 
   const setupSteps = [
     {
@@ -265,9 +280,9 @@ function buildAgencyDashboardSummary({
       detail: setup.properties ? `${properties.length} properties in the workspace.` : "Add the first rental or managed home."
     },
     {
-      label: "Owner visibility",
+      label: "Sharing rules",
       status: setup.owners ? "done" : setup.properties ? "next" : "pending",
-      detail: setup.owners ? `${ownerVisible} owner access records prepared.` : "Invite owners when access rules are clear."
+      detail: setup.owners ? `${ownerVisible} sharing records prepared.` : "Prepare agency-approved sharing only after the property record is clear."
     },
     {
       label: "Maintenance rules",
@@ -292,19 +307,124 @@ function buildAgencyDashboardSummary({
     rules,
     stats: {
       readinessScore: Math.min(readinessScore, 100),
+      setupProgress,
       propertyCount: properties.length,
       activeProperties,
       ownerVisible,
       needsReview,
       urgent,
-      pendingInvites
+      pendingInvites,
+      nextActionLabel: nextAction.label,
+      nextActionDetail: nextAction.detail,
+      nextActionHref: nextAction.href,
+      operatingMode: nextAction.mode
     },
     setupSteps,
     graph: [
       { label: "Clear properties", value: clearProperties, tone: "green" },
-      { label: "Owner access ready", value: ownerAccess, tone: "blue" },
+      { label: "Sharing ready", value: ownerAccess, tone: "blue" },
       { label: "Records connected", value: recordsConnected, tone: "amber" },
       { label: "Needs attention", value: attentionLoad, tone: attentionLoad > 40 ? "red" : "amber" }
     ]
+  };
+}
+
+function getAgencyNextAction({
+  agency,
+  setup,
+  urgent,
+  needsReview,
+  properties,
+  pendingInvites
+}: {
+  agency: AgencyProfile | null;
+  setup: {
+    profile: boolean;
+    properties: boolean;
+    owners: boolean;
+    rules: boolean;
+  };
+  urgent: number;
+  needsReview: number;
+  properties: AgencyManagedProperty[];
+  pendingInvites: number;
+}) {
+  if (!agency) {
+    return {
+      label: "Create the agency workspace",
+      detail: "Add the agency details first so properties, rules, and sharing settings have a clear home.",
+      href: "#agency-profile",
+      mode: "Setup needed"
+    };
+  }
+
+  if (!setup.profile) {
+    return {
+      label: "Finish agency details",
+      detail: "Add phone and service area before inviting owners or adding live property records.",
+      href: "#agency-profile",
+      mode: "Profile setup"
+    };
+  }
+
+  if (!setup.properties) {
+    return {
+      label: "Add the first managed property",
+      detail: "Start with one real rental or managed home. Everything else becomes easier once the record exists.",
+      href: "#properties",
+      mode: "Portfolio setup"
+    };
+  }
+
+  if (urgent > 0) {
+    return {
+      label: "Triage urgent properties",
+      detail: `${urgent} property ${urgent === 1 ? "needs" : "need"} fast attention before a clean property update.`,
+      href: "#properties",
+      mode: "Fast triage"
+    };
+  }
+
+  if (needsReview > 0) {
+    return {
+      label: "Clear review items",
+      detail: `${needsReview} property ${needsReview === 1 ? "has" : "have"} watch notes or follow-up work to resolve.`,
+      href: "#properties",
+      mode: "Review queue"
+    };
+  }
+
+  if (!setup.owners) {
+    return {
+      label: "Prepare agency-approved sharing",
+      detail: "Choose one property and share the narrowest useful record first.",
+      href: "#owner-access",
+      mode: "Access setup"
+    };
+  }
+
+  if (pendingInvites > 0) {
+    return {
+      label: "Follow up pending access",
+      detail: `${pendingInvites} owner ${pendingInvites === 1 ? "invite is" : "invites are"} waiting to become active.`,
+      href: "#owner-access",
+      mode: "Access follow-up"
+    };
+  }
+
+  if (!setup.rules) {
+    return {
+      label: "Set maintenance rules",
+      detail: "Save the agency rules for urgent contact, after-hours notes, and property update preferences.",
+      href: "#rules",
+      mode: "Rules setup"
+    };
+  }
+
+  return {
+    label: "Start the next maintenance request",
+    detail: `${properties.length} managed ${properties.length === 1 ? "property is" : "properties are"} ready to carry request history and follow-up work.`,
+    href: "/post-job",
+    mode: "Ready to operate"
   };
 }

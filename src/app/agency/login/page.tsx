@@ -20,10 +20,10 @@ export default async function AgencyLoginPage() {
           <div>
             <Badge>PropertySafe agency access</Badge>
             <h1 className="mt-5 text-4xl font-black leading-tight tracking-tight md:text-5xl">
-              Sign in to manage properties, owner visibility, and repair records.
+              Sign in to manage properties, sharing rules, and repair records.
             </h1>
             <p className="mt-5 max-w-xl text-lg leading-8 text-[var(--text2)]">
-              Agency accounts keep maintenance requests, Safety Check history, owner access, and follow-up work organised
+              Agency accounts keep maintenance requests, Safety Check history, agency-approved sharing, and follow-up work organised
               around the property record your team controls.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">

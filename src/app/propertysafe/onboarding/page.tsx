@@ -7,7 +7,7 @@ import { appUrl } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Book a PropertySafe agency walkthrough | Fixit247",
   description:
-    "Book a PropertySafe walkthrough for real estate agencies, property managers, landlords, and owners who want clearer tenant maintenance, owner-visible records, and controlled property access.",
+    "Book a PropertySafe walkthrough for real estate agencies, property managers, landlords, and owners who want clearer tenant maintenance, agency-approved records, and cleaner property sharing.",
   alternates: { canonical: "/propertysafe/onboarding" },
   openGraph: {
     title: "PropertySafe agency walkthrough",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 const outcomes = [
   ["Fewer follow-up loops", "Tenant issues become structured requests with priority, photos, location, and the next action in one place."],
-  ["Owner-ready evidence", "Owners see the useful record when the agency chooses, without taking over the workflow."],
+  ["Agency-ready evidence", "Prepare clear property updates without handing over control of the agency workflow."],
   ["Compliance-ready history", "Safety Check notes, repair actions, access context, and follow-up recommendations stay organised where rental obligations apply."],
   ["Cleaner staff handover", "Repair history, Safety Checks, access notes, and recommendations stay attached to the property."],
   ["Better Fixer attendance", "Fixers receive clearer briefs before quoting, visiting, or requesting more detail."]
@@ -53,10 +53,10 @@ const operatingModel = [
 ];
 
 const onboardingSteps = [
-  ["Choose the pilot", "Start with a small group of managed properties where maintenance and owner updates already create friction."],
+  ["Choose the pilot", "Start with a small group of managed properties where maintenance, approvals, or handover already create friction."],
   ["Set permission logic", "Decide what agency users, owners, landlords, and support can see before anything is shared."],
   ["Connect the request path", "Urgent maintenance and routine repair requests keep moving while the property record builds behind them."],
-  ["Prepare the owner story", "Turn completed checks, recommendations, and follow-up work into a calmer update for owners."]
+  ["Prepare the update story", "Turn completed checks, recommendations, and follow-up work into a calmer property update."]
 ];
 
 export default function PropertySafeOnboardingPage() {
@@ -70,11 +70,11 @@ export default function PropertySafeOnboardingPage() {
             Turn maintenance pressure into owner confidence.
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text2)]">
-            A practical walkthrough for agencies managing rentals: capture tenant issues cleanly, keep owners informed,
-            and keep safety, repair, and follow-up evidence in a property record your team controls.
+            A practical walkthrough for agencies managing rentals: capture tenant issues cleanly, prepare clearer updates,
+            manage the property portfolio, and keep safety, repair, and follow-up evidence in a record your team controls.
           </p>
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            {["Agency controlled", "Owner confidence", "Tomorrow-ready pilot"].map((item) => (
+            {["Agency controlled", "Clearer updates", "Tomorrow-ready pilot"].map((item) => (
               <div key={item} className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-white px-3 py-3 text-sm font-black shadow-[var(--shadow)]">
                 <ShieldCheck size={16} className="text-[var(--green)]" />
                 {item}
@@ -107,8 +107,8 @@ export default function PropertySafeOnboardingPage() {
           <FileText className="text-[var(--amber2)]" />
           <h2 className="mt-4 text-3xl font-black tracking-tight">Property managers need fewer loose threads, not another inbox.</h2>
           <p className="mt-3 leading-7 text-[var(--text2)]">
-            The opportunity is not a prettier maintenance form. It is a controlled record that supports owner confidence,
-            staff handover, rental safety evidence, urgent triage, and quote-ready next steps.
+            The opportunity is not a prettier maintenance form. It is an agency-led portfolio layer that supports staff
+            handover, rental safety evidence, urgent triage, and quote-ready next steps.
           </p>
           <div className="mt-5 grid gap-3">
             {outcomes.map(([title, copy]) => (
@@ -121,7 +121,7 @@ export default function PropertySafeOnboardingPage() {
         </Card>
         <Card>
           <Badge>Source-backed signals</Badge>
-          <h2 className="mt-4 text-2xl font-black">Why agencies should make the record visible now.</h2>
+          <h2 className="mt-4 text-2xl font-black">Why agencies should organise the record now.</h2>
           <div className="mt-6 grid gap-4 md:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
             {marketSignals.map((signal) => (
               <div key={signal.value} className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4">
@@ -179,14 +179,15 @@ export default function PropertySafeOnboardingPage() {
             <Badge>Best first call</Badge>
             <h2 className="mt-4 text-3xl font-black tracking-tight">Bring one real property. Leave with the first rollout shape.</h2>
             <p className="mt-4 leading-7 text-white/70">
-              Share the portfolio size, your most common maintenance friction, and how owners should be updated.
-              Fixit247 can then prepare the first agency workspace around real access rules, not generic promises.
+              Share the portfolio size, your most common maintenance friction, and the checks your team needs to keep
+              organised. Fixit247 can then prepare the first agency workspace around real access rules, not generic
+              promises.
             </p>
           </Card>
           <div className="grid gap-4 sm:grid-cols-3">
             {[
               [Users, "Agency teams", "Principals, managers, ops, and support users."],
-              [Home, "Owners", "Controlled access to the right property record."],
+              [Home, "Properties", "Agency-approved sharing for the right record."],
               [Clock3, "Follow-up", "Maintenance requests and next fixes kept visible."]
             ].map(([Icon, title, copy]) => (
               <Card key={String(title)}>
