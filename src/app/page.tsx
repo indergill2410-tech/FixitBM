@@ -48,7 +48,7 @@ export default function HomePage() {
               Get Help Now
               <ArrowRight size={17} />
             </Button>
-            <Button href="/propertysafe" variant="dark">
+            <Button href="/propertysafe" variant="ghost">
               PropertySafe
             </Button>
             <Button href="/fixit-plus" variant="ghost">
@@ -107,14 +107,14 @@ export default function HomePage() {
         <Card variant="dark">
           <Building2 className="text-[var(--amber)]" />
           <Badge className="mt-4">Owners, landlords, and agencies</Badge>
-          <h2 className="mt-4 text-3xl font-black tracking-tight">Owners see clarity. Agencies keep control. Repairs move faster.</h2>
+          <h2 className="mt-4 text-3xl font-black tracking-tight">Owners see confidence. Agencies keep control. Repairs move with context.</h2>
           <p className="mt-4 leading-7 text-white/70">
             PropertySafe helps homeowners, landlords, and rental teams move urgent issues and routine maintenance through
-            the same calm request flow, then keep the useful history property by property.
+            one request path, then keep the useful record property by property.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Button href="/propertysafe">Explore PropertySafe</Button>
-            <Button href="/propertysafe/onboarding" variant="light">Book a walkthrough</Button>
+            <Button href="/propertysafe/onboarding">Book a walkthrough</Button>
           </div>
         </Card>
         <div className="grid gap-4 md:grid-cols-2">

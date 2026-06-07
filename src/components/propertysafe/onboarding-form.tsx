@@ -22,11 +22,11 @@ const roleOptions = [
 const portfolioOptions = ["1-10", "11-50", "51-150", "151-500", "500+"];
 
 const priorityOptions = [
-  ["tenant_maintenance", "Tenant maintenance clarity"],
-  ["owner_visibility", "Owner visibility"],
-  ["safety_checks", "Safety Check history"],
-  ["repair_history", "Repair records"],
-  ["portfolio_growth", "Better portfolio operations"]
+  ["tenant_maintenance", "Reduce tenant maintenance chasing"],
+  ["owner_visibility", "Improve owner confidence"],
+  ["safety_checks", "Make Safety Check history useful"],
+  ["repair_history", "Create cleaner repair records"],
+  ["portfolio_growth", "Strengthen the agency service offer"]
 ];
 
 export function PropertySafeOnboardingForm() {
@@ -55,19 +55,19 @@ export function PropertySafeOnboardingForm() {
         <Select name="role" label="I am" options={roleOptions} />
         <Select name="portfolioSize" label="Managed properties" options={portfolioOptions.map((value) => [value, value])} />
       </div>
-      <Select name="priority" label="Most useful first" options={priorityOptions} />
+      <Select name="priority" label="Main goal for the first rollout" options={priorityOptions} />
       <Field name="suburb" label="Primary suburb or service area" required={false} />
       <label className="grid gap-2 text-sm font-black text-[var(--text)]">
-        What should we prepare for?
+        What would make tomorrow easier?
         <textarea
           name="message"
           className="focus-ring min-h-28 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-4 font-medium"
-          placeholder="Example: We manage 80 rentals and need clearer owner updates after urgent tenant maintenance."
+          placeholder="Example: We manage 80 rentals. Tenant repair calls become hard to track and owners want clearer updates after urgent work."
         />
       </label>
       <label className="flex gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 text-sm font-semibold text-[var(--text2)]">
         <input name="consent" type="checkbox" required />
-        Fixit247 can contact me about PropertySafe onboarding and agency account setup.
+        Fixit247 can contact me to prepare a PropertySafe walkthrough and agency workspace setup.
       </label>
       <Button disabled={pending}>
         {pending ? <Loader2 className="animate-spin" size={17} /> : <Building2 size={17} />}

@@ -51,7 +51,7 @@ export default async function AgencyDashboardPage() {
                     Start maintenance request
                     <ArrowRight size={17} />
                   </Button>
-                  <Button href="/propertysafe/onboarding" variant="light">
+                  <Button href="/propertysafe/onboarding">
                     Book walkthrough
                   </Button>
                 </div>
@@ -107,22 +107,33 @@ export default async function AgencyDashboardPage() {
 
           <Card>
             <LineChart className="text-[var(--amber2)]" />
-            <h2 className="mt-4 text-2xl font-black">Portfolio clarity graph</h2>
+            <h2 className="mt-4 text-2xl font-black">Portfolio readiness signals</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-              A quick view of whether the agency has enough structure to onboard owners and start routing work cleanly.
+              A quick, practical view of whether the agency has enough structure to onboard owners and route work cleanly.
             </p>
-            <div className="mt-5 grid gap-4">
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {summary.graph.map((item) => (
-                <div key={item.label}>
-                  <div className="flex items-center justify-between gap-3 text-sm font-black">
-                    <span>{item.label}</span>
-                    <span>{item.value}%</span>
+                <div key={item.label} className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <span className={`mt-1 h-3 w-3 rounded-full ${signalTone(item.tone)}`} />
+                    <Badge tone={item.tone === "red" ? "red" : item.tone === "green" ? "green" : item.tone === "blue" ? "blue" : "amber"}>
+                      {item.label}
+                    </Badge>
                   </div>
-                  <div className="mt-2 h-3 overflow-hidden rounded-full bg-[var(--bg2)]">
-                    <div className={`${barTone(item.tone)} h-full rounded-full`} style={{ width: `${item.value}%` }} />
-                  </div>
+                  <p className="mt-5 text-4xl font-black tracking-tight">
+                    {item.value}
+                    <span className="text-xl text-[var(--text3)]">%</span>
+                  </p>
+                  <p className="mt-2 text-xs font-bold uppercase tracking-wide text-[var(--text3)]">{signalCopy(item.label)}</p>
                 </div>
               ))}
+            </div>
+            <div className="mt-4 rounded-2xl border border-amber-200 bg-[var(--amber-light)] p-4">
+              <p className="text-sm font-black">What this means on a walkthrough</p>
+              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
+                Start with the lowest signal. If owner access is low, set sharing rules. If records are not connected,
+                attach the first properties before inviting owners.
+              </p>
             </div>
           </Card>
         </section>
@@ -309,11 +320,19 @@ function labelize(value: string) {
   return value.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function barTone(tone: AgencyDashboardSummary["graph"][number]["tone"]) {
+function signalTone(tone: AgencyDashboardSummary["graph"][number]["tone"]) {
   if (tone === "green") return "bg-[var(--green)]";
   if (tone === "blue") return "bg-[var(--blue)]";
   if (tone === "red") return "bg-[var(--red)]";
   return "bg-[var(--amber)]";
+}
+
+function signalCopy(label: string) {
+  if (label === "Clear properties") return "active and ready to manage";
+  if (label === "Owner access ready") return "owners can be invited or active";
+  if (label === "Records connected") return "linked to saved records or PropertySafe";
+  if (label === "Needs attention") return "triage before owner rollout";
+  return "portfolio setup signal";
 }
 
 function stepTone(status: AgencyDashboardSummary["setupSteps"][number]["status"]) {

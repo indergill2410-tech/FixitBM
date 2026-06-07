@@ -1,7 +1,7 @@
 import { clsx } from "clsx";
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { ArrowRight, Bell, Menu, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Bell, LayoutDashboard, LogOut, Menu, ShieldCheck, UserCircle, Zap } from "lucide-react";
 import { FixitMark } from "@/components/brand";
 
 type ButtonProps = {
@@ -315,6 +315,28 @@ export function DashboardHeader({ title, role }: { title: string; role: string }
           <Bell size={17} />
           <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[var(--red)]" />
         </button>
+        <details className="group relative">
+          <summary className="flex h-10 list-none items-center gap-2 rounded-xl border border-[var(--border)] bg-white px-3 text-sm font-black shadow-[var(--shadow)] transition hover:border-amber-200">
+            <UserCircle size={17} />
+            Account
+          </summary>
+          <div className="absolute right-0 top-12 z-50 w-64 rounded-2xl border border-[var(--border)] bg-white p-3 shadow-[var(--shadow-lg)]">
+            <div className="rounded-xl bg-[var(--bg)] p-3">
+              <p className="text-xs font-bold uppercase tracking-wide text-[var(--text3)]">Signed in</p>
+              <p className="mt-1 text-sm font-black">{role}</p>
+            </div>
+            <Link href="/dashboard" className="mt-2 flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold hover:bg-[var(--bg)]">
+              <LayoutDashboard size={16} className="text-[var(--amber2)]" />
+              Dashboard home
+            </Link>
+            <form action="/auth/signout" method="post">
+              <button className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-bold text-[var(--red)] hover:bg-[var(--red-light)]">
+                <LogOut size={16} />
+                Sign out
+              </button>
+            </form>
+          </div>
+        </details>
         <FixitMark shape="circle" />
       </div>
     </div>
