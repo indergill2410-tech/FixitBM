@@ -20,7 +20,7 @@ export default async function AdminSettingsPage() {
     {
       label: "Database server key",
       ready: Boolean(process.env.SUPABASE_SECRET_KEY),
-      detail: "Server actions, admin dashboards, uploads, and seed tooling can write safely."
+      detail: "Server actions, admin areas, uploads, and seed tooling can write safely."
     },
     {
       label: "Cron secret",
@@ -45,12 +45,12 @@ export default async function AdminSettingsPage() {
     {
       label: "Verified sender",
       ready: Boolean(emailStatus.fromEmail),
-      detail: `Sender configured as ${emailStatus.fromEmail}. Confirm this sender is verified in Resend.`
+      detail: `Sender set as ${emailStatus.fromEmail}. Confirm this sender is verified in Resend.`
     },
     {
       label: "Admin alert recipients",
       ready: emailStatus.adminAlertCount > 0,
-      detail: `${emailStatus.adminAlertCount} internal recipient${emailStatus.adminAlertCount === 1 ? "" : "s"} configured for operational email alerts.`
+      detail: `${emailStatus.adminAlertCount} team recipient${emailStatus.adminAlertCount === 1 ? "" : "s"} set for operational email alerts.`
     }
   ];
 
@@ -91,7 +91,7 @@ export default async function AdminSettingsPage() {
         <Card variant="dark" className="mt-4">
           <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
             <div>
-              <Badge tone={emailStatus.configured ? "green" : "red"}>{emailStatus.configured ? "Email configured" : "Email needs attention"}</Badge>
+              <Badge tone={emailStatus.configured ? "green" : "red"}>{emailStatus.configured ? "Email ready" : "Email needs attention"}</Badge>
               <h2 className="mt-4 text-2xl font-black">Email delivery</h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-white/65">
                 Newsletter welcome, agency onboarding, support, Safety Check, request, and owner-invite emails should be

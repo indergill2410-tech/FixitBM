@@ -7,20 +7,20 @@ import { appUrl } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Book a PropertySafe agency walkthrough | Fixit247",
   description:
-    "Book a PropertySafe walkthrough for real estate agencies, property managers, landlords, and owners who want clearer tenant maintenance, agency-approved records, and cleaner property sharing.",
+    "Book a PropertySafe walkthrough for real estate agencies, property managers, landlords, and owners who want clearer tenant maintenance, compliance-ready records, and cleaner property updates.",
   alternates: { canonical: "/propertysafe/onboarding" },
   openGraph: {
     title: "PropertySafe agency walkthrough",
-    description: "A practical onboarding path for rental maintenance, owner confidence, Safety Check history, and controlled property records.",
+    description: "A practical onboarding path for rental maintenance, owner confidence, Safety Check history, and cleaner property records.",
     url: `${appUrl}/propertysafe/onboarding`,
     type: "website"
   }
 };
 
 const outcomes = [
-  ["Fewer follow-up loops", "Tenant issues become structured requests with priority, photos, location, and the next action in one place."],
-  ["Agency-ready evidence", "Prepare clear property updates without handing over control of the agency workflow."],
-  ["Compliance-ready history", "Safety Check notes, repair actions, access context, and follow-up recommendations stay organised where rental obligations apply."],
+  ["Fewer repeat follow-ups", "Tenant issues become structured requests with priority, photos, location, and the next action in one place."],
+  ["Agency-ready evidence", "Prepare clear property updates while your team stays in charge of the maintenance process."],
+          ["Compliance-ready history", "Safety Check notes, repair actions, access notes, and follow-up recommendations stay organised where rental obligations apply."],
   ["Cleaner staff handover", "Repair history, Safety Checks, access notes, and recommendations stay attached to the property."],
   ["Better Fixer attendance", "Fixers receive clearer briefs before quoting, visiting, or requesting more detail."]
 ];
@@ -54,7 +54,7 @@ const operatingModel = [
 
 const onboardingSteps = [
   ["Choose the pilot", "Start with a small group of managed properties where maintenance, approvals, or handover already create friction."],
-  ["Set permission logic", "Decide what agency users, owners, landlords, and support can see before anything is shared."],
+  ["Set the sharing plan", "Decide what agency users, owners, landlords, and support can see before anything is shared."],
   ["Connect the request path", "Urgent maintenance and routine repair requests keep moving while the property record builds behind them."],
   ["Prepare the update story", "Turn completed checks, recommendations, and follow-up work into a calmer property update."]
 ];
@@ -74,7 +74,7 @@ export default function PropertySafeOnboardingPage() {
             manage the property portfolio, and keep safety, repair, and follow-up evidence in a record your team controls.
           </p>
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            {["Agency controlled", "Clearer updates", "Tomorrow-ready pilot"].map((item) => (
+            {["Agency-led", "Clearer updates", "Tomorrow-ready pilot"].map((item) => (
               <div key={item} className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-white px-3 py-3 text-sm font-black shadow-[var(--shadow)]">
                 <ShieldCheck size={16} className="text-[var(--green)]" />
                 {item}
@@ -96,8 +96,8 @@ export default function PropertySafeOnboardingPage() {
           <Badge className="mt-4">Business case</Badge>
           <h2 className="mt-4 text-2xl font-black">Every repair is either a chase, or a record.</h2>
           <p className="mt-3 leading-7 text-white/70">
-            PropertySafe keeps requests moving while the useful facts stay attached to the property: what happened, who
-            can see it, what was checked, and what should happen next.
+            PropertySafe keeps requests moving while the useful facts stay attached to the property: what happened, what
+            was checked, who should be updated, and what should happen next.
           </p>
         </Card>
       </section>
@@ -107,7 +107,7 @@ export default function PropertySafeOnboardingPage() {
           <FileText className="text-[var(--amber2)]" />
           <h2 className="mt-4 text-3xl font-black tracking-tight">Property managers need fewer loose threads, not another inbox.</h2>
           <p className="mt-3 leading-7 text-[var(--text2)]">
-            The opportunity is not a prettier maintenance form. It is an agency-led portfolio layer that supports staff
+            The opportunity is not another maintenance form. It is an agency-led portfolio layer that supports staff
             handover, rental safety evidence, urgent triage, and quote-ready next steps.
           </p>
           <div className="mt-5 grid gap-3">
@@ -147,7 +147,7 @@ export default function PropertySafeOnboardingPage() {
             <div>
               <KeyRound className="text-[var(--amber)]" />
               <Badge className="mt-4">Operating model</Badge>
-              <h2 className="mt-4 text-3xl font-black tracking-tight">Requests move. Records remain. Access stays controlled.</h2>
+              <h2 className="mt-4 text-3xl font-black tracking-tight">Requests move. Records remain. Sharing stays deliberate.</h2>
             </div>
             <div className="grid gap-3 md:grid-cols-3">
               {operatingModel.map(([title, copy]) => (
@@ -180,14 +180,14 @@ export default function PropertySafeOnboardingPage() {
             <h2 className="mt-4 text-3xl font-black tracking-tight">Bring one real property. Leave with the first rollout shape.</h2>
             <p className="mt-4 leading-7 text-white/70">
               Share the portfolio size, your most common maintenance friction, and the checks your team needs to keep
-              organised. Fixit247 can then prepare the first agency workspace around real access rules, not generic
+              organised. Fixit247 can then prepare the first agency setup around real sharing needs, not generic
               promises.
             </p>
           </Card>
           <div className="grid gap-4 sm:grid-cols-3">
             {[
-              [Users, "Agency teams", "Principals, managers, ops, and support users."],
-              [Home, "Properties", "Agency-approved sharing for the right record."],
+              [Users, "Agency teams", "Principals, managers, operations, and support users."],
+              [Home, "Properties", "Careful sharing for the right record."],
               [Clock3, "Follow-up", "Maintenance requests and next fixes kept visible."]
             ].map(([Icon, title, copy]) => (
               <Card key={String(title)}>
@@ -199,7 +199,7 @@ export default function PropertySafeOnboardingPage() {
           </div>
           <Card>
             <CheckCircle2 className="text-[var(--green)]" />
-            <h2 className="mt-4 text-xl font-black">Want the workspace ready first?</h2>
+            <h2 className="mt-4 text-xl font-black">Want the agency account ready first?</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
               Create an agency account now, then request the walkthrough with the same email so onboarding can connect the
               conversation to your account.

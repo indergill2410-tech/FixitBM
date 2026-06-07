@@ -134,7 +134,7 @@ export async function updateJobStatusAction(
     job_id: parsed.data.jobId,
     status: parsed.data.status,
     title: `Status changed to ${parsed.data.status.replaceAll("_", " ")}`,
-    note: parsed.data.note || "Updated by admin command centre.",
+    note: parsed.data.note || "Updated by Fixit247 operations.",
     created_by: user.id
   });
 
@@ -211,7 +211,7 @@ export async function assignTradieAction(
     job_id: parsed.data.jobId,
     status: "tradie_accepted",
     title: "Fixer assigned",
-    note: "Assigned by admin command centre.",
+    note: "Assigned by Fixit247 operations.",
     created_by: user.id
   });
 

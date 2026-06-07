@@ -29,7 +29,7 @@ const plans = [
       "Priority emergency request support",
       "Saved home details and emergency history",
       "6-monthly Home Safety & Readiness Check",
-      "Member dashboard, reminders, and recommended fixes"
+      "Member account, reminders, and recommended fixes"
     ]
   },
   {
@@ -43,7 +43,7 @@ const plans = [
       "Home + road emergency request support",
       "Saved home and vehicle details",
       "6-monthly home + road readiness check",
-      "Member dashboard, roadside reminders, and recommended fixes"
+      "Member account, roadside reminders, and recommended fixes"
     ]
   }
 ];
@@ -64,7 +64,7 @@ export default function FixitPlusPage() {
               Readiness Check, so the next leak, lockout, fault, storm, or breakdown starts with a plan.
             </p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Button href="/post-job">Get Help Now</Button>
+              <Button href="/post-job">Get help now</Button>
               <Button href="#plans" variant="ghost">Compare plans</Button>
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function FixitPlusPage() {
             <div className="mt-7">
               <CheckoutButton
                 planCode={plan.code}
-                label={plan.recommended ? "Protect Home + Road" : "Protect My Home"}
+                label={plan.recommended ? "Protect home + road" : "Protect my home"}
                 variant={plan.recommended ? "primary" : "ghost"}
               />
             </div>

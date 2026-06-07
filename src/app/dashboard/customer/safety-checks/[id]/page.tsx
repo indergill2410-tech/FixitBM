@@ -13,7 +13,7 @@ export default async function SafetyCheckDetailPage({ params }: { params: Promis
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="Safety Check Report" role={`Report ${id}`} />
+        <DashboardHeader title="Safety Check report" role="Customer account" />
         <div className="grid gap-5 lg:grid-cols-[.64fr_.36fr]">
           <Card>
             <Badge tone={isCompleted ? "green" : "gray"}>
@@ -35,8 +35,8 @@ export default async function SafetyCheckDetailPage({ params }: { params: Promis
               </p>
             ) : null}
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Button href="/dashboard/customer/safety-checks/book">Book My Safety Check</Button>
-              <Button href="/post-job" variant="ghost">Get Quotes From Fixers</Button>
+              <Button href="/dashboard/customer/safety-checks/book">Book my Safety Check</Button>
+              <Button href="/post-job" variant="ghost">Get quotes from Fixers</Button>
             </div>
           </Card>
           <aside className="grid gap-5">

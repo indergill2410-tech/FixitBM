@@ -42,15 +42,15 @@ export default async function CustomerMembershipPage() {
               price="$29"
               copy="Peace of mind for home emergencies."
               features={["24/7 emergency request support", "Priority home emergency coordination", "Saved home profile", "6-monthly Safety Check included", "Home Protection Score", "Recommended Fixes after each check"]}
-              action={<CheckoutButton planCode="home" label="Protect My Home" variant="ghost" />}
+              action={<CheckoutButton planCode="home" label="Protect my home" variant="ghost" />}
             />
             <PlanCard
               title="Fixit Plus Complete"
               price="$49"
               copy="Peace of mind at home and on the road."
               recommended
-              features={["Everything in Home", "Home + Road Readiness Check every 6 months", "Saved vehicle profile", "Vehicle readiness reminders", "Roadside preparedness checklist", "Home + road dashboard"]}
-              action={<CheckoutButton planCode="complete" label="Protect Home + Road" />}
+              features={["Everything in Home", "Home + Road Readiness Check every 6 months", "Saved vehicle profile", "Vehicle readiness reminders", "Roadside preparedness checklist", "Home + road account"]}
+              action={<CheckoutButton planCode="complete" label="Protect home + road" />}
             />
           </div>
 
@@ -67,9 +67,9 @@ export default async function CustomerMembershipPage() {
               </p>
               <div className="mt-5 flex flex-col gap-3 sm:flex-row">
                 <Button href={isActive ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"}>
-                  {isActive ? "Book My Safety Check" : "Unlock My Safety Check"}
+                  {isActive ? "Book my Safety Check" : "Unlock my Safety Check"}
                 </Button>
-                <Button href="/dashboard/customer/safety-checks" variant="ghost">View My Report</Button>
+                <Button href="/dashboard/customer/safety-checks" variant="ghost">View my report</Button>
               </div>
             </Card>
             <Card variant="emergency">

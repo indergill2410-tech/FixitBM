@@ -31,7 +31,7 @@ export default async function BookSafetyCheckPage() {
             {!active ? (
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 <Button href="/fixit-plus">Join Fixit Plus</Button>
-                <Button href="/dashboard/customer/membership" variant="ghost">View Membership</Button>
+                <Button href="/dashboard/customer/membership" variant="ghost">View membership</Button>
               </div>
             ) : (
               <div className="mt-6 grid gap-4">
@@ -42,7 +42,7 @@ export default async function BookSafetyCheckPage() {
                 {summary.properties.length ? (
                   <SafetyCheckBookingForm properties={summary.properties} />
                 ) : (
-                  <Button href="/dashboard/customer/properties">Add Saved Property</Button>
+                  <Button href="/dashboard/customer/properties">Add saved property</Button>
                 )}
               </div>
             )}

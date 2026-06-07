@@ -33,7 +33,7 @@ export default async function CustomerRegisterPage({
           </h1>
           <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
             {isAgency
-              ? "Use this account to prepare PropertySafe sharing rules, support requests, and managed property records."
+              ? "Use this account to prepare PropertySafe sharing setup, support requests, and managed property records."
               : "Save properties, track emergency jobs, manage vehicles, and activate Fixit Plus when ready."}
           </p>
           <CustomerRegisterForm intent={isAgency ? "agency" : undefined} />

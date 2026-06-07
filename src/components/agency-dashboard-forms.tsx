@@ -33,7 +33,7 @@ export function AgencyProfileForm({ agency }: { agency: AgencyProfile | null }) 
       <Field name="abn" label="ABN optional" defaultValue={agency?.abn ?? ""} required={false} />
       <Button disabled={pending}>
         {pending ? <Loader2 className="animate-spin" size={17} /> : <Building2 size={17} />}
-        {agency ? "Update agency workspace" : "Create agency workspace"}
+        {agency ? "Update agency setup" : "Create agency setup"}
       </Button>
     </form>
   );
@@ -84,7 +84,7 @@ export function AgencyManagedPropertyForm({ disabled }: { disabled: boolean }) {
       <Textarea
         name="notes"
         label="Helpful context optional"
-        placeholder="Access notes, regular issues, owner preference, tenant handover context."
+        placeholder="Access notes, regular issues, owner preferences, or tenant handover context."
         disabled={disabled}
       />
       <Button disabled={disabled || pending}>
@@ -176,12 +176,12 @@ export function AgencyRulesForm({ rules, disabled }: { rules: AgencyMaintenanceR
         name="preferredTradesNotes"
         label="Preferred Fixer notes"
         defaultValue={rules?.preferred_trades_notes ?? ""}
-        placeholder="Preferred trades, excluded suppliers, access requirements, or quote thresholds."
+        placeholder="Preferred Fixers, excluded suppliers, access requirements, or quote thresholds."
         disabled={disabled}
       />
       <Button disabled={disabled || pending}>
         {pending ? <Loader2 className="animate-spin" size={17} /> : <Settings2 size={17} />}
-        Save rules
+        Save preferences
       </Button>
     </form>
   );

@@ -16,8 +16,8 @@ export default async function TradieProfilePage() {
           <div className="grid gap-5">
             <div className="grid gap-4 md:grid-cols-4">
               <StatCard label="Profile health" value={`${profile.profile_health ?? 0}%`} detail="Matching readiness" />
-              <StatCard label="Verification" value={profile.verification_status ?? "pending"} detail="Admin-reviewed trust" />
-              <StatCard label="Availability" value={profile.availability_status ?? "available"} detail="Lead visibility" />
+              <StatCard label="Verification" value={profile.verification_status ?? "pending"} detail="Trust review status" />
+              <StatCard label="Availability" value={profile.availability_status ?? "available"} detail="Lead matching status" />
               <StatCard label="Response" value={`${profile.response_rate ?? 0}%`} detail="Customer confidence" />
             </div>
             <div className="grid gap-5 lg:grid-cols-[.56fr_.44fr]">

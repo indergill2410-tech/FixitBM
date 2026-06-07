@@ -277,17 +277,17 @@ function buildAgencyDashboardSummary({
     {
       label: "Managed properties",
       status: setup.properties ? "done" : setup.profile ? "next" : "pending",
-      detail: setup.properties ? `${properties.length} properties in the workspace.` : "Add the first rental or managed home."
+      detail: setup.properties ? `${properties.length} properties in the portfolio.` : "Add the first rental or managed home."
     },
     {
-      label: "Sharing rules",
+      label: "Sharing setup",
       status: setup.owners ? "done" : setup.properties ? "next" : "pending",
       detail: setup.owners ? `${ownerVisible} sharing records prepared.` : "Prepare agency-approved sharing only after the property record is clear."
     },
     {
-      label: "Maintenance rules",
+      label: "Maintenance preferences",
       status: setup.rules ? "done" : setup.owners ? "next" : "pending",
-      detail: setup.rules ? "Update rules are saved." : "Set how urgent updates and follow-up notes should move."
+      detail: setup.rules ? "Update preferences are saved." : "Set how urgent updates and follow-up notes should move."
     }
   ] satisfies AgencyDashboardSummary["setupSteps"];
 
@@ -351,8 +351,8 @@ function getAgencyNextAction({
 }) {
   if (!agency) {
     return {
-      label: "Create the agency workspace",
-      detail: "Add the agency details first so properties, rules, and sharing settings have a clear home.",
+      label: "Create the agency setup",
+      detail: "Add the agency details first so properties, maintenance preferences, and sharing settings have a clear home.",
       href: "#agency-profile",
       mode: "Setup needed"
     };
@@ -399,25 +399,25 @@ function getAgencyNextAction({
       label: "Prepare agency-approved sharing",
       detail: "Choose one property and share the narrowest useful record first.",
       href: "#owner-access",
-      mode: "Access setup"
+      mode: "Sharing setup"
     };
   }
 
   if (pendingInvites > 0) {
     return {
-      label: "Follow up pending access",
+      label: "Follow up pending sharing",
       detail: `${pendingInvites} owner ${pendingInvites === 1 ? "invite is" : "invites are"} waiting to become active.`,
       href: "#owner-access",
-      mode: "Access follow-up"
+      mode: "Sharing follow-up"
     };
   }
 
   if (!setup.rules) {
     return {
-      label: "Set maintenance rules",
-      detail: "Save the agency rules for urgent contact, after-hours notes, and property update preferences.",
+      label: "Set maintenance preferences",
+      detail: "Save the agency preferences for urgent contact, after-hours notes, and property update timing.",
       href: "#rules",
-      mode: "Rules setup"
+      mode: "Preference setup"
     };
   }
 

@@ -27,7 +27,7 @@ export default async function AdminJobsPage({ searchParams }: { searchParams: Pr
           <FilterGroup label="Assignment" param="assignment" value={filters.assignment ?? "all"} options={assignments} params={params} />
         </div>
         <Card variant="dark">
-          <Badge tone="red">Dispatch console</Badge>
+          <Badge tone="red">Dispatch queue</Badge>
           <h2 className="mt-4 text-2xl font-black">{jobs.length} requests in this view</h2>
           <p className="mt-2 text-sm leading-6 text-white/65">
             Filter live requests by lane, operational status, and whether a Fixer has been assigned.

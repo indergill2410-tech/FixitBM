@@ -18,7 +18,7 @@ import {
 import { Badge } from "@/components/ui";
 
 const adminNav: { label: string; href: string; icon: LucideIcon; detail: string }[] = [
-  { label: "Command", href: "/admin", icon: Gauge, detail: "Live ops" },
+  { label: "Operations", href: "/admin", icon: Gauge, detail: "Live queue" },
   { label: "Requests", href: "/admin/jobs", icon: ClipboardList, detail: "Queue" },
   { label: "Safety Checks", href: "/admin/safety-checks", icon: ShieldCheck, detail: "Member readiness" },
   { label: "PropertySafe", href: "/admin/propertysafe", icon: Building2, detail: "Shared access" },
@@ -41,14 +41,14 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               <Wrench size={22} />
             </span>
             <div>
-              <p className="text-lg font-black">Fixit247 Ops</p>
-              <p className="text-xs font-semibold text-white/55">Admin command centre</p>
+              <p className="text-lg font-black">Fixit247 Operations</p>
+              <p className="text-xs font-semibold text-white/55">Admin operations centre</p>
             </div>
           </Link>
 
           <div className="mt-5 rounded-2xl border border-amber-300/25 bg-amber-300/10 p-4">
             <Badge>Protected</Badge>
-            <p className="mt-3 text-sm font-bold text-white">Super admin workspace</p>
+            <p className="mt-3 text-sm font-bold text-white">Super admin area</p>
             <p className="mt-1 text-xs leading-5 text-white/60">Requests, Fixers, Safety Checks, billing readiness, and customer support.</p>
           </div>
 

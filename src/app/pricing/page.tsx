@@ -29,7 +29,7 @@ const customerPlans = [
     name: "Fixit Plus Complete",
     price: "$49",
     note: "Peace of mind at home and on the road.",
-    features: ["Everything in Home", "Roadside coordination", "Saved vehicle profile", "Home + road dashboard"]
+    features: ["Everything in Home", "Roadside coordination", "Saved vehicle profile", "Home + road account"]
   }
 ];
 
@@ -56,7 +56,7 @@ export default function PricingPage() {
           <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
             Post home emergencies, roadside help, standard trade jobs, and larger project quote requests free.
           </p>
-          <Button href="/post-job" variant="ghost" className="mt-5 w-full">Post a Request Free</Button>
+          <Button href="/post-job" variant="ghost" className="mt-5 w-full">Post a request free</Button>
         </Card>
         {customerPlans.map((plan) => (
           <Card key={plan.code} variant={plan.code === "complete" ? "membership" : "default"}>

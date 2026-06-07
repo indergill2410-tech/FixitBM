@@ -19,7 +19,7 @@ export default async function TradieSubscriptionPage() {
           </h1>
           <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
             Free Starter can still claim leads using 111 bonus credits renewed every month for the first 6 months. Paid
-            plans add priority access, visibility, alerts, and higher growth limits.
+            plans add priority access, stronger matching, alerts, and higher growth limits.
           </p>
         </Card>
         <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-4">

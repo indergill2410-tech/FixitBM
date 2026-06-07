@@ -27,7 +27,7 @@ export default function TermsPage() {
             <h2 className="text-xl font-black text-[var(--text)]">Fixer access</h2>
             <p className="mt-2">
               Fixers keep 100% of the work value agreed with the customer. Fixit247 may charge for subscriptions, lead
-              credits, verification, visibility, priority placement, and business tools. Launch bonus credits can be used
+              credits, verification, profile placement, priority access, and business tools. Launch bonus credits can be used
               to claim eligible leads and may expire or be limited by anti-abuse rules.
             </p>
           </section>

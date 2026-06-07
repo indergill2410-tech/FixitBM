@@ -44,10 +44,10 @@ export function ProtectionHeroCard({ summary }: { summary: HomeProtectionSummary
       </p>
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
         <Button href={isActive ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"}>
-          {isActive ? (isComplete ? "Book My Readiness Check" : "Book My Safety Check") : "Protect My Home"}
+          {isActive ? (isComplete ? "Book my readiness check" : "Book my Safety Check") : "Protect my home"}
         </Button>
         <Button href={isComplete ? "/dashboard/customer/membership" : "/fixit-plus"} variant="ghost">
-          {isComplete ? "Manage Protection" : isActive ? "Upgrade to Complete" : "See What’s Included"}
+          {isComplete ? "Manage protection" : isActive ? "Upgrade to Complete" : "See what is included"}
         </Button>
       </div>
     </Card>
@@ -107,7 +107,7 @@ export function HomeProtectionScoreCard({ summary }: { summary: HomeProtectionSu
             <Button href={summary.membership?.status === "active" ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"}>
               {summary.membership?.status === "active" ? "Book Safety Check" : "Join Fixit Plus"}
             </Button>
-            <Button href="/dashboard/customer/properties" variant="ghost">Complete Home Profile</Button>
+            <Button href="/dashboard/customer/properties" variant="ghost">Complete home profile</Button>
           </div>
         </div>
       </div>
@@ -130,7 +130,7 @@ export function SafetyCheckStatusCard({ summary }: { summary: HomeProtectionSumm
       ? activeCheck.preferred_window
         ? `Requested window: ${activeCheck.preferred_window}.`
         : "Fixit247 support can now assign a Fixer."
-      : "A visual readiness check helps spot visible risks, save key home details, and prepare before the next emergency."
+      : "A visual readiness check helps spot visible concerns, save key home details, and prepare before the next emergency."
     : summary.membership
       ? activationCopy
       : "Fixit Plus members get a Home Safety & Readiness Check on signup, then every 6 months while active.";
@@ -164,7 +164,7 @@ export function RecommendedFixesCard({ summary }: { summary: HomeProtectionSumma
           </div>
         ))}
       </div>
-      <Button href="/post-job" variant="ghost" className="mt-5 w-full">Get Quotes From Fixers</Button>
+      <Button href="/post-job" variant="ghost" className="mt-5 w-full">Get quotes from Fixers</Button>
     </Card>
   );
 }
@@ -194,7 +194,7 @@ export function HomeProfileReadinessCard({ summary }: { summary: HomeProtectionS
           </div>
         ))}
       </div>
-      <Button href="/dashboard/customer/properties" className="mt-5 w-full">Complete Home Profile</Button>
+      <Button href="/dashboard/customer/properties" className="mt-5 w-full">Complete home profile</Button>
     </Card>
   );
 }
@@ -212,7 +212,7 @@ export function VehicleProtectionCard({ summary }: { summary: HomeProtectionSumm
           : "Fixit Plus Complete adds roadside peace of mind for flat tyres, dead batteries, lockouts, fuel emergencies, towing coordination, and breakdown stress."}
       </p>
       <Button href={isComplete ? "/dashboard/customer/vehicles" : "/fixit-plus"} variant="ghost" className="mt-5 w-full">
-        {isComplete ? "Add Vehicle Details" : "Upgrade to Complete"}
+        {isComplete ? "Add vehicle details" : "Upgrade to Complete"}
       </Button>
     </Card>
   );

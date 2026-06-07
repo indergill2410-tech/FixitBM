@@ -288,7 +288,7 @@ export async function notifyNewsletterSignup(input: { email: string; source?: st
           lines: [
             "Short product updates.",
             "Useful property readiness reminders.",
-            "No noise, no public demo offers, and no internal launch notes."
+            "Only practical updates when there is something worth knowing."
           ]
         }
       ],
@@ -352,7 +352,7 @@ export async function notifyCustomerRegistered(input: { userId: string; email: s
           lines: ["Save your home or investment property details.", "Start a request when something needs attention.", "Review Fixit Plus if you want Safety Checks included."]
         }
       ],
-      cta: { label: "Open my dashboard", href: `${appUrl}/dashboard/customer` },
+      cta: { label: "Open my account", href: `${appUrl}/dashboard/customer` },
       idempotencyKey: `customer-welcome-${input.userId}`
     })
   ]);
@@ -368,24 +368,24 @@ export async function notifyAgencyRegistered(input: {
   await sendBestEffort([
     sendTransactionalEmail({
       to: input.email,
-      subject: "Your PropertySafe agency workspace is ready",
+      subject: "Your PropertySafe agency account is ready",
       category: "agency",
       eyebrow: "Agency account ready",
       title: `Welcome${input.firstName ? `, ${input.firstName}` : ""}.`,
       intro:
-        "Your PropertySafe agency account is ready. Start with the agency profile, add the first managed property, then prepare agency-approved sharing only when the record is ready.",
+        "Your PropertySafe agency account is ready. Start with the agency profile, add the first managed property, then prepare careful sharing only when the record is ready.",
       sections: [
         {
           label: input.agencyName,
           lines: [
             `Portfolio size: ${input.portfolioSize}`,
-            "Agency users manage the workflow.",
-            "Owners and landlords see only the records you explicitly share.",
+            "Agency users manage the process.",
+            "Owners and landlords see only the records your team chooses to share.",
             "Maintenance requests still move through Fixit247 so the useful history stays connected."
           ]
         }
       ],
-      cta: { label: "Open agency dashboard", href: `${appUrl}/dashboard/agency` },
+      cta: { label: "Open agency account", href: `${appUrl}/dashboard/agency` },
       idempotencyKey: `agency-welcome-${input.userId}`
     }),
     sendAdminAlert({
@@ -426,7 +426,7 @@ export async function notifyFixerRegistered(input: {
           ]
         }
       ],
-      cta: { label: "Open Fixer dashboard", href: `${appUrl}/dashboard/tradie` },
+      cta: { label: "Open Fixer account", href: `${appUrl}/dashboard/tradie` },
       idempotencyKey: `fixer-welcome-${input.userId}`
     }),
     sendAdminAlert({
@@ -493,7 +493,7 @@ export async function notifySafetyCheckReportPublished(input: {
           eyebrow: "Report ready",
           title: "Your Safety Check report is ready.",
           intro:
-            "Your completed report is now available in your dashboard. PropertySafe has also been updated from the real check details.",
+            "Your completed report is now available in your account. PropertySafe has also been updated from the real check details.",
           sections: [
             {
               label: "Summary",
@@ -522,7 +522,7 @@ export async function notifyLeadClaimed(input: {
           subject: `Lead claimed: ${input.reference}`,
           eyebrow: "Lead claimed",
           title: "The request is now in your claimed list.",
-          intro: "You can review the customer details and continue from your Fixer dashboard.",
+          intro: "You can review the customer details and continue from your Fixer account.",
           sections: [{ label: "Request", lines: [input.jobTitle, `Reference: ${input.reference}`] }],
           cta: { label: "Open leads", href: `${appUrl}/dashboard/tradie/leads` },
           idempotencyKey: `lead-claimed-fixer-${input.jobId}-${input.fixerEmail}`
@@ -534,9 +534,9 @@ export async function notifyLeadClaimed(input: {
           subject: `A Fixer has claimed your request ${input.reference}`,
           eyebrow: "Fixer update",
           title: "A Fixer is reviewing your request.",
-          intro: "Your request has moved forward. Keep an eye on your dashboard for the next update.",
+          intro: "Your request has moved forward. Keep an eye on your account for the next update.",
           sections: [{ label: "Request", lines: [input.jobTitle, `Fixer: ${input.fixerName}`] }],
-          cta: { label: "Open dashboard", href: `${appUrl}/dashboard/customer/jobs/${input.jobId}` },
+          cta: { label: "Open request", href: `${appUrl}/dashboard/customer/jobs/${input.jobId}` },
           idempotencyKey: `lead-claimed-customer-${input.jobId}-${input.customerEmail}`
         })
       : null,
@@ -567,7 +567,7 @@ export async function notifyJobStatusChanged(input: {
           subject: `Fixit247 request update: ${statusLabel}`,
           eyebrow: "Request update",
           title: statusLabel,
-          intro: "Your request status has been updated. The latest detail is available in your dashboard.",
+          intro: "Your request status has been updated. The latest detail is available in your account.",
           sections: [{ label: "Request", lines: [input.title, `Reference: ${input.reference}`] }],
           cta: { label: "View request", href: `${appUrl}/dashboard/customer/jobs/${input.jobId}` },
           idempotencyKey: `job-status-customer-${input.jobId}-${input.status}`
@@ -635,7 +635,7 @@ export async function notifyAgencyOwnerInvited(input: {
       eyebrow: "PropertySafe owner access",
       title: input.ownerName ? `${input.ownerName}, your property record is being prepared.` : "Your property record is being prepared.",
       intro:
-        "PropertySafe gives owners and landlords a clearer view of useful property history while the agency keeps maintenance work controlled and organised.",
+        "PropertySafe gives owners and landlords a clearer view of useful property history while the agency keeps maintenance work organised and deliberate.",
       sections: [
         {
           label: input.propertyLabel,
@@ -675,7 +675,7 @@ export async function notifyPropertySafeWalkthroughRequested(input: {
       eyebrow: "PropertySafe onboarding",
       title: "We have your PropertySafe walkthrough request.",
       intro:
-        "The walkthrough is for understanding your property portfolio, sharing rules, maintenance flow, and how PropertySafe can sit beside your current agency process.",
+        "The walkthrough is for understanding your property portfolio, sharing needs, maintenance flow, and how PropertySafe can sit beside your current agency process.",
       sections: [
         {
           label: input.agencyName,
@@ -690,8 +690,8 @@ export async function notifyPropertySafeWalkthroughRequested(input: {
           label: "What happens next",
           lines: [
             "Fixit247 reviews the details and prepares the right onboarding conversation.",
-            "You can create an agency account now if you want the workspace ready before the call.",
-            "Urgent maintenance requests can still be started separately through Get Help Now."
+            "You can create an agency account now if you want the setup ready before the call.",
+            "Urgent maintenance requests can still be started separately through Get help now."
           ]
         }
       ],
@@ -815,7 +815,7 @@ export async function notifyMembershipStatusChanged(input: {
           intro:
             input.status === "active"
               ? "Your Fixit Plus membership is active. Safety Check access and member benefits are now available according to your plan."
-              : "Your Fixit Plus membership status has changed. You can review the latest detail in your dashboard.",
+            : "Your Fixit Plus membership status has changed. You can review the latest detail in your account.",
           sections: [{ label: "Plan", lines: [input.plan ? labelize(input.plan) : "Fixit Plus"] }],
           cta: { label: "Open membership", href: `${appUrl}/dashboard/customer/membership` },
           idempotencyKey: `membership-${input.membershipId}-${input.status}`
@@ -837,7 +837,7 @@ export async function notifySafetyCheckAssigned(input: {
           subject: "A Fixer has been assigned to your Safety Check",
           eyebrow: "Safety Check",
           title: "Your Safety Check has an assigned Fixer.",
-          intro: "Fixit247 has moved your booking forward. You can review the booking from your dashboard.",
+          intro: "Fixit247 has moved your booking forward. You can review the booking from your account.",
           sections: [{ label: "Assigned Fixer", lines: [input.fixerName || "Fixit247 Fixer"] }],
           cta: { label: "View Safety Checks", href: `${appUrl}/dashboard/customer/safety-checks` },
           idempotencyKey: `safety-check-assigned-customer-${input.safetyCheckId}`

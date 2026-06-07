@@ -24,7 +24,7 @@ export default async function TradieSafetyChecksPage() {
           <Badge tone="green">Member readiness</Badge>
           <h1 className="mt-4 text-2xl font-black">Complete the check, then publish the report.</h1>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-white/70">
-            Use the checklist to record visible readiness issues, raise the home score, and recommend practical follow-up work
+            Use the checklist to record visible readiness concerns, raise the home score, and recommend practical follow-up work
             that the customer can turn into a request.
           </p>
         </Card>
@@ -53,7 +53,7 @@ export default async function TradieSafetyChecksPage() {
                       {check.customer_notes ? <p className="rounded-xl bg-white/5 p-3">{check.customer_notes}</p> : null}
                     </div>
                     <Button href="/dashboard/tradie" variant="light" className="mt-5">
-                      Back to command centre
+                      Back to work hub
                     </Button>
                   </div>
                   <SafetyCheckReportForm safetyCheckId={check.id} />

@@ -60,7 +60,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <p className="mt-2 leading-7 text-[var(--text2)]">
             Start a free request for emergency help, a standard trade job, or a larger project quote.
           </p>
-          <Button href="/post-job" className="mt-5">Start a Request</Button>
+          <Button href="/post-job" className="mt-5">Start a request</Button>
         </Card>
         <Card variant="membership" className="mt-5">
           <h2 className="text-xl font-black">Get practical Fixit247 guides.</h2>

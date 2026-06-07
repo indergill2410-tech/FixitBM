@@ -13,14 +13,14 @@ import { isSupabasePublicConfigured, isSupabaseServerConfigured } from "@/lib/su
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export const safetyCheckDisclaimer =
-  "The Fixit247 Safety Check is a visual home safety and readiness check designed to help identify visible risks, maintenance needs, and emergency preparation gaps. It is not a building inspection, electrical certificate, gas compliance certificate, pest inspection, insurance assessment, or mechanical inspection. Specialist inspections, compliance certificates, repairs, parts, labour, towing, trade work, renovations, and specialist services are quoted separately unless specifically included.";
+  "The Fixit247 Safety Check is a visual home safety and readiness check designed to help identify visible concerns, maintenance needs, and emergency preparation gaps. It is not a building inspection, electrical certificate, gas compliance certificate, pest inspection, insurance assessment, or mechanical inspection. Specialist inspections, compliance certificates, repairs, parts, labour, towing, trade work, renovations, and specialist services are quoted separately unless specifically included.";
 
 export const activationCopy =
   "To keep Fixit Plus fair for every member, benefits activate after 72 hours. Existing emergencies can still be started free and handled as pay-as-you-go requests.";
 
 export const safetyCheckChecklist = [
   "Water shutoff and visible leak readiness",
-  "Electrical visible risk awareness",
+  "Electrical visible concern awareness",
   "Fire and smoke alarm reminders",
   "Lockout and access readiness",
   "Roof, gutter, and storm readiness",
@@ -39,7 +39,7 @@ export const recommendedFixExamples = [
   "Deck maintenance",
   "Painting maintenance",
   "Pest concern",
-  "Electrical visible risk"
+  "Electrical visible concern"
 ];
 
 export type CustomerMembershipSummary = {
@@ -254,11 +254,11 @@ export async function getHomeProtectionSummary(user: AppUser): Promise<HomeProte
           : "Included with Fixit Plus";
 
   const safetyCheckCta = safetyCheckState === "booked" || safetyCheckState === "assigned"
-    ? "View Booking"
+    ? "View booking"
     : safetyCheckState === "available_to_book" || safetyCheckState === "completed"
-      ? "Book My Safety Check"
+      ? "Book my Safety Check"
       : safetyCheckState === "pending_activation"
-        ? "View Membership"
+        ? "View membership"
         : "Join Fixit Plus";
 
   return {

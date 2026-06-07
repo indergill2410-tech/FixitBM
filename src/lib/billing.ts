@@ -36,7 +36,7 @@ export const billingPlans: BillingPlan[] = [
     priceCents: 9900,
     interval: "month",
     stripePriceEnv: "STRIPE_PRICE_TRADIE_LOCAL_PRO",
-    description: "Local job alerts, visibility, and standard lead access."
+    description: "Local job alerts, stronger matching, and standard lead access."
   },
   {
     code: "emergency_pro",

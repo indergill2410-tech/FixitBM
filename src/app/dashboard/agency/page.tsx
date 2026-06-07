@@ -37,13 +37,13 @@ export default async function AgencyDashboardPage() {
   const user = await requireRole(["agency", "admin", "super_admin"]);
   const summary = await getAgencyDashboard(user);
   const canManage = summary.memberRole !== "viewer";
-  const displayName = summary.agency?.name ?? "PropertySafe agency workspace";
+  const displayName = summary.agency?.name ?? "PropertySafe agency setup";
   const commandQueue = buildCommandQueue(summary);
 
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title={summary.agency ? displayName : "PropertySafe agency workspace"} role="Agency command" />
+        <DashboardHeader title={summary.agency ? displayName : "PropertySafe agency setup"} role="Agency portfolio" />
 
         <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
           <Card variant="dark" className="overflow-hidden p-6 md:p-8">
@@ -51,15 +51,15 @@ export default async function AgencyDashboardPage() {
             <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_260px] lg:items-end">
               <div>
                 <h2 className="max-w-4xl text-4xl font-black leading-tight tracking-tight md:text-5xl">
-                  Less chasing. Cleaner records. One controlled workspace for every managed property.
+                  Fewer follow-ups. Cleaner records. One organised view for every managed property.
                 </h2>
                 <p className="mt-5 max-w-2xl leading-7 text-white/72">
                   PropertySafe keeps requests moving through Fixit247 while the useful property record stays together:
-                  portfolio maintenance notes, compliance-ready Safety Check records, follow-up work, and permission-based
-                  access.
+                  portfolio maintenance notes, compliance-ready Safety Check records, follow-up work, and agency-approved
+                  sharing.
                 </p>
                 <p className="mt-3 max-w-2xl text-sm font-bold leading-6 text-[var(--amber)]">
-                  Built for agency control first, then clear updates when the record is ready to share.
+                  Built for agency control first, then clear updates when a record is ready to share.
                 </p>
                 <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                   <Button href={summary.stats.nextActionHref}>
@@ -84,7 +84,7 @@ export default async function AgencyDashboardPage() {
                   />
                 </div>
                 <p className="mt-4 text-sm leading-6 text-white/62">
-                  The score stays honest: profile, property records, sharing rules, maintenance rules, and current attention all
+                  The score stays honest: agency details, property records, sharing setup, maintenance preferences, and current attention all
                   matter.
                 </p>
               </div>
@@ -155,8 +155,8 @@ export default async function AgencyDashboardPage() {
               <div>
                 <h2 className="text-2xl font-black tracking-tight">Guided setup path</h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text2)]">
-                  One ordered path keeps onboarding calm: profile, first property, sharing rules, then maintenance
-                  rules.
+                  One ordered path keeps onboarding calm: agency details, first property, sharing setup, then maintenance
+                  preferences.
                 </p>
               </div>
               <Badge tone={summary.stats.setupProgress === 100 ? "green" : "amber"}>{summary.stats.setupProgress}% complete</Badge>
@@ -166,9 +166,9 @@ export default async function AgencyDashboardPage() {
 
           <Card>
             <MapPinned className="text-[var(--amber2)]" />
-            <h2 className="mt-4 text-2xl font-black tracking-tight">Command queue</h2>
+            <h2 className="mt-4 text-2xl font-black tracking-tight">Next actions</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-              A short action list for the next agency call. No scattered tasks, no generic dashboard noise.
+              A short action list for the next agency call. Clear priorities, no scattered tasks.
             </p>
             <div className="mt-5 grid gap-3">
               {commandQueue.map((item) => (
@@ -195,9 +195,9 @@ export default async function AgencyDashboardPage() {
             <Building2 className="text-[var(--amber2)]" />
             <div className="mt-4 flex items-start justify-between gap-3">
               <div>
-                <h2 className="text-2xl font-black tracking-tight">{summary.agency ? "Agency profile" : "Create agency workspace"}</h2>
+                <h2 className="text-2xl font-black tracking-tight">{summary.agency ? "Agency profile" : "Create agency setup"}</h2>
                 <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                  This is the anchor for properties, sharing settings, and maintenance rules.
+                  This anchors the property list, update preferences, and maintenance preferences.
                 </p>
               </div>
               {summary.agency ? (
@@ -213,10 +213,10 @@ export default async function AgencyDashboardPage() {
             <Home className="text-[var(--amber2)]" />
             <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
               <div>
-                <h2 className="text-2xl font-black tracking-tight">Managed property workspace</h2>
+                <h2 className="text-2xl font-black tracking-tight">Managed properties</h2>
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text2)]">
                   Start with one recognisable property. Each record can carry request history, compliance-ready check notes,
-                  access context, and next recommended fixes.
+                  access notes, and next recommended fixes.
                 </p>
               </div>
               <Badge tone={summary.properties.length ? "green" : "gray"}>{summary.properties.length || "No"} properties</Badge>
@@ -233,7 +233,7 @@ export default async function AgencyDashboardPage() {
             <MailCheck className="text-[var(--amber2)]" />
             <h2 className="mt-4 text-2xl font-black tracking-tight">Agency-approved sharing</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-              Keep this inside the agency workflow. Prepare narrow sharing only after the property record is clear enough
+              Keep this inside the agency process. Prepare narrow sharing only after the property record is clear enough
               to be useful.
             </p>
             <div className="mt-5">
@@ -245,7 +245,7 @@ export default async function AgencyDashboardPage() {
             <Users className="text-[var(--green)]" />
             <h2 className="mt-4 text-2xl font-black tracking-tight">Sharing map</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-              Permission is the product logic: the agency controls the workflow, owners see only the right record, and
+              Sharing is deliberate: the agency manages the process, owners see only the right record, and
               Fixers receive better repair context.
             </p>
             <AccessModel />
@@ -257,11 +257,11 @@ export default async function AgencyDashboardPage() {
           <Card variant="dark">
             <KeyRound className="text-[var(--amber)]" />
             <Badge className="mt-4">Agency operating logic</Badge>
-            <h2 className="mt-4 text-3xl font-black tracking-tight">Controlled first. Shareable later. Useful always.</h2>
+            <h2 className="mt-4 text-3xl font-black tracking-tight">Agency-led first. Shareable later. Useful always.</h2>
             <p className="mt-4 leading-7 text-white/72">
               PropertySafe should make the agency look organised, not exposed. It helps keep rental maintenance history,
               Safety Check notes, compliance-ready evidence, and follow-up work in one place while the agency stays in
-              charge of the workflow.
+              charge of the process.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               {["Triage calmly", "Record clearly", "Share deliberately"].map((item) => (
@@ -274,7 +274,7 @@ export default async function AgencyDashboardPage() {
 
           <Card id="rules">
             <Wrench className="text-[var(--amber2)]" />
-            <h2 className="mt-4 text-2xl font-black tracking-tight">Maintenance rules</h2>
+            <h2 className="mt-4 text-2xl font-black tracking-tight">Maintenance preferences</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
               Set the agency defaults before volume grows: urgent contact, after-hours notes, preferred Fixers, and
               update preferences for rental safety and maintenance records.
@@ -291,7 +291,7 @@ export default async function AgencyDashboardPage() {
             <h2 className="mt-4 text-2xl font-black tracking-tight">Portfolio signals</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
               A quiet health view for the portfolio. It shows where the next call should focus without turning the page
-              into a noisy analytics wall.
+              into a heavy analytics screen.
             </p>
             <PortfolioSignals summary={summary} />
           </Card>
@@ -376,8 +376,8 @@ function PortfolioSignals({ summary }: { summary: AgencyDashboardSummary }) {
 
 function AccessModel() {
   const items = [
-    ["Agency", "Controls workflow, rules, property records, and access timing."],
-    ["Owner", "Receives the useful property record only when sharing is prepared."],
+    ["Agency", "Manages the process, preferences, property records, and sharing timing."],
+    ["Owner", "Receives the useful property record when sharing is prepared."],
     ["Fixer", "Gets location, context, priority, and notes before quoting or attending."]
   ];
 
@@ -399,7 +399,7 @@ function PropertyAttentionList({ properties }: { properties: AgencyManagedProper
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-5">
         <p className="font-black">No properties yet.</p>
         <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-          Add one real property first. The first record makes the agency demo feel concrete immediately.
+          Add one real property first. The first record makes the rollout feel concrete immediately.
         </p>
       </div>
     );
@@ -485,7 +485,7 @@ function buildCommandQueue(summary: AgencyDashboardSummary) {
     {
       title: "Keep the first rollout small",
       detail: summary.stats.propertyCount
-        ? "Use the first records to prove the maintenance path before inviting every owner."
+        ? "Use the first records to prove the maintenance path before expanding access."
         : "One recognisable property is enough for tomorrow's agency walkthrough.",
       href: "#properties",
       state: "Calm path",
@@ -523,7 +523,7 @@ function signalTone(tone: AgencyDashboardSummary["graph"][number]["tone"]) {
 
 function signalCopy(label: string) {
   if (label === "Clear properties") return "active and ready to manage";
-  if (label === "Sharing ready") return "sharing rules are prepared";
+  if (label === "Sharing ready") return "sharing setup is prepared";
   if (label === "Records connected") return "linked to saved records or PropertySafe";
   if (label === "Needs attention") return "triage before broader rollout";
   return "portfolio setup signal";
@@ -538,7 +538,7 @@ function stepTone(status: AgencyDashboardSummary["setupSteps"][number]["status"]
 function stepHref(label: string) {
   if (label === "Agency profile") return "#agency-profile";
   if (label === "Managed properties") return "#properties";
-  if (label === "Sharing rules") return "#owner-access";
-  if (label === "Maintenance rules") return "#rules";
+  if (label === "Sharing setup") return "#owner-access";
+  if (label === "Maintenance preferences") return "#rules";
   return "#agency-profile";
 }

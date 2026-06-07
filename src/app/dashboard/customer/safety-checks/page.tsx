@@ -15,7 +15,7 @@ export default async function SafetyChecksOverviewPage() {
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title="Your Safety Checks" role="Customer" />
+        <DashboardHeader title="Your Safety Checks" role="Customer account" />
         <p className="-mt-3 mb-6 max-w-2xl text-sm leading-6 text-[var(--text2)]">
           Fixit Plus helps your household prepare before emergencies become stressful.
         </p>
@@ -39,14 +39,14 @@ export default async function SafetyChecksOverviewPage() {
               </p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button href={activeCheck ? `/dashboard/customer/safety-checks/${activeCheck.id}` : active ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"}>
-                  {activeCheck ? "View Booking" : active ? "Book My Safety Check" : "Join Fixit Plus"}
+                  {activeCheck ? "View booking" : active ? "Book my Safety Check" : "Join Fixit Plus"}
                 </Button>
-                <Button href="/dashboard/customer/properties" variant="ghost">Complete Home Profile</Button>
+                <Button href="/dashboard/customer/properties" variant="ghost">Complete home profile</Button>
               </div>
             </Card>
             <Card>
               <FileText className="text-[var(--amber2)]" />
-              <h2 className="mt-4 text-xl font-black">Last Safety Check Report</h2>
+              <h2 className="mt-4 text-xl font-black">Latest Safety Check report</h2>
               <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
                 {completedCheck
                   ? completedCheck.summary ?? "Your completed Safety Check report is ready to review."
@@ -55,7 +55,7 @@ export default async function SafetyChecksOverviewPage() {
                     : "After your first completed Safety Check, this report area shows summary notes, readiness changes, findings, and recommended fixes."}
               </p>
               <Button href={completedCheck ? `/dashboard/customer/safety-checks/${completedCheck.id}` : active ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"} variant="ghost" className="mt-5">
-                {completedCheck ? "View Report" : active ? "Book My First Check" : "Unlock Safety Checks"}
+                {completedCheck ? "View report" : active ? "Book my first check" : "Unlock Safety Checks"}
               </Button>
             </Card>
             <Card>
@@ -71,7 +71,7 @@ export default async function SafetyChecksOverviewPage() {
                   <div key={fix} className="rounded-xl bg-[var(--bg)] p-3 text-sm font-bold text-[var(--text2)]">{fix}</div>
                 ))}
               </div>
-              <Button href="/post-job" className="mt-5">Get Quotes From Fixers</Button>
+              <Button href="/post-job" className="mt-5">Get quotes from Fixers</Button>
             </Card>
           </div>
           <aside className="grid gap-5">

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui";
 const initialState: SafetyCheckReportState = {};
 const checklist = [
   "Water shutoff and visible leak readiness",
-  "Electrical visible risk awareness",
+  "Electrical visible concern awareness",
   "Fire and smoke alarm reminders",
   "Lockout and access readiness",
   "Roof, gutter, and storm readiness",
@@ -49,7 +49,7 @@ export function SafetyCheckReportForm({ safetyCheckId }: { safetyCheckId: string
         <textarea
           name="summary"
           className="min-h-28 rounded-lg border border-white/10 bg-[#201915] p-3 text-white"
-          placeholder="Summarise visible risks, readiness improvements, and practical next steps."
+          placeholder="Summarise visible concerns, readiness improvements, and practical next steps."
           required
         />
       </label>

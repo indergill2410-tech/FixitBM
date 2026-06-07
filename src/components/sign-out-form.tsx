@@ -14,7 +14,7 @@ export function SignOutForm() {
           <div>
             <p className="text-sm font-black text-[var(--red)]">Sign out of this account?</p>
             <p className="mt-1 text-xs font-semibold leading-5 text-[var(--text2)]">
-              Your dashboard session will close and private pages will need sign in again.
+              Your account session will close and private pages will need sign in again.
             </p>
           </div>
         </div>

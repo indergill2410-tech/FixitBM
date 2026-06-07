@@ -53,7 +53,7 @@ const rulesSchema = z.object({
 });
 
 function configError(): AgencyActionState {
-  return { ok: false, message: "Agency workspace access is temporarily unavailable." };
+  return { ok: false, message: "Agency setup access is temporarily unavailable." };
 }
 
 async function getAgencyActionContext() {
@@ -99,7 +99,7 @@ export async function saveAgencyProfileAction(_state: AgencyActionState, formDat
     : await supabase.from("agency_profiles").insert(patch).select("id").single();
 
   if (error || !agency) {
-    return { ok: false, message: error?.message ?? "Agency workspace could not be saved." };
+    return { ok: false, message: error?.message ?? "Agency setup could not be saved." };
   }
 
   await ensurePrincipalMember(supabase, agency.id, user.id);
@@ -117,7 +117,7 @@ export async function saveAgencyProfileAction(_state: AgencyActionState, formDat
   });
 
   revalidateAgencyPaths();
-  return { ok: true, message: existing ? "Agency profile updated." : "Agency workspace created." };
+  return { ok: true, message: existing ? "Agency profile updated." : "Agency setup created." };
 }
 
 export async function addAgencyManagedPropertyAction(
@@ -128,7 +128,7 @@ export async function addAgencyManagedPropertyAction(
   if (!supabase) return configError();
 
   const agency = await getWritableAgency(supabase, user);
-  if (!agency) return { ok: false, message: "Create the agency workspace first." };
+  if (!agency) return { ok: false, message: "Create the agency setup first." };
 
   const ownerEmail = String(formData.get("ownerEmail") ?? "").trim().toLowerCase();
   const parsed = propertySchema.safeParse({
@@ -199,7 +199,7 @@ export async function inviteAgencyOwnerAction(_state: AgencyActionState, formDat
   if (!supabase) return configError();
 
   const agency = await getWritableAgency(supabase, user);
-  if (!agency) return { ok: false, message: "Create the agency workspace first." };
+  if (!agency) return { ok: false, message: "Create the agency setup first." };
 
   const parsed = ownerInviteSchema.safeParse({
     managedPropertyId: formData.get("managedPropertyId"),
@@ -220,7 +220,7 @@ export async function inviteAgencyOwnerAction(_state: AgencyActionState, formDat
     .maybeSingle();
 
   if (!property) {
-    return { ok: false, message: "That property is not in this agency workspace." };
+    return { ok: false, message: "That property is not in this agency setup." };
   }
 
   const { data: existingUser } = await supabase
@@ -309,7 +309,7 @@ export async function saveAgencyRulesAction(_state: AgencyActionState, formData:
   if (!supabase) return configError();
 
   const agency = await getWritableAgency(supabase, user);
-  if (!agency) return { ok: false, message: "Create the agency workspace first." };
+  if (!agency) return { ok: false, message: "Create the agency setup first." };
 
   const parsed = rulesSchema.safeParse({
     ownerUpdatePolicy: formData.get("ownerUpdatePolicy"),
@@ -320,7 +320,7 @@ export async function saveAgencyRulesAction(_state: AgencyActionState, formData:
   });
 
   if (!parsed.success) {
-    return { ok: false, message: "Choose valid maintenance rules." };
+    return { ok: false, message: "Choose valid maintenance preferences." };
   }
 
   const { data: rules, error } = await supabase
@@ -340,7 +340,7 @@ export async function saveAgencyRulesAction(_state: AgencyActionState, formData:
     .single();
 
   if (error || !rules) {
-    return { ok: false, message: error?.message ?? "Maintenance rules could not be saved." };
+    return { ok: false, message: error?.message ?? "Maintenance preferences could not be saved." };
   }
 
   await supabase
@@ -361,7 +361,7 @@ export async function saveAgencyRulesAction(_state: AgencyActionState, formData:
   });
 
   revalidateAgencyPaths();
-  return { ok: true, message: "Maintenance rules saved. The agency workspace is ready." };
+  return { ok: true, message: "Maintenance preferences saved. The agency setup is ready." };
 }
 
 async function getWritableAgency(supabase: SupabaseAdmin, user: AppUser) {

@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     eyebrow: "Email test",
     title: "Fixit247 email is connected.",
     intro:
-      "This confirms the production app can send through the configured Resend account. Newsletter, agency, support, request, and Safety Check emails use the same delivery layer.",
+      "This confirms the production app can send through the Resend account. Newsletter, agency, support, request, and Safety Check emails use the same delivery layer.",
     sections: [
       {
         label: "Runtime check",

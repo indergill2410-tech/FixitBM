@@ -19,10 +19,10 @@ export default function BecomeAFixerPage() {
           <h2 className="mt-4 text-2xl font-black">Keep 100% of the work value.</h2>
           <p className="mt-3 leading-7 text-[var(--text2)]">
             A Fixer is a verified local tradie, roadside helper, or service provider on Fixit247. You pay for lead access,
-            priority, verification, visibility, and business tools, not a percentage of the work.
+            priority, verification, stronger matching, and business tools, not a percentage of the work.
           </p>
           <Button href="/register/tradie" className="mt-5">
-            Apply to Become a Fixer
+            Apply to become a Fixer
           </Button>
         </Card>
       </section>

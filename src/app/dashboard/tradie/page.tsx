@@ -50,19 +50,19 @@ export default async function TradieDashboardPage() {
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title={`${displayName} command`} role="Fixer dashboard" />
+        <DashboardHeader title={`${displayName} work hub`} role="Fixer account" />
 
         <section className="grid gap-5 lg:grid-cols-[1fr_.38fr]">
           <Card variant="dark" className="overflow-hidden p-6">
             <div className="grid gap-8 lg:grid-cols-[1fr_.48fr] lg:items-end">
               <div>
-                <Badge>Live work console</Badge>
+                <Badge>Live work view</Badge>
                 <h2 className="mt-5 max-w-3xl text-4xl font-black leading-tight tracking-tight md:text-5xl">
                   Choose the right lead. Keep control of the work.
                 </h2>
                 <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70 md:text-base">
-                  Your Fixer workspace brings credits, available leads, assigned requests, Safety Check appointments,
-                  and account controls into one place so you can act without hunting through pages.
+                  Your Fixer account brings credits, available leads, assigned requests, Safety Check appointments,
+                  and key controls into one place so you can choose the right work with confidence.
                 </p>
                 <div className="mt-6 grid gap-3 sm:grid-cols-3">
                   <DarkMetric label="Mode" value={emergencyMode} />
@@ -156,7 +156,7 @@ export default async function TradieDashboardPage() {
                 <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
                   {nextSafetyCheck
                     ? `${nextSafetyCheck.customer_name} - ${nextSafetyCheck.property_label}. ${nextSafetyCheck.preferred_window ? `Requested window: ${nextSafetyCheck.preferred_window}.` : nextSafetyCheck.property_location}`
-                    : "Help members and property owners document visible readiness issues and identify practical follow-up work."}
+                    : "Help members and property owners document visible readiness concerns and identify practical follow-up work."}
                 </p>
                 <Button href="/dashboard/tradie/safety-checks" variant="ghost" className="mt-5 w-full">
                   View appointments
@@ -179,7 +179,7 @@ export default async function TradieDashboardPage() {
           <aside className="grid gap-5">
             <Card variant="dark">
               <Zap className="text-[var(--amber)]" />
-              <Badge className="mt-4">Action controls</Badge>
+              <Badge className="mt-4">Quick actions</Badge>
               <div className="mt-5 grid gap-2">
                 <ControlLink href="/dashboard/tradie/profile" icon={SlidersHorizontal} title="Availability and profile" />
                 <ControlLink href="/dashboard/tradie/wallet" icon={Wallet} title="Credits and bonus balance" />

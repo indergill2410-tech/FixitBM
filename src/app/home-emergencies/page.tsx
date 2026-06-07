@@ -15,7 +15,7 @@ export default function HomeEmergenciesPage() {
           get better context from the first message.
         </p>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-          <Button href="/post-job">Get Help Now</Button>
+          <Button href="/post-job">Get help now</Button>
           <Button href="/fixit-plus" variant="ghost">Join Fixit Plus</Button>
         </div>
       </section>

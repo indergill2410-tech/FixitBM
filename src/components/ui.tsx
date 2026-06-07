@@ -88,12 +88,12 @@ export function PublicHeader() {
             Account
           </Button>
           <Button href="/post-job" className="min-h-9 px-4">
-            Get Help Now
+            Get help now
           </Button>
         </div>
         <div className="ml-auto flex items-center gap-2 lg:hidden">
           <Button href="/post-job" className="min-h-10 px-3 text-xs sm:px-4 sm:text-sm">
-            Help Now
+            Help now
           </Button>
         <details className="group">
           <summary className="flex h-10 w-10 list-none items-center justify-center rounded-lg border border-[var(--border)] bg-white">
@@ -117,7 +117,7 @@ export function PublicHeader() {
               Account
             </Link>
             <Button href="/post-job" className="w-full">
-              Get Help Now
+              Get help now
             </Button>
           </div>
         </details>
@@ -130,12 +130,12 @@ export function PublicHeader() {
 export function PublicFooter() {
   const groups = [
     {
-      title: "Get Help",
+      title: "Get help",
       links: [
-        ["Get Help Now", "/post-job"],
-        ["Home Emergencies", "/home-emergencies"],
-        ["Roadside Help", "/roadside-help"],
-        ["All Trade Jobs", "/all-trade-jobs"]
+        ["Get help now", "/post-job"],
+        ["Home emergencies", "/home-emergencies"],
+        ["Roadside help", "/roadside-help"],
+        ["All trade jobs", "/all-trade-jobs"]
       ]
     },
     {
@@ -157,7 +157,7 @@ export function PublicFooter() {
     {
       title: "Company",
       links: [
-        ["How It Works", "/how-it-works"],
+        ["How it works", "/how-it-works"],
         ["Guides", "/blog"],
         ["About", "/about"],
         ["Privacy", "/privacy"],
@@ -181,7 +181,7 @@ export function PublicFooter() {
           </p>
           <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <Button href="/post-job" className="min-h-10 px-4">
-              Get Help Now
+              Get help now
             </Button>
             <Button href="/propertysafe" variant="ghost" className="min-h-10 px-4">
               PropertySafe
@@ -215,7 +215,7 @@ export function MobileBottomActionBar() {
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--border)] bg-white/95 p-3 shadow-[0_-12px_30px_rgba(30,26,23,.08)] backdrop-blur md:hidden">
       <Button href="/post-job" className="w-full">
         <Zap size={17} />
-        Get Emergency Help Now
+        Get emergency help now
       </Button>
     </div>
   );
@@ -331,7 +331,7 @@ export function DashboardHeader({ title, role }: { title: string; role: string }
             </div>
             <Link href="/dashboard" className="mt-2 flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-bold hover:bg-[var(--bg)]">
               <LayoutDashboard size={16} className="text-[var(--amber2)]" />
-              Dashboard home
+              Account home
             </Link>
             <SignOutForm />
           </div>
@@ -354,7 +354,7 @@ export function IconTile({ icon: Icon, label }: { icon: LucideIcon; label: strin
 export function TrustStrip() {
   return (
     <div className="grid gap-3 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow)] md:grid-cols-3">
-      {["Free requests", "Fixit Plus from $29/month", "PropertySafe for owners and agencies"].map((item) => (
+      {["Free to post a request", "Fixit Plus from $29/month", "PropertySafe for managed property records"].map((item) => (
         <div key={item} className="flex items-center gap-2 text-sm font-semibold text-[var(--text2)]">
           <ShieldCheck size={16} className="text-[var(--green)]" />
           {item}

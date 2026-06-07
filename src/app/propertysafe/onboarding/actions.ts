@@ -54,7 +54,7 @@ export async function requestPropertySafeWalkthroughAction(
   });
 
   if (!parsed.success) {
-    return { ok: false, message: "Add your agency details and tick permission so we can prepare the walkthrough." };
+    return { ok: false, message: "Add your agency details and tick the consent box so we can prepare the walkthrough." };
   }
 
   let ticketId: string | null = null;

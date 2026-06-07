@@ -40,7 +40,7 @@ export default async function TradieJobDetailPage({ params }: { params: Promise<
                 <Badge tone="amber">Request actions</Badge>
                 <h2 className="mt-4 text-xl font-black">Move the work forward</h2>
                 <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                  Update only confirmed assigned requests. Customers and ops see these status changes on the shared timeline.
+                  Update only confirmed assigned requests. Customers and Fixit247 support see these status changes on the shared timeline.
                 </p>
                 <TradieJobActions jobId={job.id} status={job.status} />
               </Card>

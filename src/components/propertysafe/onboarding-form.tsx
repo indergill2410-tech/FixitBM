@@ -67,7 +67,7 @@ export function PropertySafeOnboardingForm() {
       </label>
       <label className="flex gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-3 text-sm font-semibold text-[var(--text2)]">
         <input name="consent" type="checkbox" required />
-        Fixit247 can contact me to prepare a PropertySafe walkthrough and agency workspace setup.
+        Fixit247 can contact me to prepare a PropertySafe walkthrough and agency setup.
       </label>
       <Button disabled={pending}>
         {pending ? <Loader2 className="animate-spin" size={17} /> : <Building2 size={17} />}

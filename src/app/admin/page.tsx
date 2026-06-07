@@ -10,9 +10,9 @@ export default async function AdminPage() {
   return (
     <main className="min-h-screen bg-[#120f0c] text-white">
       <section className="container py-8">
-        <DashboardHeader title="Request ops command centre" role="Admin" />
+        <DashboardHeader title="Request operations centre" role="Admin" />
         <p className="-mt-3 mb-6 max-w-3xl text-sm leading-6 text-white/60">
-          Real operating console for emergency requests, standard trade work, project quotes, Fixer supply, memberships,
+          Live operating view for emergency requests, standard trade work, project quotes, Fixer supply, memberships,
           Safety Checks, support, and credit control.
         </p>
 
@@ -30,7 +30,7 @@ export default async function AdminPage() {
 
         <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <AdminPriorityCard href="/admin/jobs" icon={adminIcons.ClipboardList} title="Dispatch queue" copy="Open request detail pages, assign Fixers, and move status forward." tone="red" />
-          <AdminPriorityCard href="/admin/safety-checks" icon={adminIcons.ShieldCheck} title="Safety Check ops" copy="Prepare member checks, reports, recommended fixes, and quote follow-ups." />
+          <AdminPriorityCard href="/admin/safety-checks" icon={adminIcons.ShieldCheck} title="Safety Checks" copy="Prepare member checks, reports, recommended fixes, and quote follow-ups." />
           <AdminPriorityCard href="/admin/tradies/verification" icon={adminIcons.CheckCircle2} title="Fixer verification" copy="Review licences, insurance, identity, and trust documents." tone="green" />
           <AdminPriorityCard href="/admin/support" icon={adminIcons.Headphones} title="Support desk" copy="Track customer escalations, disputes, and operational notes." tone="blue" />
         </div>
@@ -40,7 +40,7 @@ export default async function AdminPage() {
             <Badge tone="red">Live request queue</Badge>
             <h2 className="mt-4 text-2xl font-black">Emergency, trade, and project requests</h2>
             <p className="mt-2 text-sm leading-6 text-white/60">
-              This list is pulled from the live `jobs` request table and filtered to active operational statuses.
+              Active requests are grouped here so the team can assign, update, and resolve them faster.
             </p>
             <div className="mt-5 grid gap-3">
               {jobs.length ? (
@@ -53,7 +53,7 @@ export default async function AdminPage() {
             </div>
           </Card>
           <Card variant="dark">
-            <Badge>Ops tools</Badge>
+            <Badge>Team tools</Badge>
             <div className="mt-5 grid gap-3 text-sm text-white/75">
               {[
                 ["Assign Fixer", "/admin/jobs"],

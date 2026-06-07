@@ -32,20 +32,20 @@ export default function HomePage() {
       />
       <section className="container grid min-h-[calc(100vh-64px)] items-center gap-10 py-10 lg:grid-cols-[1.05fr_.95fr]">
         <div>
-          <Badge>Emergency help + PropertySafe records</Badge>
+          <Badge>Free requests + PropertySafe</Badge>
           <h1 className="mt-5 max-w-3xl text-[42px] font-black leading-[1.04] tracking-tight md:text-[64px]">
-            Fast help when things break. Clear records so they do not keep repeating.
+            Post a repair free. Keep the property record clear.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-8 text-[var(--text2)] md:text-lg">
             Fixit247 helps households, tenants, property managers, and real estate agencies start urgent repairs,
-            roadside help, trade work, and PropertySafe records from one calm request path.
+            roadside help, trade work, and PropertySafe records without turning every issue into repeat follow-up.
           </p>
           <p className="mt-3 text-sm font-black uppercase tracking-wide text-[var(--amber2)]">
-            Free to post a request. Move the repair now. Keep the property memory for later.
+            Free to post a request. Move the repair now. Keep the record for later.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Button href="/post-job">
-              Get Help Now
+              Get help now
               <ArrowRight size={17} />
             </Button>
             <Button href="/propertysafe" variant="ghost">
@@ -91,7 +91,7 @@ export default function HomePage() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <Badge tone="amber">PropertySafe</Badge>
-                  <h3 className="mt-4 text-xl font-black">Every repair leaves a useful record.</h3>
+                  <h3 className="mt-4 text-xl font-black">Every repair can leave a useful record.</h3>
                   <p className="mt-2 text-sm leading-6 text-white/70">
                     Saved details, completed Safety Checks, recommended fixes, and follow-up work stay tied to the property.
                   </p>
@@ -106,11 +106,11 @@ export default function HomePage() {
       <section className="container grid gap-6 py-12 lg:grid-cols-[.9fr_1.1fr]">
         <Card variant="dark">
           <Building2 className="text-[var(--amber)]" />
-          <Badge className="mt-4">Owners, landlords, and agencies</Badge>
-          <h2 className="mt-4 text-3xl font-black tracking-tight">Agencies keep control. Repairs move with context. Property records stay clear.</h2>
+          <Badge className="mt-4">PropertySafe for agencies</Badge>
+          <h2 className="mt-4 text-3xl font-black tracking-tight">Agencies manage the repair. Records stay clear.</h2>
           <p className="mt-4 leading-7 text-white/70">
-            PropertySafe helps homeowners, landlords, and rental teams move urgent issues and routine maintenance through
-            one request path, then keep the useful record property by property.
+            PropertySafe helps rental teams and property owners move urgent issues and routine maintenance through
+            one request path, then keep useful history attached to the right property with careful sharing.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Button href="/propertysafe">Explore PropertySafe</Button>
@@ -119,10 +119,10 @@ export default function HomePage() {
         </Card>
         <div className="grid gap-4 md:grid-cols-2">
           {[
-            ["Tenant calls become clearer requests", "Burst pipes, lockouts, faults, leaks, and urgent maintenance start with the details your team needs."],
-            ["Records stay agency-led", "Investment property checks and next fixes can be prepared for the right person with agency-approved sharing."],
+            ["Tenant issues become clearer requests", "Burst pipes, lockouts, faults, leaks, and urgent maintenance start with the details your team needs."],
+            ["Property history stays organised", "Investment property checks and next fixes can be prepared for the right person at the right time."],
             ["Fixers get better briefs", "Routine repairs and larger work can be prepared with location, photos, priority, and trade context."],
-            ["Next steps are easier to explain", "Maintenance recommendations and quote opportunities become clearer to review and act on."]
+            ["Next steps are easier to explain", "Maintenance recommendations and quote opportunities become easier to review and act on."]
           ].map(([title, copy]) => (
             <Card key={title}>
               <CheckCircle2 className="text-[var(--green)]" />
@@ -165,17 +165,17 @@ export default function HomePage() {
           <h2 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">Your home checked every 6 months.</h2>
           <p className="mt-4 leading-7 text-[var(--text2)]">
             Fixit Plus does not just wait for emergencies. It helps you prepare for them. Members receive a visual Home
-            Safety & Readiness Check on signup, then every 6 months while active - helping you spot visible risks, save
+            Safety & Readiness Check on signup, then every 6 months while active - helping you spot visible concerns, save
             key home details, and feel ready before the next leak, lockout, fault, storm, or breakdown.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Button href="/fixit-plus">Protect My Home</Button>
-            <Button href="/fixit-plus#safety-check" variant="ghost">See What&apos;s Checked</Button>
+            <Button href="/fixit-plus">Protect my home</Button>
+            <Button href="/fixit-plus#safety-check" variant="ghost">See what is checked</Button>
           </div>
         </Card>
         <div className="grid gap-3 md:grid-cols-2">
           {[
-            "Spot visible risks",
+            "Spot visible concerns",
             "Save key home details",
             "Prepare before emergencies",
             "Get recommended fixes",
@@ -273,7 +273,7 @@ export default function HomePage() {
           <Hammer className="text-[var(--amber)]" />
           <h2 className="mt-4 text-3xl font-black tracking-tight">From burst pipes to full property upgrades.</h2>
           <p className="mt-4 leading-7 text-white/70">Emergency-first. Ready for every trade job your property needs.</p>
-          <Button href="/post-job" className="mt-6">Start a Request</Button>
+          <Button href="/post-job" className="mt-6">Start a request</Button>
         </Card>
       </section>
       <section className="container py-12">

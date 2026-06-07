@@ -35,16 +35,16 @@ export default async function CustomerDashboardPage() {
   return (
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
-        <DashboardHeader title={`Good evening, ${displayName}`} role="Customer dashboard" />
+        <DashboardHeader title={`Good evening, ${displayName}`} role="Customer account" />
         <p className="-mt-3 mb-6 max-w-2xl text-sm leading-6 text-[var(--text2)]">
-          Your home and road protection dashboard. Track requests, manage Fixit Plus, book your Safety Check, and keep
+          Your home and road protection account. Track requests, manage Fixit Plus, book your Safety Check, and keep
           your household ready before the next emergency.
         </p>
         <div className="mb-5 grid gap-3 md:grid-cols-4">
-          <Button href="/post-job">Get Help Now</Button>
-          <Button href="/dashboard/customer/safety-checks/book" variant="ghost">Book My Safety Check</Button>
+          <Button href="/post-job">Get help now</Button>
+          <Button href="/dashboard/customer/safety-checks/book" variant="ghost">Book my Safety Check</Button>
           <Button href="/fixit-plus" variant="ghost">Join Fixit Plus</Button>
-          <Button href="/post-job" variant="ghost">Start a Trade Request</Button>
+          <Button href="/post-job" variant="ghost">Start a trade request</Button>
         </div>
         <div className="grid gap-5 lg:grid-cols-[.68fr_.32fr]">
           <div className="grid gap-5">
@@ -80,7 +80,7 @@ export default async function CustomerDashboardPage() {
             ) : (
               <Card>
                 <Badge tone="gray">No active requests</Badge>
-                <h2 className="mt-4 text-2xl font-black">Your protection timeline starts here.</h2>
+                <h2 className="mt-4 text-2xl font-black">Your request history starts here.</h2>
                 <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
                   Start an emergency request, trade request, or project quote free.
                 </p>
@@ -89,7 +89,7 @@ export default async function CustomerDashboardPage() {
             <div className="grid gap-4">
               <div>
                 <Badge tone="gray">Recent requests</Badge>
-                <h2 className="mt-3 text-2xl font-black">Emergencies, trade jobs, projects, and completed work.</h2>
+                <h2 className="mt-3 text-2xl font-black">Emergency requests, trade jobs, projects, and completed work.</h2>
               </div>
               {jobs.slice(0, 3).map((job) => (
                 <CustomerJobCard key={job.id} job={job} />

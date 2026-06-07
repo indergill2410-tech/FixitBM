@@ -318,7 +318,7 @@ export async function registerAgencyAction(
     .single();
 
   if (agencyError || !agency) {
-    return { ok: false, message: agencyError?.message ?? "Agency workspace could not be prepared." };
+    return { ok: false, message: agencyError?.message ?? "Agency setup could not be prepared." };
   }
 
   await admin.from("agency_accounts").upsert(

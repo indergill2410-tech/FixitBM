@@ -126,10 +126,10 @@ export default function PostJobPage() {
       <PublicHeader />
       <section className="container py-8">
         <Badge>Start free. Create an account later.</Badge>
-        <h1 className="mt-4 text-3xl font-black tracking-tight md:text-5xl">Tell us what happened. We will prepare the request for the right Fixers.</h1>
+        <h1 className="mt-4 text-3xl font-black tracking-tight md:text-5xl">Tell us what happened. We will prepare the right request.</h1>
         <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--text2)]">
           Home emergency, roadside help, standard trade request, or larger project quote. Add the details once, submit free,
-          and keep your next step clear.
+          and keep the next step clear.
         </p>
         <div className="mt-6 grid gap-6 lg:grid-cols-[.72fr_.28fr]">
           <Card>
@@ -319,7 +319,7 @@ export default function PostJobPage() {
                 <Review label="Photos" value={photos.length ? `${photos.length} attached` : "None attached"} />
                 <Button onClick={submit} className="w-full" variant={form.consent && form.phone ? "primary" : "ghost"} disabled={!form.consent || !form.phone || loading}>
                   {loading ? <Loader2 className="animate-spin" size={17} /> : null}
-                  {form.serviceLane === "larger_project" ? "Get Project Quotes" : form.serviceLane === "standard_trade_job" ? "Start My Trade Request" : "Start My Emergency Request"}
+                  {form.serviceLane === "larger_project" ? "Get project quotes" : form.serviceLane === "standard_trade_job" ? "Start my trade request" : "Start my emergency request"}
                 </Button>
               </div>
             )}
@@ -350,7 +350,7 @@ export default function PostJobPage() {
               <Phone className="text-[var(--green)]" />
               <h2 className="mt-4 font-black">Built for urgent moments</h2>
               <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                We capture the right details up front so a Fixer can understand the situation before calling or accepting the request.
+                We capture the right details up front so the next person helping can understand the situation before calling or accepting the request.
               </p>
             </Card>
             {result ? (
@@ -361,7 +361,7 @@ export default function PostJobPage() {
                   {result.dashboardUrl ? (
                     <Button href={result.dashboardUrl} variant="ghost">Track this request</Button>
                   ) : (
-                    <Button href="/login" variant="ghost">Create account to track it</Button>
+                    <Button href="/login" variant="ghost">Create an account to track it</Button>
                   )}
                   <Button href="/fixit-plus" variant="ghost">Join Fixit Plus</Button>
                 </div>
