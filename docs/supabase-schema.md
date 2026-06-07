@@ -162,8 +162,19 @@ Backend tables:
 - `propertysafe_recommendations`
 - `propertysafe_events`
 - `propertysafe_participants`
+- `agency_profiles`
+- `agency_members`
+- `agency_managed_properties`
+- `agency_owner_invites`
+- `agency_maintenance_rules`
 
 PropertySafe should be built from real saved properties, active memberships, completed Safety Check reports, customer-approved recommended fixes, and explicit shared-access records for owners, landlords, and agency teams. It should not rename or replace the Safety Check tables. See `docs/propertysafe-schema.md`.
+
+Agency workspace rule:
+- Agency tables sit above saved properties, requests, and PropertySafe records.
+- Agency dashboards can manage portfolio setup, owner visibility, and maintenance rules.
+- Owners and landlords still use customer accounts for controlled PropertySafe visibility.
+- Completed Safety Checks remain the source of truth for real check reports and recommendations.
 
 ### tradie_profiles
 Internal Fixer business profiles.

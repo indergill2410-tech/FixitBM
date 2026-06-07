@@ -114,7 +114,7 @@ export default function HomePage() {
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Button href="/propertysafe">Explore PropertySafe</Button>
-            <Button href="/contact" variant="light">Book a walkthrough</Button>
+            <Button href="/propertysafe/onboarding" variant="light">Book a walkthrough</Button>
           </div>
         </Card>
         <div className="grid gap-4 md:grid-cols-2">

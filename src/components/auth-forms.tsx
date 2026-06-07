@@ -27,12 +27,13 @@ export function LoginForm() {
   );
 }
 
-export function CustomerRegisterForm() {
+export function CustomerRegisterForm({ intent }: { intent?: string }) {
   const [state, action, pending] = useActionState(registerCustomerAction, initialState);
 
   return (
     <form action={action} className="mt-6 grid gap-3">
       <FormMessage message={state.message} />
+      {intent ? <input type="hidden" name="intent" value={intent} /> : null}
       <div className="grid gap-3 md:grid-cols-2">
         <Input name="firstName" label="First name" />
         <Input name="lastName" label="Last name" />
@@ -42,7 +43,7 @@ export function CustomerRegisterForm() {
       <Input name="password" label="Password" type="password" />
       <Button disabled={pending}>
         {pending ? <Loader2 className="animate-spin" size={17} /> : <Home size={17} />}
-        Create customer account
+        {intent === "agency" ? "Create agency account" : "Create customer account"}
       </Button>
     </form>
   );

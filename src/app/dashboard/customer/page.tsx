@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Car, Headphones, Home, MessageSquare, ShieldCheck, Star, UserRound, Wrench } from "lucide-react";
+import { Building2, Car, Headphones, Home, MessageSquare, ShieldCheck, Star, UserRound, Wrench } from "lucide-react";
 import { Badge, Button, Card, DashboardHeader, EmergencyCTA, StatCard } from "@/components/ui";
 import { customerTimeline } from "@/lib/data";
 import { requireRole } from "@/lib/auth";
@@ -149,6 +149,7 @@ export default async function CustomerDashboardPage() {
             <Card>
               <div className="grid gap-3">
                 <DashboardLink icon={Home} label="Saved properties" href="/dashboard/customer/properties" />
+                <DashboardLink icon={Building2} label="Agency dashboard" href="/dashboard/agency" />
                 <DashboardLink icon={Car} label="Saved vehicles" href="/dashboard/customer/vehicles" />
                 <DashboardLink icon={Wrench} label="Recommended fixes" href="/dashboard/customer/safety-checks" />
                 <DashboardLink icon={UserRound} label="Payments" href="/dashboard/customer/membership" />

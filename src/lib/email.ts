@@ -465,6 +465,113 @@ export async function notifyPropertySafeInvite(input: {
   ]);
 }
 
+export async function notifyAgencyOwnerInvited(input: {
+  inviteId: string;
+  email: string;
+  agencyName: string;
+  propertyLabel: string;
+  ownerName?: string | null;
+  accessLevel: string;
+  status: string;
+}) {
+  await sendBestEffort([
+    sendTransactionalEmail({
+      to: input.email,
+      subject: `${input.agencyName} prepared PropertySafe access`,
+      eyebrow: "PropertySafe owner access",
+      title: input.ownerName ? `${input.ownerName}, your property record is being prepared.` : "Your property record is being prepared.",
+      intro:
+        "PropertySafe gives owners and landlords a clearer view of useful property history while the agency keeps maintenance work controlled and organised.",
+      sections: [
+        {
+          label: input.propertyLabel,
+          lines: [
+            `Agency: ${input.agencyName}`,
+            `Access: ${labelize(input.accessLevel)}`,
+            input.status === "active"
+              ? "Your account is already linked to this owner access."
+              : "Create or sign in with this email address when the agency is ready to share the record."
+          ]
+        }
+      ],
+      cta: { label: "Open Fixit247 account", href: `${appUrl}/dashboard` },
+      idempotencyKey: `agency-owner-invite-${input.inviteId}`
+    })
+  ]);
+}
+
+export async function notifyPropertySafeWalkthroughRequested(input: {
+  ticketId?: string | null;
+  name: string;
+  email: string;
+  phone: string;
+  agencyName: string;
+  role: string;
+  portfolioSize: string;
+  priority: string;
+  suburb?: string | null;
+  message?: string | null;
+}) {
+  const ticketRef = input.ticketId ? `Reference: ${input.ticketId}` : null;
+
+  await sendBestEffort([
+    sendTransactionalEmail({
+      to: input.email,
+      subject: "Your PropertySafe walkthrough request is in",
+      eyebrow: "PropertySafe onboarding",
+      title: "We have your PropertySafe walkthrough request.",
+      intro:
+        "The walkthrough is for understanding your portfolio, owner visibility needs, maintenance flow, and how PropertySafe can sit beside your current agency process.",
+      sections: [
+        {
+          label: input.agencyName,
+          lines: [
+            `Portfolio size: ${input.portfolioSize}`,
+            `Main focus: ${labelize(input.priority)}`,
+            input.suburb ? `Primary area: ${input.suburb}` : null,
+            ticketRef
+          ]
+        },
+        {
+          label: "What happens next",
+          lines: [
+            "Fixit247 reviews the details and prepares the right onboarding conversation.",
+            "You can create an agency account now if you want the workspace ready before the call.",
+            "Urgent maintenance requests can still be started separately through Get Help Now."
+          ]
+        }
+      ],
+      cta: { label: "Create agency account", href: `${appUrl}/register/customer?intent=agency` },
+      idempotencyKey: `propertysafe-walkthrough-user-${input.email.toLowerCase()}-${input.ticketId ?? input.agencyName}`
+    }),
+    sendAdminAlert({
+      subject: `PropertySafe walkthrough: ${input.agencyName}`,
+      eyebrow: "PropertySafe agency lead",
+      title: `${input.agencyName} requested a walkthrough.`,
+      intro: "A property manager, agency, landlord, or owner wants PropertySafe onboarding.",
+      sections: [
+        {
+          label: "Lead",
+          lines: [
+            `Name: ${input.name}`,
+            `Email: ${input.email}`,
+            `Phone: ${input.phone}`,
+            `Role: ${labelize(input.role)}`,
+            `Portfolio: ${input.portfolioSize}`,
+            `Focus: ${labelize(input.priority)}`,
+            input.suburb ? `Area: ${input.suburb}` : null,
+            ticketRef
+          ]
+        },
+        input.message ? { label: "Message", lines: [input.message] } : { lines: [] }
+      ],
+      cta: { label: "Open support queue", href: `${appUrl}/admin/support` },
+      replyTo: input.email,
+      idempotencyKey: `propertysafe-walkthrough-admin-${input.email.toLowerCase()}-${input.ticketId ?? input.agencyName}`
+    })
+  ]);
+}
+
 export async function notifyFixerVerificationReviewed(input: {
   documentId: string;
   fixerEmail?: string | null;

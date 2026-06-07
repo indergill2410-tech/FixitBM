@@ -87,11 +87,71 @@ Permission records for shared PropertySafe access.
 
 This enables real estate agencies and property managers to manage a PropertySafe record while giving homeowners or landlords controlled visibility into the property they own.
 
+### agency_profiles
+
+The signed-in agency workspace for PropertySafe onboarding and portfolio operations.
+
+- `owner_user_id`
+- `name`
+- `abn`
+- `phone`
+- `service_area`
+- `portfolio_size`
+- `status`
+- `onboarding_stage`
+
+### agency_members
+
+Agency team access without changing the global `users.role` enum.
+
+- `agency_id`
+- `user_id` or `invite_email`
+- `role`: `principal`, `property_manager`, `operations`, `viewer`
+- `status`: `invited`, `active`, `paused`, `removed`
+
+### agency_managed_properties
+
+The portfolio register used by agencies before, during, and after PropertySafe onboarding.
+
+- `agency_id`
+- `saved_property_id`
+- `propertysafe_profile_id`
+- `label`
+- `address`
+- `owner_name`
+- `owner_email`
+- `management_status`
+- `risk_status`
+- `notes`
+
+### agency_owner_invites
+
+Owner visibility prepared by an agency for a managed property.
+
+- `agency_id`
+- `managed_property_id`
+- `owner_email`
+- `owner_name`
+- `access_level`: `view_record`, `request_work`, `manage_record`
+- `status`: `invited`, `active`, `paused`, `revoked`
+
+### agency_maintenance_rules
+
+Operating rules for how the agency wants maintenance and owner updates handled.
+
+- `agency_id`
+- `owner_update_policy`
+- `default_contact_method`
+- `after_hours_notes`
+- `urgent_authority_notes`
+- `preferred_trades_notes`
+
 ## Access Model
 
 - Customers can read their own PropertySafe profiles, assessments, findings, recommendations, and events.
 - Homeowners and landlords can read PropertySafe records shared with them through `propertysafe_participants`.
 - Property managers and agency users can be attached to a record as participants without changing the Safety Check tables.
+- Agency dashboards manage the portfolio layer through `agency_*` tables. This is separate from completed Safety Check reports and explicit PropertySafe participant access.
 - Shared access must be explicit per PropertySafe profile. No owner, tenant, or agency user should infer access from suburb, address, email domain, or role alone.
 - Admin operations use the server-side Supabase secret key.
 - Public users cannot create PropertySafe data.

@@ -7,6 +7,7 @@ const routes = [
   "",
   "/fixit-plus",
   "/propertysafe",
+  "/propertysafe/onboarding",
   "/post-job",
   "/home-emergencies",
   "/roadside-help",

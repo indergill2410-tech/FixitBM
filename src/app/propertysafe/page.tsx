@@ -64,7 +64,7 @@ export default function PropertySafePage() {
             Owners see the record. Agencies manage the workflow. Fixers get the context.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Button href="/contact">
+            <Button href="/propertysafe/onboarding">
               Book an agency walkthrough
               <ArrowRight size={17} />
             </Button>
@@ -103,7 +103,7 @@ export default function PropertySafePage() {
             A tenant needs help. An owner wants to protect an investment. A manager needs a clean next step. A Fixer needs
             the right brief. PropertySafe connects those moving parts without turning the record into a public free-for-all.
           </p>
-          <Button href="/contact" className="mt-6">Plan agency onboarding</Button>
+          <Button href="/propertysafe/onboarding" className="mt-6">Plan agency onboarding</Button>
         </Card>
         <div className="grid gap-3 md:grid-cols-2">
           {workflow.map(([title, copy], index) => (
@@ -153,7 +153,7 @@ export default function PropertySafePage() {
               without losing the long-term maintenance story.
             </p>
           </div>
-          <Button href="/contact">Book a walkthrough</Button>
+          <Button href="/propertysafe/onboarding">Book a walkthrough</Button>
         </Card>
       </section>
       <PublicFooter />

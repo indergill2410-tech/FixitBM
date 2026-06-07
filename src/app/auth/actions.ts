@@ -5,7 +5,7 @@ import { z } from "zod";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabasePublicConfigured, isSupabaseServerConfigured } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { roleHome, type Role } from "@/lib/auth";
+import type { Role } from "@/lib/auth";
 import { notifyCustomerRegistered, notifyFixerRegistered } from "@/lib/email";
 
 export type AuthActionState = {
@@ -21,7 +21,8 @@ const emailPasswordSchema = z.object({
 const customerRegistrationSchema = emailPasswordSchema.extend({
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  phone: z.string().min(8)
+  phone: z.string().min(8),
+  intent: z.enum(["agency"]).optional()
 });
 
 const tradieRegistrationSchema = customerRegistrationSchema.extend({
@@ -79,7 +80,7 @@ export async function signInAction(_state: AuthActionState, formData: FormData):
     return { ok: false, message: "Account profile could not be prepared. Please contact Fixit247 support." };
   }
 
-  redirect(roleHome(userRole));
+  redirect("/dashboard");
 }
 
 async function resolveSignedInUserRole(
@@ -144,7 +145,8 @@ export async function registerCustomerAction(
     password: formData.get("password"),
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
-    phone: formData.get("phone")
+    phone: formData.get("phone"),
+    intent: formData.get("intent") || undefined
   });
 
   if (!parsed.success) {
@@ -203,7 +205,7 @@ export async function registerCustomerAction(
     firstName: parsed.data.firstName
   });
 
-  redirect("/dashboard/customer");
+  redirect(parsed.data.intent === "agency" ? "/dashboard/agency" : "/dashboard/customer");
 }
 
 export async function registerTradieAction(

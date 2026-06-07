@@ -1368,13 +1368,20 @@ export async function getAdminSupportTickets() {
   return tickets.map((ticket) => {
     const linkedUserId = ticket.user_id ?? ticket.customer_id;
     const linkedUser = linkedUserId ? userById.get(linkedUserId) : null;
+    const publicLeadName = ticket.body ? extractSupportBodyValue(ticket.body, "Name") : null;
+    const publicLeadEmail = ticket.body ? extractSupportBodyValue(ticket.body, "Email") : null;
     return {
       ...ticket,
       customer_name: linkedUser
         ? [linkedUser.first_name, linkedUser.last_name].filter(Boolean).join(" ") || linkedUser.email || "User"
-        : "Unlinked user"
+        : [publicLeadName, publicLeadEmail].filter(Boolean).join(" · ") || "Public enquiry"
     };
   });
+}
+
+function extractSupportBodyValue(body: string, label: string) {
+  const line = body.split("\n").find((item) => item.toLowerCase().startsWith(`${label.toLowerCase()}:`));
+  return line?.slice(label.length + 1).trim() || null;
 }
 
 export async function getUserSupportTickets(user: AppUser): Promise<UserSupportTicketRow[]> {
