@@ -24,7 +24,7 @@ import { getAgencyDashboard, type AgencyDashboardSummary, type AgencyManagedProp
 export const dynamic = "force-dynamic";
 
 export default async function AgencyDashboardPage() {
-  const user = await requireRole(["agency", "customer", "admin", "super_admin"]);
+  const user = await requireRole(["agency", "admin", "super_admin"]);
   const summary = await getAgencyDashboard(user);
   const canManage = summary.memberRole !== "viewer";
   const displayName = summary.agency?.name ?? "PropertySafe agency workspace";

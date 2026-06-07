@@ -171,6 +171,10 @@ export async function registerCustomerAction(
     return { ok: false, message: "Complete the required customer details." };
   }
 
+  if (parsed.data.intent === "agency") {
+    redirect("/agency/register");
+  }
+
   const supabase = await createSupabaseServerClient();
   const admin = createSupabaseAdminClient();
 
@@ -223,7 +227,7 @@ export async function registerCustomerAction(
     firstName: parsed.data.firstName
   });
 
-  redirect(parsed.data.intent === "agency" ? "/dashboard/agency" : "/dashboard/customer");
+  redirect("/dashboard/customer");
 }
 
 export async function registerAgencyAction(

@@ -57,7 +57,7 @@ function configError(): AgencyActionState {
 }
 
 async function getAgencyActionContext() {
-  const user = await requireRole(["agency", "customer", "admin", "super_admin"]);
+  const user = await requireRole(["agency", "admin", "super_admin"]);
 
   if (!isSupabaseServerConfigured()) {
     return { user, supabase: null };
