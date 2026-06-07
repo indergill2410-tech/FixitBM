@@ -78,6 +78,69 @@ textarea {
     linear-gradient(135deg, #17120e, #2a2119);
 }
 
+.app-button {
+  box-shadow: var(--shadow);
+}
+
+.app-button-primary {
+  border: 1px solid rgba(245, 158, 11, 0.6);
+  background: linear-gradient(180deg, #f7aa22, var(--amber));
+  color: #1e1a17 !important;
+  box-shadow: 0 10px 24px rgba(245, 158, 11, 0.26);
+}
+
+.app-button-primary:hover {
+  background: linear-gradient(180deg, #f9b63a, var(--amber2));
+  color: #1e1a17 !important;
+}
+
+.app-button-ghost {
+  border: 1px solid var(--border);
+  background: #fffdf9;
+  color: #1e1a17 !important;
+}
+
+.app-button-ghost:hover {
+  border-color: rgba(245, 158, 11, 0.55);
+  color: #9a5b00 !important;
+}
+
+.app-button-dark {
+  border: 1px solid rgba(30, 26, 23, 0.92);
+  background: linear-gradient(180deg, #2b241f, #17120e);
+  color: #fffaf0 !important;
+  box-shadow: 0 14px 30px rgba(30, 26, 23, 0.22);
+}
+
+.app-button-dark:hover {
+  background: linear-gradient(180deg, #382c23, #211813);
+  color: #fffaf0 !important;
+}
+
+.app-button-light {
+  border: 1px solid rgba(255, 250, 240, 0.86);
+  background: #fffaf0;
+  color: #1e1a17 !important;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
+}
+
+.app-button-light:hover {
+  background: #ffffff;
+  color: #9a5b00 !important;
+}
+
+.app-button-danger {
+  border: 1px solid #fecaca;
+  background: var(--red-light);
+  color: var(--red) !important;
+}
+
+.app-button-success {
+  border: 1px solid #bbf7d0;
+  background: var(--green-light);
+  color: var(--green) !important;
+}
+
 .focus-ring:focus-visible {
   outline: 3px solid rgba(245, 158, 11, 0.35);
   outline-offset: 2px;

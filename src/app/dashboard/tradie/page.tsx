@@ -41,7 +41,7 @@ export default async function TradieDashboardPage() {
                 <p className="mt-2 text-white/70">
                   {formatJobLocation(activeJobs[0])} · {statusLabel(activeJobs[0].status)}
                 </p>
-                <Button href={`/dashboard/tradie/jobs/${activeJobs[0].id}`} variant="ghost" className="mt-5">
+                <Button href={`/dashboard/tradie/jobs/${activeJobs[0].id}`} variant="light" className="mt-5">
                   Open request
                 </Button>
               </Card>

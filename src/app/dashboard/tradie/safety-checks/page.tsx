@@ -52,7 +52,7 @@ export default async function TradieSafetyChecksPage() {
                       <p>{check.preferred_window ? `Requested window: ${check.preferred_window}` : "No preferred window supplied yet."}</p>
                       {check.customer_notes ? <p className="rounded-xl bg-white/5 p-3">{check.customer_notes}</p> : null}
                     </div>
-                    <Button href="/dashboard/tradie" variant="ghost" className="mt-5">
+                    <Button href="/dashboard/tradie" variant="light" className="mt-5">
                       Back to command centre
                     </Button>
                   </div>

@@ -7,7 +7,7 @@ import { FixitMark } from "@/components/brand";
 type ButtonProps = {
   href?: string;
   children: React.ReactNode;
-  variant?: "primary" | "ghost" | "dark" | "danger" | "success";
+  variant?: "primary" | "ghost" | "dark" | "light" | "danger" | "success";
   className?: string;
   onClick?: () => void;
   disabled?: boolean;
@@ -15,15 +15,14 @@ type ButtonProps = {
 
 export function Button({ href, children, variant = "primary", className, onClick, disabled }: ButtonProps) {
   const styles = clsx(
-    "focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] px-5 text-sm font-bold transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0",
+    "app-button focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-[10px] px-5 text-center text-sm font-black transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0",
     {
-      "bg-[var(--amber)] text-white shadow-[0_4px_14px_rgba(245,158,11,.34)] hover:bg-[var(--amber2)]":
-        variant === "primary",
-      "border border-[var(--border)] bg-white text-[var(--text2)] shadow-[var(--shadow)] hover:border-[var(--amber)] hover:text-[var(--amber2)]":
-        variant === "ghost",
-      "bg-[var(--text)] text-white shadow-[var(--shadow-md)]": variant === "dark",
-      "border border-red-200 bg-[var(--red-light)] text-[var(--red)]": variant === "danger",
-      "border border-green-200 bg-[var(--green-light)] text-[var(--green)]": variant === "success"
+      "app-button-primary": variant === "primary",
+      "app-button-ghost": variant === "ghost",
+      "app-button-dark": variant === "dark",
+      "app-button-light": variant === "light",
+      "app-button-danger": variant === "danger",
+      "app-button-success": variant === "success"
     },
     className
   );
