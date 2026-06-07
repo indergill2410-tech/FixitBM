@@ -3,6 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   AlertTriangle,
   BarChart3,
+  Building2,
   CheckCircle2,
   ClipboardList,
   CreditCard,
@@ -20,6 +21,7 @@ const adminNav: { label: string; href: string; icon: LucideIcon; detail: string 
   { label: "Command", href: "/admin", icon: Gauge, detail: "Live ops" },
   { label: "Requests", href: "/admin/jobs", icon: ClipboardList, detail: "Queue" },
   { label: "Safety Checks", href: "/admin/safety-checks", icon: ShieldCheck, detail: "Member readiness" },
+  { label: "PropertySafe", href: "/admin/propertysafe", icon: Building2, detail: "Shared access" },
   { label: "Customers", href: "/admin/customers", icon: Users, detail: "Profiles" },
   { label: "Fixers", href: "/admin/tradies", icon: Wrench, detail: "Network" },
   { label: "Memberships", href: "/admin/memberships", icon: Home, detail: "Fixit Plus" },

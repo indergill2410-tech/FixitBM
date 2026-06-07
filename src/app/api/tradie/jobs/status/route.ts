@@ -2,6 +2,7 @@ import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentAppUser } from "@/lib/auth";
+import { notifyJobStatusChanged } from "@/lib/email";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
 
@@ -42,7 +43,7 @@ export async function POST(request: Request) {
 
   const { data: job } = await supabase
     .from("jobs")
-    .select("id, status, assigned_tradie_id")
+    .select("id, public_reference, title, status, assigned_tradie_id, customer_id, guest_email")
     .eq("id", parsed.data.jobId)
     .eq("assigned_tradie_id", tradie.id)
     .maybeSingle();
@@ -73,6 +74,19 @@ export async function POST(request: Request) {
     sender_user_id: user.id,
     sender_label: user.first_name || "Fixer",
     body: title
+  });
+
+  const { data: customer } = job.customer_id
+    ? await supabase.from("users").select("email").eq("id", job.customer_id).maybeSingle()
+    : { data: null };
+
+  await notifyJobStatusChanged({
+    jobId: job.id,
+    reference: job.public_reference,
+    title: job.title,
+    status: parsed.data.status,
+    customerEmail: customer?.email ?? job.guest_email ?? null,
+    fixerEmail: user.email
   });
 
   revalidatePath(`/dashboard/tradie/jobs/${job.id}`);

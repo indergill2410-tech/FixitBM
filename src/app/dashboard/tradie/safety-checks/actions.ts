@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { notifySafetyCheckReportPublished } from "@/lib/email";
 import { getTradieProfileForUser } from "@/lib/jobs";
 import { syncPropertySafeFromSafetyCheckReport } from "@/lib/propertysafe";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -167,6 +168,19 @@ export async function submitSafetyCheckReportAction(
     recommendations,
     publishedAt: now,
     nextReviewAt: nextDue
+  });
+
+  const { data: customer } = await supabase
+    .from("users")
+    .select("email")
+    .eq("id", safetyCheck.customer_id)
+    .maybeSingle();
+
+  await notifySafetyCheckReportPublished({
+    safetyCheckId: safetyCheck.id,
+    userEmail: customer?.email ?? null,
+    scoreAfter: parsed.data.scoreAfter,
+    recommendationCount: recommendations.length
   });
 
   revalidatePath("/admin/safety-checks");

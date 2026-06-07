@@ -1,4 +1,4 @@
-import { Badge, Button, Card, IconTile, MobileBottomActionBar, PublicHeader } from "@/components/ui";
+import { Badge, Button, Card, IconTile, MobileBottomActionBar, PublicFooter, PublicHeader } from "@/components/ui";
 import { homeCategories } from "@/lib/data";
 
 export default function HomeEmergenciesPage() {
@@ -8,10 +8,11 @@ export default function HomeEmergenciesPage() {
       <section className="container py-14">
         <Badge tone="red">Home emergencies</Badge>
         <h1 className="mt-5 max-w-3xl text-[40px] font-black leading-tight tracking-tight md:text-[58px]">
-          When something breaks, leaks, locks, or sparks, start here.
+          When home panic starts, start with one clear request.
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text2)]">
-          Fixit247 helps you prepare an urgent home request and find verified Fixers who can assess the problem.
+          Tell us what happened, where it is, and how urgent it feels. Fixit247 prepares the request so suitable Fixers
+          get better context from the first message.
         </p>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row">
           <Button href="/post-job">Get Help Now</Button>
@@ -23,6 +24,7 @@ export default function HomeEmergenciesPage() {
           <IconTile key={item.label} icon={item.icon} label={item.label} />
         ))}
       </section>
+      <PublicFooter />
       <MobileBottomActionBar />
     </main>
   );

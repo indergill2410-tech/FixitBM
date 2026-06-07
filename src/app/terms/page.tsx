@@ -1,4 +1,4 @@
-import { PublicHeader } from "@/components/ui";
+import { PublicFooter, PublicHeader } from "@/components/ui";
 
 export default function TermsPage() {
   return (
@@ -41,6 +41,7 @@ export default function TermsPage() {
           </section>
         </div>
       </article>
+      <PublicFooter />
     </main>
   );
 }

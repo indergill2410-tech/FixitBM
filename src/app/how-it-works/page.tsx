@@ -1,4 +1,4 @@
-import { Badge, Card, PublicHeader } from "@/components/ui";
+import { Badge, Card, PublicFooter, PublicHeader } from "@/components/ui";
 
 export default function HowItWorksPage() {
   return (
@@ -6,7 +6,7 @@ export default function HowItWorksPage() {
       <PublicHeader />
       <section className="container py-14">
         <Badge>How it works</Badge>
-        <h1 className="mt-5 text-[40px] font-black tracking-tight md:text-[56px]">Fast help, calm steps.</h1>
+        <h1 className="mt-5 text-[40px] font-black tracking-tight md:text-[56px]">One request. Clear next steps.</h1>
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {[
             ["Tell us what happened", "Choose home, road, or scheduled work and share only what matters."],
@@ -21,6 +21,7 @@ export default function HowItWorksPage() {
           ))}
         </div>
       </section>
+      <PublicFooter />
     </main>
   );
 }

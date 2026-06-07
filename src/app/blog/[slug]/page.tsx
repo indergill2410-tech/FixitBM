@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Badge, Button, Card, PublicHeader } from "@/components/ui";
+import { Badge, Button, Card, PublicFooter, PublicHeader } from "@/components/ui";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { appUrl, articleJsonLd, blogPosts, getBlogPost } from "@/lib/seo";
 
@@ -69,6 +69,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           </div>
         </Card>
       </article>
+      <PublicFooter />
     </main>
   );
 }

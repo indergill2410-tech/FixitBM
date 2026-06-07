@@ -66,11 +66,13 @@ export function PropertySafeStatusCard({ summary }: { summary: PropertySafeSumma
       <div className="mt-5 grid grid-cols-2 gap-3">
         <div className="rounded-xl border border-[var(--border)] bg-white p-3">
           <p className="text-2xl font-black">{summary.activeProfileCount}</p>
-          <p className="mt-1 text-[10px] font-bold uppercase text-[var(--text3)]">Protected homes</p>
+          <p className="mt-1 text-[10px] font-bold uppercase text-[var(--text3)]">Property records</p>
         </div>
         <div className="rounded-xl border border-[var(--border)] bg-white p-3">
-          <p className="text-2xl font-black">{summary.openRecommendationCount}</p>
-          <p className="mt-1 text-[10px] font-bold uppercase text-[var(--text3)]">Next fixes</p>
+          <p className="text-2xl font-black">{summary.agencyManagedCount || summary.openRecommendationCount}</p>
+          <p className="mt-1 text-[10px] font-bold uppercase text-[var(--text3)]">
+            {summary.agencyManagedCount ? "Agency shared" : "Next fixes"}
+          </p>
         </div>
       </div>
       <p className="mt-4 text-xs font-bold uppercase text-[var(--text3)]">{summary.nextReviewLabel}</p>

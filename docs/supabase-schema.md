@@ -161,8 +161,9 @@ Backend tables:
 - `propertysafe_findings`
 - `propertysafe_recommendations`
 - `propertysafe_events`
+- `propertysafe_participants`
 
-PropertySafe should be built from real saved properties, active memberships, completed Safety Check reports, and customer-approved recommended fixes. It should not rename or replace the Safety Check tables. See `docs/propertysafe-schema.md`.
+PropertySafe should be built from real saved properties, active memberships, completed Safety Check reports, customer-approved recommended fixes, and explicit shared-access records for owners, landlords, and agency teams. It should not rename or replace the Safety Check tables. See `docs/propertysafe-schema.md`.
 
 ### tradie_profiles
 Internal Fixer business profiles.

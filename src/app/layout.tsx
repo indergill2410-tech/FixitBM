@@ -5,15 +5,15 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://fixit247.com.au";
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
-  title: "Fixit247 | Emergency help for your home and road",
+  title: "Fixit247 | Emergency help and PropertySafe records",
   description:
-    "Emergency help for your home and road, 24/7. Built for emergencies and ready for any trade job.",
+    "Start home, roadside, trade, and property maintenance requests with Fixit247. Add Fixit Plus protection and PropertySafe records for owned or managed properties.",
   alternates: {
     canonical: "/"
   },
   openGraph: {
     title: "Fixit247",
-    description: "Emergency help for your home and road, 24/7. Built for emergencies and ready for any trade job.",
+    description: "Fast help when things break, plus clearer records for homes, roads, rentals, and managed properties.",
     url: appUrl,
     type: "website"
   }

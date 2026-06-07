@@ -1,4 +1,4 @@
-import { Badge, Button, IconTile, MobileBottomActionBar, PublicHeader } from "@/components/ui";
+import { Badge, Button, IconTile, MobileBottomActionBar, PublicFooter, PublicHeader } from "@/components/ui";
 import { projectCategories } from "@/lib/data";
 
 export default function ProjectsPage() {
@@ -21,6 +21,7 @@ export default function ProjectsPage() {
           <IconTile key={item.label} icon={item.icon} label={item.label} />
         ))}
       </section>
+      <PublicFooter />
       <MobileBottomActionBar />
     </main>
   );

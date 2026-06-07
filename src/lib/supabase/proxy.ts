@@ -20,14 +20,23 @@ export async function updateSession(request: NextRequest) {
         cookiesToSet.forEach(({ name, value, options }) => {
           supabaseResponse.cookies.set(name, value, options);
         });
-        Object.entries(headers).forEach(([key, value]) => {
+        Object.entries(headers ?? {}).forEach(([key, value]) => {
           supabaseResponse.headers.set(key, value);
         });
       }
     }
   });
 
-  await supabase.auth.getClaims();
+  await supabase.auth.getUser();
+
+  if (
+    request.nextUrl.pathname.startsWith("/dashboard") ||
+    request.nextUrl.pathname.startsWith("/admin") ||
+    request.nextUrl.pathname.startsWith("/login") ||
+    request.nextUrl.pathname.startsWith("/register")
+  ) {
+    supabaseResponse.headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  }
 
   return supabaseResponse;
 }

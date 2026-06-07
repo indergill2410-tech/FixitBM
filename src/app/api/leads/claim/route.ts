@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
 import { getCurrentAppUser } from "@/lib/auth";
+import { notifyLeadClaimed } from "@/lib/email";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
 
@@ -53,6 +54,35 @@ export async function POST(request: NextRequest) {
 
   revalidatePath("/dashboard/tradie/leads");
   revalidatePath("/dashboard/tradie/wallet");
+
+  const [{ data: job }, { data: tradie }] = await Promise.all([
+    supabase
+      .from("jobs")
+      .select("id, public_reference, title, customer_id, guest_email")
+      .eq("id", jobId)
+      .maybeSingle(),
+    supabase
+      .from("tradie_profiles")
+      .select("id, business_name, trade_category")
+      .eq("user_id", user.id)
+      .maybeSingle()
+  ]);
+
+  const { data: customer } = job?.customer_id
+    ? await supabase.from("users").select("email").eq("id", job.customer_id).maybeSingle()
+    : { data: null };
+
+  if (job) {
+    await notifyLeadClaimed({
+      jobId: job.id,
+      reference: job.public_reference,
+      jobTitle: job.title,
+      fixerName: tradie?.business_name || tradie?.trade_category || user.first_name || "Fixer",
+      fixerEmail: user.email,
+      customerEmail: customer?.email ?? job.guest_email ?? null
+    });
+  }
+
   redirectUrl.searchParams.set("claim", "success");
   return NextResponse.redirect(redirectUrl);
 }

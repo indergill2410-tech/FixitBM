@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Check } from "lucide-react";
-import { Badge, Button, Card, PublicHeader } from "@/components/ui";
+import { Badge, Button, Card, PublicFooter, PublicHeader } from "@/components/ui";
 import { CheckoutButton } from "@/components/billing-buttons";
 import { appUrl } from "@/lib/seo";
 
@@ -40,11 +40,11 @@ export default function PricingPage() {
       <section className="container py-14">
         <Badge>Pricing</Badge>
         <h1 className="mt-5 max-w-3xl text-[40px] font-black leading-tight tracking-tight md:text-[56px]">
-          Simple peace-of-mind plans for your home and road.
+          Start free. Add protection when you want more peace of mind.
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text2)]">
-          Start any emergency, trade, or project request free. Join Fixit Plus when you want household protection before
-          the next urgent moment.
+          Any customer can start a request without paying Fixit247. Fixit Plus adds priority support, saved details,
+          reminders, and Safety Checks for households that want more readiness.
         </p>
       </section>
 
@@ -98,6 +98,7 @@ export default function PricingPage() {
           <Button href="/become-a-fixer" variant="ghost" className="mt-5 w-full">See Fixer plans</Button>
         </Card>
       </section>
+      <PublicFooter />
     </main>
   );
 }

@@ -1,4 +1,4 @@
-import { Badge, Button, Card, PublicHeader } from "@/components/ui";
+import { Badge, Button, Card, PublicFooter, PublicHeader } from "@/components/ui";
 import { tradiePlans } from "@/lib/data";
 
 export default function BecomeAFixerPage() {
@@ -8,15 +8,15 @@ export default function BecomeAFixerPage() {
       <section className="container py-14">
         <Badge tone="purple">Fixer network</Badge>
         <h1 className="mt-5 max-w-3xl text-[40px] font-black leading-tight tracking-tight md:text-[58px]">
-          Become a Fixer. Help local customers when it matters most.
+          Get real local requests without giving away the job value.
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text2)]">
-          Join the Fixit247 Fixer network and receive emergency, repair, maintenance, installation, and project requests
-          from customers ready to take action.
+          Join the Fixit247 Fixer network for emergency, repair, maintenance, installation, roadside, and project requests
+          from customers ready to move.
         </p>
         <Card variant="membership" className="mt-8 max-w-2xl">
           <Badge>No commission</Badge>
-          <h2 className="mt-4 text-2xl font-black">Keep 100% of the job value.</h2>
+          <h2 className="mt-4 text-2xl font-black">Keep 100% of the work value.</h2>
           <p className="mt-3 leading-7 text-[var(--text2)]">
             A Fixer is a verified local tradie, roadside helper, or service provider on Fixit247. You pay for lead access,
             priority, verification, visibility, and business tools, not a percentage of the work.
@@ -59,6 +59,7 @@ export default function BecomeAFixerPage() {
           </p>
         </Card>
       </section>
+      <PublicFooter />
     </main>
   );
 }

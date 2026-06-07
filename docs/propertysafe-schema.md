@@ -12,7 +12,7 @@ It must not replace or rename:
 
 Safety & Readiness Checks remain the booking, assignment, checklist, and report workflow.
 
-PropertySafe is the longer-term property view built from real completed Safety Check data, saved property records, and customer-approved recommended fixes. It must never show fake reports, fake findings, or fake scores.
+PropertySafe is the longer-term property view built from real completed Safety Check data, saved property records, customer-approved recommended fixes, and agency-shared property access. It must never show fake reports, fake findings, or fake scores.
 
 ## Tables
 
@@ -71,9 +71,36 @@ Customer-facing next fixes and quote opportunities.
 
 Timeline entries for PropertySafe activity.
 
+### propertysafe_participants
+
+Permission records for shared PropertySafe access.
+
+- `propertysafe_profile_id`
+- `user_id` or `invite_email`
+- `relationship`: `owner`, `landlord`, `agency_manager`, `property_manager`, `tenant_viewer`, `viewer`
+- `agency_name`
+- `can_view`
+- `can_request_work`
+- `can_manage_record`
+- `can_view_financials`
+- `status`: `invited`, `active`, `paused`, `revoked`
+
+This enables real estate agencies and property managers to manage a PropertySafe record while giving homeowners or landlords controlled visibility into the property they own.
+
 ## Access Model
 
 - Customers can read their own PropertySafe profiles, assessments, findings, recommendations, and events.
+- Homeowners and landlords can read PropertySafe records shared with them through `propertysafe_participants`.
+- Property managers and agency users can be attached to a record as participants without changing the Safety Check tables.
+- Shared access must be explicit per PropertySafe profile. No owner, tenant, or agency user should infer access from suburb, address, email domain, or role alone.
 - Admin operations use the server-side Supabase secret key.
 - Public users cannot create PropertySafe data.
 - Fixers update Safety Check reports; PropertySafe sync is server-mediated after a real report is published.
+
+## Admin Workflow
+
+- `/admin/propertysafe` lists active PropertySafe records, participant counts, next review dates, and open recommendations.
+- Admins can invite an owner, landlord, property manager, agency manager, tenant viewer, or viewer to one PropertySafe profile at a time.
+- If the email already belongs to a Fixit247 user, access becomes active for that user.
+- If the email does not yet belong to a user, an invited participant record is saved and the person can use that same email when creating an account.
+- Invites are audited and emailed through the transactional email layer when Resend is configured.

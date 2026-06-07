@@ -1,4 +1,4 @@
-import { Badge, Button, Card, PublicHeader } from "@/components/ui";
+import { Badge, Button, Card, PublicFooter, PublicHeader } from "@/components/ui";
 
 export default function ContactPage() {
   return (
@@ -6,7 +6,7 @@ export default function ContactPage() {
       <PublicHeader />
       <section className="container py-14">
         <Badge>Contact</Badge>
-        <h1 className="mt-5 text-[40px] font-black tracking-tight md:text-[56px]">Talk to Fixit247.</h1>
+        <h1 className="mt-5 text-[40px] font-black tracking-tight md:text-[56px]">Choose the fastest path.</h1>
         <Card className="mt-8 max-w-2xl">
           <p className="leading-7 text-[var(--text2)]">
             For help, partnerships, or Fixer onboarding, choose the fastest path below.
@@ -18,6 +18,7 @@ export default function ContactPage() {
           </div>
         </Card>
       </section>
+      <PublicFooter />
     </main>
   );
 }

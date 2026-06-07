@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Badge, Card, PublicHeader } from "@/components/ui";
+import { Badge, Card, PublicFooter, PublicHeader } from "@/components/ui";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { appUrl, blogPosts } from "@/lib/seo";
 
@@ -54,6 +54,7 @@ export default function BlogPage() {
           </div>
         </Card>
       </section>
+      <PublicFooter />
     </main>
   );
 }

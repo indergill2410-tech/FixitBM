@@ -27,16 +27,16 @@ export async function getCurrentAppUser(): Promise<AppUser | null> {
   }
 
   const supabase = await createSupabaseServerClient();
-  const { data: claimsData, error: claimsError } = await supabase.auth.getClaims();
+  const { data: authData, error: authError } = await supabase.auth.getUser();
 
-  if (claimsError || !claimsData?.claims?.sub) {
+  if (authError || !authData.user) {
     return null;
   }
 
   const { data, error } = await supabase
     .from("users")
     .select("id, auth_id, email, phone, first_name, last_name, role, status")
-    .eq("auth_id", claimsData.claims.sub)
+    .eq("auth_id", authData.user.id)
     .maybeSingle();
 
   if (error || !data) {

@@ -6,6 +6,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabasePublicConfigured, isSupabaseServerConfigured } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { roleHome, type Role } from "@/lib/auth";
+import { notifyCustomerRegistered, notifyFixerRegistered } from "@/lib/email";
 
 export type AuthActionState = {
   ok?: boolean;
@@ -60,8 +61,8 @@ export async function signInAction(_state: AuthActionState, formData: FormData):
     return { ok: false, message: error.message };
   }
 
-  const [{ data: claimsData }, { data: authUserData }] = await Promise.all([supabase.auth.getClaims(), supabase.auth.getUser()]);
-  const authId = claimsData?.claims?.sub;
+  const { data: authUserData } = await supabase.auth.getUser();
+  const authId = authUserData.user?.id;
 
   if (!authId) {
     return { ok: false, message: "Signed in, but the session could not be confirmed." };
@@ -196,6 +197,12 @@ export async function registerCustomerAction(
 
   await admin.from("customer_profiles").upsert({ user_id: appUser.id }, { onConflict: "user_id" });
 
+  await notifyCustomerRegistered({
+    userId: appUser.id,
+    email: parsed.data.email,
+    firstName: parsed.data.firstName
+  });
+
   redirect("/dashboard/customer");
 }
 
@@ -320,6 +327,14 @@ export async function registerTradieAction(
     });
   }
   await admin.from("tradie_subscriptions").upsert({ tradie_id: tradie.id, plan: "starter", status: "active" }, { onConflict: "tradie_id" });
+
+  await notifyFixerRegistered({
+    userId: appUser.id,
+    email: parsed.data.email,
+    firstName: parsed.data.firstName,
+    businessName: parsed.data.businessName,
+    bonusCredits: 111
+  });
 
   redirect("/dashboard/tradie");
 }

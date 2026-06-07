@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Check, Clock, Home, ShieldAlert, Star, Wrench } from "lucide-react";
-import { Badge, Button, Card, MobileBottomActionBar, PublicHeader } from "@/components/ui";
+import { Badge, Button, Card, MobileBottomActionBar, PublicFooter, PublicHeader } from "@/components/ui";
 import { CheckoutButton } from "@/components/billing-buttons";
 import { appUrl } from "@/lib/seo";
 import { activationCopy, safetyCheckChecklist, safetyCheckDisclaimer } from "@/lib/safety-checks";
@@ -57,11 +57,11 @@ export default function FixitPlusPage() {
         <div className="grid gap-8 lg:grid-cols-[.9fr_1.1fr] lg:items-end">
           <div>
             <h1 className="mt-5 text-[40px] font-black leading-tight tracking-tight md:text-[58px]">
-              Peace of mind before panic starts.
+              Protect the moments before home panic starts.
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text2)]">
-              Fixit Plus gives your household emergency support, saved home details, and a 6-monthly Safety & Readiness
-              Check - so when something leaks, locks, sparks, breaks, or leaves you stranded, you already have a plan.
+              Fixit Plus gives your household priority request support, saved home details, and a 6-monthly Safety &
+              Readiness Check, so the next leak, lockout, fault, storm, or breakdown starts with a plan.
             </p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Button href="/post-job">Get Help Now</Button>
@@ -194,6 +194,7 @@ export default function FixitPlusPage() {
           </Card>
         ))}
       </section>
+      <PublicFooter />
       <MobileBottomActionBar />
     </main>
   );

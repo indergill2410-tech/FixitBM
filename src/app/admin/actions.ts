@@ -3,6 +3,16 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import {
+  notifyFixerVerificationReviewed,
+  notifyJobStatusChanged,
+  notifyLeadCreditsRefunded,
+  notifyMembershipStatusChanged,
+  notifyPropertySafeInvite,
+  notifySafetyCheckAssigned,
+  notifySafetyCheckStatusChanged,
+  notifySupportTicketStatusChanged
+} from "@/lib/email";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
 
@@ -75,6 +85,16 @@ const safetyCheckAssignSchema = z.object({
   fixerId: z.string().uuid()
 });
 
+const propertySafeInviteSchema = z.object({
+  profileId: z.string().uuid(),
+  email: z.string().email(),
+  relationship: z.enum(["owner", "landlord", "agency_manager", "property_manager", "tenant_viewer", "viewer"]),
+  agencyName: z.string().max(120).optional(),
+  canRequestWork: z.boolean(),
+  canManageRecord: z.boolean(),
+  canViewFinancials: z.boolean()
+});
+
 function configError(): AdminActionState {
   return { ok: false, message: "Admin database access is unavailable." };
 }
@@ -126,6 +146,37 @@ export async function updateJobStatusAction(
     metadata: { status: parsed.data.status }
   });
 
+  const { data: job } = await supabase
+    .from("jobs")
+    .select("id, public_reference, title, customer_id, guest_email, assigned_tradie_id")
+    .eq("id", parsed.data.jobId)
+    .maybeSingle();
+
+  if (job) {
+    const [{ data: customer }, { data: assignedTradie }] = await Promise.all([
+      job.customer_id ? supabase.from("users").select("email").eq("id", job.customer_id).maybeSingle() : Promise.resolve({ data: null }),
+      job.assigned_tradie_id
+        ? supabase
+            .from("tradie_profiles")
+            .select("user_id")
+            .eq("id", job.assigned_tradie_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null })
+    ]);
+    const { data: fixerUser } = assignedTradie?.user_id
+      ? await supabase.from("users").select("email").eq("id", assignedTradie.user_id).maybeSingle()
+      : { data: null };
+
+    await notifyJobStatusChanged({
+      jobId: job.id,
+      reference: job.public_reference,
+      title: job.title,
+      status: parsed.data.status,
+      customerEmail: customer?.email ?? job.guest_email ?? null,
+      fixerEmail: fixerUser?.email ?? null
+    });
+  }
+
   revalidatePath("/admin");
   revalidatePath("/admin/jobs");
   revalidatePath(`/admin/jobs/${parsed.data.jobId}`);
@@ -171,6 +222,35 @@ export async function assignTradieAction(
     entity_id: parsed.data.jobId,
     metadata: { tradieId: parsed.data.tradieId }
   });
+
+  const [{ data: job }, { data: tradie }] = await Promise.all([
+    supabase
+      .from("jobs")
+      .select("id, public_reference, title, customer_id, guest_email")
+      .eq("id", parsed.data.jobId)
+      .maybeSingle(),
+    supabase
+      .from("tradie_profiles")
+      .select("business_name, trade_category, user_id")
+      .eq("id", parsed.data.tradieId)
+      .maybeSingle()
+  ]);
+
+  if (job) {
+    const [{ data: customer }, { data: fixerUser }] = await Promise.all([
+      job.customer_id ? supabase.from("users").select("email").eq("id", job.customer_id).maybeSingle() : Promise.resolve({ data: null }),
+      tradie?.user_id ? supabase.from("users").select("email").eq("id", tradie.user_id).maybeSingle() : Promise.resolve({ data: null })
+    ]);
+
+    await notifyJobStatusChanged({
+      jobId: job.id,
+      reference: job.public_reference,
+      title: job.title,
+      status: "tradie_accepted",
+      customerEmail: customer?.email ?? job.guest_email ?? null,
+      fixerEmail: fixerUser?.email ?? null
+    });
+  }
 
   revalidatePath("/admin");
   revalidatePath("/admin/jobs");
@@ -227,6 +307,22 @@ export async function reviewVerificationAction(
     entity_type: "verification_document",
     entity_id: parsed.data.documentId,
     metadata: { notes: parsed.data.notes ?? null }
+  });
+
+  const { data: tradie } = await supabase
+    .from("tradie_profiles")
+    .select("user_id")
+    .eq("id", document.tradie_id)
+    .maybeSingle();
+  const { data: fixerUser } = tradie?.user_id
+    ? await supabase.from("users").select("email").eq("id", tradie.user_id).maybeSingle()
+    : { data: null };
+
+  await notifyFixerVerificationReviewed({
+    documentId: parsed.data.documentId,
+    fixerEmail: fixerUser?.email ?? null,
+    status: parsed.data.status,
+    notes: parsed.data.notes ?? null
   });
 
   revalidatePath("/admin/tradies/verification");
@@ -298,6 +394,22 @@ export async function refundLeadCreditsAction(
     metadata: { amount: claim.credits_spent, reason: parsed.data.reason }
   });
 
+  const { data: tradie } = await supabase
+    .from("tradie_profiles")
+    .select("user_id")
+    .eq("id", claim.tradie_id)
+    .maybeSingle();
+  const { data: fixerUser } = tradie?.user_id
+    ? await supabase.from("users").select("email").eq("id", tradie.user_id).maybeSingle()
+    : { data: null };
+
+  await notifyLeadCreditsRefunded({
+    leadClaimId: claim.id,
+    fixerEmail: fixerUser?.email ?? null,
+    amount: claim.credits_spent,
+    reason: parsed.data.reason
+  });
+
   revalidatePath("/admin/credits");
   revalidatePath("/admin/disputes");
 
@@ -337,6 +449,24 @@ export async function updateSupportTicketStatusAction(
       status: parsed.data.status,
       note: parsed.data.note ?? null
     }
+  });
+
+  const { data: ticket } = await supabase
+    .from("support_tickets")
+    .select("subject, title, user_id, customer_id")
+    .eq("id", parsed.data.ticketId)
+    .maybeSingle();
+  const linkedUserId = ticket?.user_id ?? ticket?.customer_id ?? null;
+  const { data: ticketUser } = linkedUserId
+    ? await supabase.from("users").select("email").eq("id", linkedUserId).maybeSingle()
+    : { data: null };
+
+  await notifySupportTicketStatusChanged({
+    ticketId: parsed.data.ticketId,
+    userEmail: ticketUser?.email ?? null,
+    subject: ticket?.subject || ticket?.title || "Support request",
+    status: parsed.data.status,
+    note: parsed.data.note ?? null
   });
 
   revalidatePath("/admin");
@@ -426,6 +556,22 @@ export async function updateMembershipStatusAction(
     }
   });
 
+  const { data: membership } = await supabase
+    .from("memberships")
+    .select("customer_id, plan, plan_code")
+    .eq("id", parsed.data.membershipId)
+    .maybeSingle();
+  const { data: customer } = membership?.customer_id
+    ? await supabase.from("users").select("email").eq("id", membership.customer_id).maybeSingle()
+    : { data: null };
+
+  await notifyMembershipStatusChanged({
+    membershipId: parsed.data.membershipId,
+    userEmail: customer?.email ?? null,
+    status: parsed.data.status,
+    plan: membership?.plan ?? membership?.plan_code ?? null
+  });
+
   revalidatePath("/admin");
   revalidatePath("/admin/memberships");
   revalidatePath("/dashboard/customer");
@@ -471,6 +617,22 @@ export async function updateSafetyCheckStatusAction(
     metadata: { status: parsed.data.status, note: parsed.data.note ?? null }
   });
 
+  const { data: safetyCheck } = await supabase
+    .from("safety_checks")
+    .select("customer_id")
+    .eq("id", parsed.data.safetyCheckId)
+    .maybeSingle();
+  const { data: customer } = safetyCheck?.customer_id
+    ? await supabase.from("users").select("email").eq("id", safetyCheck.customer_id).maybeSingle()
+    : { data: null };
+
+  await notifySafetyCheckStatusChanged({
+    safetyCheckId: parsed.data.safetyCheckId,
+    customerEmail: customer?.email ?? null,
+    status: parsed.data.status,
+    note: parsed.data.note ?? null
+  });
+
   revalidatePath("/admin/safety-checks");
   revalidatePath("/dashboard/customer/safety-checks");
 
@@ -508,8 +670,160 @@ export async function assignSafetyCheckFixerAction(
     metadata: { fixerId: parsed.data.fixerId }
   });
 
+  const [{ data: safetyCheck }, { data: fixer }] = await Promise.all([
+    supabase
+      .from("safety_checks")
+      .select("customer_id")
+      .eq("id", parsed.data.safetyCheckId)
+      .maybeSingle(),
+    supabase
+      .from("tradie_profiles")
+      .select("business_name, trade_category, user_id")
+      .eq("id", parsed.data.fixerId)
+      .maybeSingle()
+  ]);
+  const [{ data: customer }, { data: fixerUser }] = await Promise.all([
+    safetyCheck?.customer_id ? supabase.from("users").select("email").eq("id", safetyCheck.customer_id).maybeSingle() : Promise.resolve({ data: null }),
+    fixer?.user_id ? supabase.from("users").select("email").eq("id", fixer.user_id).maybeSingle() : Promise.resolve({ data: null })
+  ]);
+
+  await notifySafetyCheckAssigned({
+    safetyCheckId: parsed.data.safetyCheckId,
+    customerEmail: customer?.email ?? null,
+    fixerEmail: fixerUser?.email ?? null,
+    fixerName: fixer?.business_name || fixer?.trade_category || null
+  });
+
   revalidatePath("/admin/safety-checks");
   revalidatePath("/dashboard/tradie");
 
   return { ok: true, message: "Fixer assigned to Safety Check." };
+}
+
+export async function invitePropertySafeParticipantAction(
+  _state: AdminActionState,
+  formData: FormData
+): Promise<AdminActionState> {
+  const { user, supabase } = await getAdminClient();
+  if (!supabase) return configError();
+
+  const parsed = propertySafeInviteSchema.safeParse({
+    profileId: formData.get("profileId"),
+    email: String(formData.get("email") ?? "").toLowerCase().trim(),
+    relationship: formData.get("relationship"),
+    agencyName: String(formData.get("agencyName") ?? "").trim() || undefined,
+    canRequestWork: formData.get("canRequestWork") === "on",
+    canManageRecord: formData.get("canManageRecord") === "on",
+    canViewFinancials: formData.get("canViewFinancials") === "on"
+  });
+
+  if (!parsed.success) {
+    return { ok: false, message: "Enter a valid PropertySafe invite." };
+  }
+
+  const { data: profile } = await supabase
+    .from("propertysafe_profiles")
+    .select("id, display_name, property_id")
+    .eq("id", parsed.data.profileId)
+    .maybeSingle();
+
+  if (!profile) {
+    return { ok: false, message: "PropertySafe profile not found." };
+  }
+
+  const { data: invitedUser } = await supabase
+    .from("users")
+    .select("id, email")
+    .eq("email", parsed.data.email)
+    .maybeSingle();
+
+  const existingQuery = invitedUser
+    ? supabase
+        .from("propertysafe_participants")
+        .select("id")
+        .eq("propertysafe_profile_id", parsed.data.profileId)
+        .eq("user_id", invitedUser.id)
+        .eq("relationship", parsed.data.relationship)
+        .maybeSingle()
+    : supabase
+        .from("propertysafe_participants")
+        .select("id")
+        .eq("propertysafe_profile_id", parsed.data.profileId)
+        .eq("invite_email", parsed.data.email)
+        .eq("relationship", parsed.data.relationship)
+        .maybeSingle();
+
+  const { data: existingParticipant } = await existingQuery;
+  const participantPatch = {
+    propertysafe_profile_id: parsed.data.profileId,
+    user_id: invitedUser?.id ?? null,
+    invite_email: invitedUser ? null : parsed.data.email,
+    relationship: parsed.data.relationship,
+    agency_name: parsed.data.agencyName ?? null,
+    can_view: true,
+    can_request_work: parsed.data.canRequestWork,
+    can_manage_record: parsed.data.canManageRecord,
+    can_view_financials: parsed.data.canViewFinancials,
+    status: invitedUser ? "active" : "invited",
+    created_by: user.id
+  };
+
+  const { data: participant, error } = existingParticipant
+    ? await supabase
+        .from("propertysafe_participants")
+        .update(participantPatch)
+        .eq("id", existingParticipant.id)
+        .select("id")
+        .single()
+    : await supabase
+        .from("propertysafe_participants")
+        .insert(participantPatch)
+        .select("id")
+        .single();
+
+  if (error || !participant) {
+    return { ok: false, message: error?.message ?? "PropertySafe access could not be saved." };
+  }
+
+  const { data: property } = profile.property_id
+    ? await supabase
+        .from("saved_properties")
+        .select("label, address, suburb, postcode, state")
+        .eq("id", profile.property_id)
+        .maybeSingle()
+    : { data: null };
+  const propertyLabel =
+    profile.display_name ||
+    property?.label ||
+    [property?.address, property?.suburb, property?.postcode, property?.state].filter(Boolean).join(" ") ||
+    "PropertySafe record";
+
+  await supabase.from("audit_logs").insert({
+    actor_id: user.id,
+    action: "invite_propertysafe_participant",
+    entity_type: "propertysafe_participant",
+    entity_id: participant.id,
+    metadata: {
+      propertysafeProfileId: parsed.data.profileId,
+      relationship: parsed.data.relationship,
+      email: parsed.data.email,
+      agencyName: parsed.data.agencyName ?? null
+    }
+  });
+
+  await notifyPropertySafeInvite({
+    participantId: participant.id,
+    email: parsed.data.email,
+    propertyLabel,
+    agencyName: parsed.data.agencyName ?? null,
+    relationship: parsed.data.relationship
+  });
+
+  revalidatePath("/admin/propertysafe");
+  revalidatePath("/dashboard/customer");
+
+  return {
+    ok: true,
+    message: invitedUser ? "PropertySafe access is active for that account." : "PropertySafe invite saved and emailed."
+  };
 }

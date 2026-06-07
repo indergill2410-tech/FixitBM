@@ -49,9 +49,27 @@ export type PropertySafeRecommendation = {
   updated_at: string;
 };
 
+export type PropertySafeParticipant = {
+  id: string;
+  propertysafe_profile_id: string;
+  user_id: string | null;
+  invite_email: string | null;
+  relationship: "owner" | "landlord" | "agency_manager" | "property_manager" | "tenant_viewer" | "viewer";
+  agency_name: string | null;
+  can_view: boolean;
+  can_request_work: boolean;
+  can_manage_record: boolean;
+  can_view_financials: boolean;
+  status: "invited" | "active" | "paused" | "revoked";
+  created_at: string;
+  updated_at: string;
+};
+
 export type PropertySafeSummary = {
   membershipStatus: string | null;
   activeProfileCount: number;
+  sharedProfileCount: number;
+  agencyManagedCount: number;
   openRecommendationCount: number;
   latestAssessment: PropertySafeAssessment | null;
   statusLabel: string;
@@ -60,6 +78,21 @@ export type PropertySafeSummary = {
   nextReviewLabel: string;
   ctaLabel: string;
   ctaHref: string;
+};
+
+export type AdminPropertySafeProfileRow = {
+  id: string;
+  display_name: string | null;
+  status: string;
+  protection_level: string;
+  customer_name: string;
+  customer_email: string | null;
+  property_label: string;
+  last_assessed_at: string | null;
+  next_review_at: string | null;
+  participant_count: number;
+  open_recommendation_count: number;
+  latest_assessment_summary: string | null;
 };
 
 type PropertySafeReportItem = {
@@ -98,6 +131,7 @@ export async function getCustomerPropertySafeSummary(user: AppUser): Promise<Pro
   const defaultSummary = buildPropertySafeSummary({
     membershipStatus: membership?.status ?? null,
     profiles: [],
+    participants: [],
     latestAssessment: null,
     recommendations: []
   });
@@ -105,17 +139,51 @@ export async function getCustomerPropertySafeSummary(user: AppUser): Promise<Pro
   if (!isSupabasePublicConfigured()) return defaultSummary;
 
   const supabase = await createSupabaseServerClient();
-  const { data: profiles, error: profileError } = await supabase
+  const { data: ownedProfiles, error: profileError } = await supabase
     .from("propertysafe_profiles")
     .select(propertySafeProfileSelect)
     .eq("customer_id", user.id)
     .neq("status", "archived")
     .order("created_at", { ascending: false });
 
-  if (profileError || !profiles?.length) return defaultSummary;
+  if (profileError) return defaultSummary;
+
+  const { data: participantRows, error: participantError } = await supabase
+    .from("propertysafe_participants")
+    .select(propertySafeParticipantSelect)
+    .eq("user_id", user.id)
+    .eq("status", "active")
+    .eq("can_view", true);
+
+  const participants = participantError ? [] : ((participantRows ?? []) as PropertySafeParticipant[]);
+  const sharedProfileIds = participants.map((participant) => participant.propertysafe_profile_id);
+  const { data: sharedProfiles, error: sharedProfileError } = sharedProfileIds.length
+    ? await supabase
+        .from("propertysafe_profiles")
+        .select(propertySafeProfileSelect)
+        .in("id", sharedProfileIds)
+        .neq("status", "archived")
+    : { data: [], error: null };
+
+  const profileMap = new Map<string, PropertySafeProfile>();
+  [...((ownedProfiles ?? []) as PropertySafeProfile[]), ...((sharedProfileError ? [] : sharedProfiles ?? []) as PropertySafeProfile[])].forEach((profile) => {
+    profileMap.set(profile.id, profile);
+  });
+  const profiles = Array.from(profileMap.values());
+
+  if (!profiles.length) {
+    return buildPropertySafeSummary({
+      membershipStatus: membership?.status ?? null,
+      profiles: [],
+      participants,
+      latestAssessment: null,
+      recommendations: []
+    });
+  }
 
   const profileIds = profiles.map((profile) => profile.id);
-  const [{ data: latestAssessment }, { data: recommendations }] = await Promise.all([
+  const propertyIds = profiles.map((profile) => profile.property_id).filter((id): id is string => Boolean(id));
+  const [{ data: latestAssessment }, { data: ownedRecommendations }, propertyRecommendationResult] = await Promise.all([
     supabase
       .from("propertysafe_assessments")
       .select(propertySafeAssessmentSelect)
@@ -129,14 +197,31 @@ export async function getCustomerPropertySafeSummary(user: AppUser): Promise<Pro
       .select(propertySafeRecommendationSelect)
       .eq("customer_id", user.id)
       .neq("status", "dismissed")
-      .order("created_at", { ascending: false })
+      .order("created_at", { ascending: false }),
+    propertyIds.length
+      ? supabase
+          .from("propertysafe_recommendations")
+          .select(propertySafeRecommendationSelect)
+          .in("property_id", propertyIds)
+          .neq("status", "dismissed")
+          .order("created_at", { ascending: false })
+      : Promise.resolve({ data: [], error: null })
   ]);
+
+  const recommendationMap = new Map<string, PropertySafeRecommendation>();
+  [
+    ...((ownedRecommendations ?? []) as PropertySafeRecommendation[]),
+    ...((propertyRecommendationResult.error ? [] : propertyRecommendationResult.data ?? []) as PropertySafeRecommendation[])
+  ].forEach((recommendation) => {
+    recommendationMap.set(recommendation.id, recommendation);
+  });
 
   return buildPropertySafeSummary({
     membershipStatus: membership?.status ?? null,
     profiles: profiles as PropertySafeProfile[],
+    participants,
     latestAssessment: (latestAssessment ?? null) as PropertySafeAssessment | null,
-    recommendations: (recommendations ?? []) as PropertySafeRecommendation[]
+    recommendations: Array.from(recommendationMap.values())
   });
 }
 
@@ -261,47 +346,166 @@ export async function syncPropertySafeFromSafetyCheckReport(input: PropertySafeR
   return { ok: true, message: "PropertySafe profile updated." };
 }
 
+export async function getAdminPropertySafeProfiles(): Promise<AdminPropertySafeProfileRow[]> {
+  noStore();
+
+  if (!isSupabaseServerConfigured()) return [];
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return [];
+
+  const { data: profiles, error } = await supabase
+    .from("propertysafe_profiles")
+    .select(propertySafeProfileSelect)
+    .order("updated_at", { ascending: false })
+    .limit(80);
+
+  if (error || !profiles?.length) return [];
+
+  const typedProfiles = profiles as PropertySafeProfile[];
+  const customerIds = Array.from(new Set(typedProfiles.map((profile) => profile.customer_id).filter(Boolean)));
+  const propertyIds = Array.from(new Set(typedProfiles.map((profile) => profile.property_id).filter(Boolean))) as string[];
+  const profileIds = typedProfiles.map((profile) => profile.id);
+
+  const [{ data: customers }, { data: properties }, { data: participants }, { data: recommendations }, { data: assessments }] =
+    await Promise.all([
+      customerIds.length
+        ? supabase.from("users").select("id, email, first_name, last_name").in("id", customerIds)
+        : Promise.resolve({ data: [] }),
+      propertyIds.length
+        ? supabase.from("saved_properties").select("id, label, address, suburb, postcode, state").in("id", propertyIds)
+        : Promise.resolve({ data: [] }),
+      supabase
+        .from("propertysafe_participants")
+        .select("propertysafe_profile_id, status")
+        .in("propertysafe_profile_id", profileIds)
+        .neq("status", "revoked"),
+      propertyIds.length
+        ? supabase
+            .from("propertysafe_recommendations")
+            .select("property_id, status")
+            .in("property_id", propertyIds)
+            .eq("status", "recommended")
+        : Promise.resolve({ data: [] }),
+      supabase
+        .from("propertysafe_assessments")
+        .select("propertysafe_profile_id, summary, published_at, created_at")
+        .in("propertysafe_profile_id", profileIds)
+        .eq("status", "published")
+        .order("published_at", { ascending: false, nullsFirst: false })
+    ]);
+
+  const customerById = new Map((customers ?? []).map((customer) => [customer.id, customer]));
+  const propertyById = new Map((properties ?? []).map((property) => [property.id, property]));
+  const participantCounts = new Map<string, number>();
+  (participants ?? []).forEach((participant) => {
+    participantCounts.set(participant.propertysafe_profile_id, (participantCounts.get(participant.propertysafe_profile_id) ?? 0) + 1);
+  });
+
+  const recommendationCounts = new Map<string, number>();
+  (recommendations ?? []).forEach((recommendation) => {
+    if (recommendation.property_id) {
+      recommendationCounts.set(recommendation.property_id, (recommendationCounts.get(recommendation.property_id) ?? 0) + 1);
+    }
+  });
+
+  const latestAssessmentByProfileId = new Map<string, { summary: string | null }>();
+  (assessments ?? []).forEach((assessment) => {
+    if (!latestAssessmentByProfileId.has(assessment.propertysafe_profile_id)) {
+      latestAssessmentByProfileId.set(assessment.propertysafe_profile_id, { summary: assessment.summary ?? null });
+    }
+  });
+
+  return typedProfiles.map((profile) => {
+    const customer = customerById.get(profile.customer_id);
+    const property = profile.property_id ? propertyById.get(profile.property_id) : null;
+    const customerName = customer
+      ? [customer.first_name, customer.last_name].filter(Boolean).join(" ") || customer.email || "Customer"
+      : "Customer";
+    const propertyLabel =
+      profile.display_name ||
+      property?.label ||
+      [property?.address, property?.suburb, property?.postcode, property?.state].filter(Boolean).join(" ") ||
+      "PropertySafe record";
+
+    return {
+      id: profile.id,
+      display_name: profile.display_name,
+      status: profile.status,
+      protection_level: profile.protection_level,
+      customer_name: customerName,
+      customer_email: customer?.email ?? null,
+      property_label: propertyLabel,
+      last_assessed_at: profile.last_assessed_at,
+      next_review_at: profile.next_review_at,
+      participant_count: participantCounts.get(profile.id) ?? 0,
+      open_recommendation_count: profile.property_id ? recommendationCounts.get(profile.property_id) ?? 0 : 0,
+      latest_assessment_summary: latestAssessmentByProfileId.get(profile.id)?.summary ?? null
+    };
+  });
+}
+
 function buildPropertySafeSummary({
   membershipStatus,
   profiles,
+  participants,
   latestAssessment,
   recommendations
 }: {
   membershipStatus: string | null;
   profiles: PropertySafeProfile[];
+  participants: PropertySafeParticipant[];
   latestAssessment: PropertySafeAssessment | null;
   recommendations: PropertySafeRecommendation[];
 }): PropertySafeSummary {
   const activeProfiles = profiles.filter((profile) => profile.status === "active");
+  const sharedProfileIds = new Set(participants.map((participant) => participant.propertysafe_profile_id));
+  const sharedProfiles = activeProfiles.filter((profile) => sharedProfileIds.has(profile.id));
+  const agencyManagedProfiles = sharedProfiles.filter((profile) => {
+    const participant = participants.find((item) => item.propertysafe_profile_id === profile.id);
+    return participant?.relationship === "owner" || participant?.relationship === "landlord";
+  });
   const openRecommendations = recommendations.filter((recommendation) => recommendation.status === "recommended");
 
   if (!activeProfiles.length) {
     return {
       membershipStatus,
       activeProfileCount: 0,
+      sharedProfileCount: participants.length,
+      agencyManagedCount: 0,
       openRecommendationCount: 0,
       latestAssessment: null,
       statusLabel: membershipStatus === "active" ? "Ready to build" : "Not active yet",
       headline: "Build your PropertySafe view from a real Safety Check.",
       copy: membershipStatus === "active"
-        ? "Book a Safety & Readiness Check and we will turn the completed report into a clear PropertySafe view for your home."
-        : "Join Fixit Plus to unlock Safety Checks, saved home details, and a real PropertySafe history over time.",
+        ? "Book a Safety & Readiness Check for your home, or ask your property manager to share a managed property record with you."
+        : "Join Fixit Plus for your own home, or use PropertySafe through a real estate agency managing your investment property.",
       nextReviewLabel: "No report yet",
-      ctaLabel: membershipStatus === "active" ? "Book Safety Check" : "Protect My Home",
+      ctaLabel: membershipStatus === "active" ? "Book Safety Check" : "Protect My Property",
       ctaHref: membershipStatus === "active" ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"
     };
   }
 
+  const hasAgencyManagedRecord = agencyManagedProfiles.length > 0;
+
   return {
     membershipStatus,
     activeProfileCount: activeProfiles.length,
+    sharedProfileCount: sharedProfiles.length,
+    agencyManagedCount: agencyManagedProfiles.length,
     openRecommendationCount: openRecommendations.length,
     latestAssessment,
-    statusLabel: latestAssessment ? "PropertySafe active" : "Profile active",
-    headline: latestAssessment ? "Your PropertySafe view is live." : "Your PropertySafe profile is active.",
+    statusLabel: hasAgencyManagedRecord ? "Agency-shared record" : latestAssessment ? "PropertySafe active" : "Profile active",
+    headline: hasAgencyManagedRecord
+      ? "Your managed property record is ready."
+      : latestAssessment
+        ? "Your PropertySafe view is live."
+        : "Your PropertySafe profile is active.",
     copy: latestAssessment?.summary
       ? latestAssessment.summary
-      : "PropertySafe brings your saved property, Safety Check history, and recommended next steps into one calm view.",
+      : hasAgencyManagedRecord
+        ? "See real checks, recommended fixes, and follow-up work shared through the agency managing your property."
+        : "PropertySafe brings your saved property, Safety Check history, and recommended next steps into one calm view.",
     nextReviewLabel: latestAssessment?.next_review_at
       ? `Next review ${new Date(latestAssessment.next_review_at).toLocaleDateString()}`
       : "Review date pending",
@@ -318,3 +522,6 @@ const propertySafeAssessmentSelect =
 
 const propertySafeRecommendationSelect =
   "id, assessment_id, customer_id, property_id, title, trade_type, priority, description, status, linked_job_id, created_at, updated_at";
+
+const propertySafeParticipantSelect =
+  "id, propertysafe_profile_id, user_id, invite_email, relationship, agency_name, can_view, can_request_work, can_manage_record, can_view_financials, status, created_at, updated_at";

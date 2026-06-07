@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { notifySupportTicketCreated } from "@/lib/email";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
 
@@ -64,6 +65,15 @@ export async function submitSupportTicketAction(
       subject: parsed.data.subject,
       role: user.role
     }
+  });
+
+  await notifySupportTicketCreated({
+    ticketId: ticket.id,
+    userEmail: user.email,
+    userName: [user.first_name, user.last_name].filter(Boolean).join(" ") || null,
+    role: user.role,
+    subject: parsed.data.subject,
+    message: parsed.data.message
   });
 
   revalidatePath("/admin/support");

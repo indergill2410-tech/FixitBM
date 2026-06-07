@@ -1,4 +1,4 @@
-import { PublicHeader } from "@/components/ui";
+import { PublicFooter, PublicHeader } from "@/components/ui";
 
 export default function PrivacyPage() {
   return (
@@ -39,6 +39,7 @@ export default function PrivacyPage() {
           </section>
         </div>
       </article>
+      <PublicFooter />
     </main>
   );
 }

@@ -1,4 +1,4 @@
-import { Badge, Button, IconTile, MobileBottomActionBar, PublicHeader } from "@/components/ui";
+import { Badge, Button, IconTile, MobileBottomActionBar, PublicFooter, PublicHeader } from "@/components/ui";
 import { roadsideCategories } from "@/lib/data";
 
 export default function RoadsideHelpPage() {
@@ -8,10 +8,11 @@ export default function RoadsideHelpPage() {
       <section className="container py-14">
         <Badge tone="blue">Roadside help</Badge>
         <h1 className="mt-5 max-w-3xl text-[40px] font-black leading-tight tracking-tight md:text-[58px]">
-          Road moments are stressful. Fixit247 gives you a plan.
+          Stuck on the road? Start the request calmly.
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text2)]">
-          Start a request for flat tyres, batteries, lockouts, fuel emergencies, towing coordination, and mechanic support.
+          Flat tyre, battery, lockout, fuel issue, towing, or mechanic help. Share your location and situation once so the
+          next step is clearer.
         </p>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row">
           <Button href="/post-job">Get Roadside Help</Button>
@@ -23,6 +24,7 @@ export default function RoadsideHelpPage() {
           <IconTile key={item.label} icon={item.icon} label={item.label} />
         ))}
       </section>
+      <PublicFooter />
       <MobileBottomActionBar />
     </main>
   );

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { notifyNewsletterSignup } from "@/lib/email";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
@@ -51,6 +52,8 @@ export async function POST(request: Request) {
       message: "Thanks. You're on the list."
     });
   }
+
+  await notifyNewsletterSignup({ email: parsed.data.email.toLowerCase(), source: parsed.data.source });
 
   return NextResponse.json({ message: "Thanks. You're on the list." });
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentAppUser } from "@/lib/auth";
+import { notifyRequestReceived } from "@/lib/email";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
@@ -163,6 +164,20 @@ export async function POST(request: Request) {
       await supabase.from("job_photos").insert(photoRows);
     }
   }
+
+  await notifyRequestReceived({
+    requestId: job.id,
+    reference: job.public_reference,
+    recipientEmail: isCustomerAccount ? user.email : data.email || null,
+    firstName: isCustomerAccount ? user.first_name : data.firstName,
+    title,
+    lane,
+    category: data.category,
+    location: [data.suburb, data.postcode, data.state].filter(Boolean).join(" ") || data.address || data.roadName || null,
+    phone: data.phone,
+    contactMethod: data.contact,
+    dashboardUrl: isCustomerAccount ? `/dashboard/customer/jobs/${job.id}` : null
+  });
 
   return NextResponse.json({
     reference: job.public_reference,

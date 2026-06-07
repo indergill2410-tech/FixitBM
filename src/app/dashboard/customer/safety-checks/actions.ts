@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { notifySafetyCheckBooked } from "@/lib/email";
 import { getCustomerMembershipSummary } from "@/lib/safety-checks";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
@@ -56,7 +57,7 @@ export async function bookSafetyCheckAction(
 
   const { data: property } = await supabase
     .from("saved_properties")
-    .select("id")
+    .select("id, label, address, suburb, postcode, state")
     .eq("id", parsed.data.propertyId)
     .eq("customer_id", user.id)
     .maybeSingle();
@@ -118,6 +119,17 @@ export async function bookSafetyCheckAction(
       propertyId: property.id,
       preferredWindow: parsed.data.preferredWindow
     }
+  });
+
+  await notifySafetyCheckBooked({
+    safetyCheckId: safetyCheck.id,
+    userEmail: user.email,
+    firstName: user.first_name,
+    propertyLabel:
+      property.label ||
+      [property.address, property.suburb, property.postcode, property.state].filter(Boolean).join(" ") ||
+      "Saved property",
+    preferredWindow: parsed.data.preferredWindow
   });
 
   revalidatePath("/dashboard/customer");

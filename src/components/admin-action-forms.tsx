@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import {
   assignSafetyCheckFixerAction,
   assignTradieAction,
+  invitePropertySafeParticipantAction,
   refundLeadCreditsAction,
   reviewVerificationAction,
   updateDisputeStatusAction,
@@ -37,6 +38,7 @@ const safetyCheckStatuses = ["due", "booked", "assigned", "completed", "cancelle
 const supportStatuses = ["open", "waiting", "resolved", "closed"];
 const disputeStatuses = ["open", "under_review", "resolved_customer", "resolved_tradie", "closed"];
 const membershipStatuses = ["active", "pending_activation", "inactive", "cancelled"];
+const propertySafeRelationships = ["owner", "landlord", "agency_manager", "property_manager", "tenant_viewer", "viewer"];
 
 export function JobStatusForm({ jobId }: { jobId: string }) {
   const [state, action, pending] = useActionState(updateJobStatusAction, initialState);
@@ -258,6 +260,49 @@ export function AssignSafetyCheckFixerForm({ safetyCheckId, tradies = [] }: { sa
         ))}
       </select>
       <Button disabled={pending}>Assign Safety Check</Button>
+    </form>
+  );
+}
+
+export function PropertySafeInviteForm({ profileId }: { profileId: string }) {
+  const [state, action, pending] = useActionState(invitePropertySafeParticipantAction, initialState);
+
+  return (
+    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+      <FormMessage state={state} />
+      <input type="hidden" name="profileId" value={profileId} />
+      <input
+        name="email"
+        type="email"
+        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        placeholder="Owner, landlord, or agency email"
+        required
+      />
+      <select name="relationship" className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+        {propertySafeRelationships.map((relationship) => (
+          <option key={relationship} value={relationship}>
+            {relationship.replaceAll("_", " ")}
+          </option>
+        ))}
+      </select>
+      <input
+        name="agencyName"
+        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        placeholder="Agency name optional"
+      />
+      <label className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold text-white/75">
+        <input name="canRequestWork" type="checkbox" className="size-4" />
+        Can start maintenance requests
+      </label>
+      <label className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold text-white/75">
+        <input name="canManageRecord" type="checkbox" className="size-4" />
+        Can manage PropertySafe record
+      </label>
+      <label className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold text-white/75">
+        <input name="canViewFinancials" type="checkbox" className="size-4" />
+        Can view financial details
+      </label>
+      <Button disabled={pending}>Share PropertySafe access</Button>
     </form>
   );
 }

@@ -23,6 +23,10 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SECRET_KEY=
 CRON_SECRET=
 ADMIN_BOOTSTRAP_SECRET=
+RESEND_API_KEY=
+RESEND_FROM_EMAIL=Fixit247 <hello@fixit247.com.au>
+FIXIT_ALERT_EMAIL=
+FIXIT_SUPPORT_EMAIL=support@fixit247.com.au
 ALLOW_DEMO_SEED=false
 ```
 
@@ -43,8 +47,8 @@ STRIPE_PRICE_CREDITS_BUSINESS=
 STRIPE_PRICE_CREDITS_AGENCY=
 ```
 
-Stripe Checkout is live-ready for customer memberships, tradie subscriptions, and credit packs. Customer portal and full
-webhook reconciliation should stay in follow-up until Stripe customer records are added to the database schema.
+Stripe Checkout, customer portal sessions, and webhook reconciliation are implemented for customer memberships, tradie
+subscriptions, and credit packs. Verify the live webhook signing secret before accepting payments.
 
 Optional integrations:
 
@@ -54,6 +58,19 @@ TWILIO_ACCOUNT_SID=
 TWILIO_AUTH_TOKEN=
 TWILIO_PHONE_NUMBER=
 ```
+
+## Transactional email
+
+The app sends best-effort transactional email through Resend when `RESEND_API_KEY` is present.
+
+Required for production:
+
+- `RESEND_FROM_EMAIL`: verified sender, for example `Fixit247 <hello@fixit247.com.au>`.
+- `FIXIT_ALERT_EMAIL`: comma-separated internal recipients for live request, support, Fixer, and PropertySafe alerts.
+- `FIXIT_SUPPORT_EMAIL`: reply-to/support address shown in customer emails.
+
+Email delivery should be verified with a real request, newsletter signup, support ticket, Safety Check booking, Fixer
+signup, and PropertySafe invite.
 
 ## Cron job
 
