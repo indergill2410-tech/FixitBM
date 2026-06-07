@@ -47,9 +47,9 @@ export function PublicHeader() {
   const navItems = [
     ["Home", "/"],
     ["Fixit Plus", "/fixit-plus"],
-    ["Home Emergencies", "/home-emergencies"],
+    ["PropertySafe", "/propertysafe"],
+    ["Emergencies", "/home-emergencies"],
     ["Roadside Help", "/roadside-help"],
-    ["All Trade Jobs", "/all-trade-jobs"],
     ["How It Works", "/how-it-works"]
   ];
 
@@ -237,7 +237,7 @@ export function IconTile({ icon: Icon, label }: { icon: LucideIcon; label: strin
 export function TrustStrip() {
   return (
     <div className="grid gap-3 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow)] md:grid-cols-3">
-      {["Free requests", "Fixit Plus from $29/month", "Any trade job"].map((item) => (
+      {["Free requests", "Fixit Plus from $29/month", "PropertySafe for agencies"].map((item) => (
         <div key={item} className="flex items-center gap-2 text-sm font-semibold text-[var(--text2)]">
           <ShieldCheck size={16} className="text-[var(--green)]" />
           {item}

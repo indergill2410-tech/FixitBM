@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle2, Hammer, Home, MapPin, Radar, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Building2, CheckCircle2, Hammer, Home, MapPin, ShieldCheck, Zap } from "lucide-react";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { Badge, Button, Card, IconTile, MobileBottomActionBar, PublicHeader, TrustStrip } from "@/components/ui";
 import { homeCategories, roadsideCategories, tradeCategories } from "@/lib/data";
@@ -32,27 +32,27 @@ export default function HomePage() {
       />
       <section className="container grid min-h-[calc(100vh-64px)] items-center gap-10 py-10 lg:grid-cols-[1.05fr_.95fr]">
         <div>
-          <Badge>Early access now open</Badge>
+          <Badge>PropertySafe now visible for agencies</Badge>
           <h1 className="mt-5 max-w-3xl text-[42px] font-black leading-[1.04] tracking-tight md:text-[64px]">
-            Emergency help for your home and road, 24/7.
+            Emergency help and PropertySafe records for homes, rentals, and road.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-8 text-[var(--text2)] md:text-lg">
-            When something breaks, leaks, locks, sparks, stalls, or leaves you stranded, Fixit247 helps you get support
-            fast, and Fixit Plus gives your household peace of mind before the next emergency.
+            When something breaks, leaks, locks, sparks, stalls, or leaves tenants stranded, Fixit247 helps households,
+            property managers, and real estate agencies start the right request fast.
           </p>
           <p className="mt-3 text-sm font-black uppercase tracking-wide text-[var(--amber2)]">
-            Emergency help when things go wrong. Safety checks before they do.
+            Emergency help when things go wrong. PropertySafe history before they repeat.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <Button href="/post-job">
               Get Help Now
               <ArrowRight size={17} />
             </Button>
-            <Button href="/fixit-plus" variant="dark">
-              Join Fixit Plus
+            <Button href="/propertysafe" variant="dark">
+              PropertySafe for Agencies
             </Button>
-            <Button href="/post-job" variant="ghost">
-              Post a Request Free
+            <Button href="/fixit-plus" variant="ghost">
+              Join Fixit Plus
             </Button>
           </div>
           <div className="mt-8">
@@ -90,15 +90,47 @@ export default function HomePage() {
             <Card variant="dark">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <Badge tone="amber">Request status</Badge>
-                  <h3 className="mt-4 text-xl font-black">Matching the right help</h3>
-                  <p className="mt-2 text-sm leading-6 text-white/70">Built for calm tracking, chat, quotes, and resolution.</p>
+                  <Badge tone="amber">PropertySafe</Badge>
+                  <h3 className="mt-4 text-xl font-black">Maintenance records for every property.</h3>
+                  <p className="mt-2 text-sm leading-6 text-white/70">
+                    Built for urgent tenant issues, repeat maintenance, Safety Check history, quotes, and next steps.
+                  </p>
                 </div>
-                <Radar className="text-[var(--amber)]" />
+                <Building2 className="text-[var(--amber)]" />
               </div>
             </Card>
           </div>
         </Card>
+      </section>
+
+      <section className="container grid gap-6 py-12 lg:grid-cols-[.9fr_1.1fr]">
+        <Card variant="dark">
+          <Building2 className="text-[var(--amber)]" />
+          <Badge className="mt-4">Property managers and agencies</Badge>
+          <h2 className="mt-4 text-3xl font-black tracking-tight">One calm maintenance path across every managed property.</h2>
+          <p className="mt-4 leading-7 text-white/70">
+            PropertySafe helps real estate teams turn tenant issues, urgent repairs, routine maintenance, and completed
+            Safety Checks into a clearer property record without losing the speed of Fixit247 requests.
+          </p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <Button href="/propertysafe">Explore PropertySafe</Button>
+            <Button href="/contact" variant="ghost">Talk to onboarding</Button>
+          </div>
+        </Card>
+        <div className="grid gap-4 md:grid-cols-2">
+          {[
+            ["Tenant issue triage", "Burst pipes, lockouts, faults, leaks, and urgent maintenance can start from one request path."],
+            ["PropertySafe history", "Completed checks and recommended fixes become a cleaner record for each property."],
+            ["Quote-ready requests", "Routine repairs and larger work can be prepared with the details Fixers need."],
+            ["Agency-ready oversight", "Support can help structure requests across portfolios without exposing backend complexity."]
+          ].map(([title, copy]) => (
+            <Card key={title}>
+              <CheckCircle2 className="text-[var(--green)]" />
+              <h3 className="mt-4 font-black">{title}</h3>
+              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">{copy}</p>
+            </Card>
+          ))}
+        </div>
       </section>
 
       <section className="container grid gap-6 py-12 lg:grid-cols-[.9fr_1.1fr]">

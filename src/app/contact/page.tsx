@@ -13,6 +13,7 @@ export default function ContactPage() {
           </p>
           <div className="mt-6 flex gap-3">
             <Button href="/post-job">Start a request</Button>
+            <Button href="/propertysafe" variant="ghost">PropertySafe</Button>
             <Button href="/become-a-fixer" variant="ghost">Become a Fixer</Button>
           </div>
         </Card>
