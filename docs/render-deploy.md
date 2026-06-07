@@ -72,6 +72,17 @@ Required for production:
 Email delivery should be verified with a real request, newsletter signup, support ticket, Safety Check booking, Fixer
 signup, and PropertySafe invite.
 
+Protected production email test:
+
+```bash
+curl -X POST "https://fixit247.com.au/api/admin/email-test" \
+  -H "Authorization: Bearer YOUR_CRON_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"you@example.com"}'
+```
+
+Recent delivery attempts appear in `/admin/settings` after the `email_delivery_logs` migration is applied.
+
 ## Cron job
 
 Create a Render Cron Job for the 111-credit monthly tradie launch bonus.
@@ -111,6 +122,8 @@ curl -X POST "https://YOUR_RENDER_APP_URL/api/admin/bootstrap" \
 7. Claim a lead and confirm credits decrease.
 8. Sign in as admin and confirm the job detail page shows status timeline, messages, audit activity, and assignment controls.
 9. Open `/admin/safety-checks` and confirm it shows an operations shell without fake check data.
+10. Open `/agency/login` and confirm a PropertySafe agency account routes to `/dashboard/agency`.
+11. Open `/admin/settings` and confirm email configuration plus recent delivery logs are visible.
 
 ## Security notes
 

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { BriefcaseBusiness, Home } from "lucide-react";
+import { BriefcaseBusiness, Building2, Home } from "lucide-react";
 import { Badge, Button, Card, PublicHeader } from "@/components/ui";
 import { getCurrentAppUser, roleHome } from "@/lib/auth";
 
@@ -19,12 +19,18 @@ export default async function RegisterPage() {
         <div className="mx-auto w-full max-w-3xl">
           <Badge>Choose account type</Badge>
           <h1 className="mt-4 text-4xl font-black tracking-tight">What brings you to Fixit247?</h1>
-          <div className="mt-7 grid gap-5 md:grid-cols-2">
+          <div className="mt-7 grid gap-5 md:grid-cols-3">
             <Card>
               <Home className="text-[var(--amber2)]" />
               <h2 className="mt-4 text-xl font-black">I need help</h2>
               <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Create a customer account for tracking requests, properties, vehicles, messages, and Fixit Plus.</p>
               <Button href="/register/customer" className="mt-5 w-full">Customer account</Button>
+            </Card>
+            <Card>
+              <Building2 className="text-[var(--amber2)]" />
+              <h2 className="mt-4 text-xl font-black">I manage properties</h2>
+              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Create a PropertySafe agency account for managed properties, owner visibility, and maintenance rules.</p>
+              <Button href="/agency/register" variant="ghost" className="mt-5 w-full">Agency account</Button>
             </Card>
             <Card>
               <BriefcaseBusiness className="text-[var(--purple)]" />

@@ -14,8 +14,8 @@ export default async function CustomerRegisterPage({
   const params = await searchParams;
   const isAgency = params?.intent === "agency";
 
-  if (user && isAgency && user.role === "customer") {
-    redirect("/dashboard/agency");
+  if (isAgency) {
+    redirect("/agency/register");
   }
 
   if (user) {

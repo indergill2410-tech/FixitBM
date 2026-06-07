@@ -73,6 +73,9 @@ export default function PropertySafePage() {
               Book an agency walkthrough
               <ArrowRight size={17} />
             </Button>
+            <Button href="/agency/login" variant="ghost">
+              Agency sign in
+            </Button>
             <Button href="/fixit-plus" variant="ghost">
               Protect my property
             </Button>

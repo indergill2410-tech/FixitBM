@@ -86,7 +86,7 @@ export default function PropertySafeOnboardingPage() {
               Book the walkthrough
               <ArrowRight size={17} />
             </Button>
-            <Button href="/register/customer?intent=agency" variant="ghost">
+            <Button href="/agency/register" variant="ghost">
               Create agency account
             </Button>
           </div>
@@ -203,7 +203,7 @@ export default function PropertySafeOnboardingPage() {
               Create an agency account now, then request the walkthrough with the same email so onboarding can connect the
               conversation to your account.
             </p>
-            <Button href="/register/customer?intent=agency" variant="ghost" className="mt-5">
+            <Button href="/agency/register" variant="ghost" className="mt-5">
               Create agency account
             </Button>
           </Card>

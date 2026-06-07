@@ -41,6 +41,10 @@ const tradieSeeds = [
   ["towpro.demo@fixit247.test", "Isla", "White", "TowPro Sydney", "Towing", "Sydney CBD"]
 ];
 
+const agencySeeds = [
+  ["harbour.agency.demo@fixit247.test", "Priya", "Mehta", "Harbour Property Management", "property_manager", "Sydney Inner West", "51-150"]
+];
+
 const jobTemplates = [
   ["home", "Plumbing", "Burst pipe under kitchen sink", "Water is leaking under the sink and spreading across the kitchen.", "emergency"],
   ["road", "Flat tyre", "Flat tyre on M4 shoulder", "Front left tyre is flat and the customer is waiting near the exit.", "emergency"],
@@ -89,6 +93,7 @@ async function createAuthUser(email, firstName, lastName, role) {
 async function seedUsers() {
   const customers = [];
   const tradies = [];
+  const agencies = [];
 
   for (const [email, firstName, lastName, phone, suburb] of customerSeeds) {
     const authId = await createAuthUser(email, firstName, lastName, "customer");
@@ -202,7 +207,120 @@ async function seedUsers() {
     tradies.push({ ...tradie, userId: user.id, email, firstName, category, suburb });
   }
 
-  return { customers, tradies };
+  for (const [email, firstName, lastName, agencyName, contactRole, serviceArea, portfolioSize] of agencySeeds) {
+    const authId = await createAuthUser(email, firstName, lastName, "agency");
+    const { data: user, error } = await supabase
+      .from("users")
+      .upsert(
+        {
+          auth_id: authId,
+          email,
+          first_name: firstName,
+          last_name: lastName,
+          phone: `04330000${agencies.length + 20}`,
+          role: "agency",
+          status: "active"
+        },
+        { onConflict: "email" }
+      )
+      .select("id")
+      .single();
+    if (error) throw error;
+
+    const { data: agency, error: agencyError } = await supabase
+      .from("agency_profiles")
+      .upsert(
+        {
+          owner_user_id: user.id,
+          name: agencyName,
+          phone: `04330000${agencies.length + 20}`,
+          service_area: serviceArea,
+          portfolio_size: portfolioSize,
+          status: "active",
+          onboarding_stage: "ready"
+        },
+        { onConflict: "owner_user_id" }
+      )
+      .select("id")
+      .single();
+    if (agencyError) throw agencyError;
+
+    await supabase.from("agency_accounts").upsert(
+      {
+        user_id: user.id,
+        agency_id: agency.id,
+        contact_role: contactRole,
+        status: "active"
+      },
+      { onConflict: "user_id" }
+    );
+
+    const { data: member } = await supabase
+      .from("agency_members")
+      .select("id")
+      .eq("agency_id", agency.id)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (member?.id) {
+      await supabase.from("agency_members").update({ role: "principal", status: "active" }).eq("id", member.id);
+    } else {
+      await supabase.from("agency_members").insert({
+        agency_id: agency.id,
+        user_id: user.id,
+        role: "principal",
+        status: "active"
+      });
+    }
+
+    await supabase.from("agency_maintenance_rules").upsert(
+      {
+        agency_id: agency.id,
+        owner_update_policy: "urgent_and_recommended",
+        default_contact_method: "email",
+        urgent_authority_notes: "Call the manager first for urgent make-safe work, then prepare an owner update.",
+        preferred_trades_notes: "Use verified local Fixers with clear photos, location, and access notes."
+      },
+      { onConflict: "agency_id" }
+    );
+
+    await supabase.from("agency_managed_properties").insert([
+      {
+        agency_id: agency.id,
+        label: "Demo rental - Parramatta",
+        address: "12 Demo Street",
+        suburb: "Parramatta",
+        postcode: "2000",
+        state: "NSW",
+        owner_name: "Maya Chen",
+        owner_email: "maya.chen.demo@fixit247.test",
+        management_status: "active",
+        risk_status: "watch",
+        notes: "Demo property with owner visibility ready.",
+        created_by: user.id,
+        last_touch_at: new Date().toISOString()
+      },
+      {
+        agency_id: agency.id,
+        label: "Demo townhouse - Ryde",
+        address: "7 Example Avenue",
+        suburb: "Ryde",
+        postcode: "2112",
+        state: "NSW",
+        owner_name: "Oliver Hughes",
+        owner_email: "oliver.hughes.demo@fixit247.test",
+        management_status: "onboarding",
+        risk_status: "clear",
+        notes: "Ready for first walkthrough.",
+        created_by: user.id,
+        last_touch_at: new Date().toISOString()
+      }
+    ]);
+
+    agencies.push({ ...agency, userId: user.id, email, firstName, agencyName });
+  }
+
+  return { customers, tradies, agencies };
 }
 
 async function seedJobs(customers, tradies) {
@@ -290,11 +408,12 @@ async function seedMemberships(customers) {
   }
 }
 
-const { customers, tradies } = await seedUsers();
+const { customers, tradies, agencies } = await seedUsers();
 await seedMemberships(customers);
 await seedJobs(customers, tradies);
 
 console.log("Demo seed complete.");
 console.log(`Customers: ${customers.length}`);
 console.log(`Tradies: ${tradies.length}`);
+console.log(`Agencies: ${agencies.length}`);
 console.log(`Password for demo users: ${password}`);

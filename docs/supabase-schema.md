@@ -28,7 +28,7 @@ Expected columns include:
 - `phone`
 - `first_name`
 - `last_name`
-- `role`: `customer`, `tradie`, `admin`, `super_admin`
+- `role`: `customer`, `agency`, `tradie`, `admin`, `super_admin`
 - `status`: `pending`, `active`, `suspended`
 - `created_at`
 
@@ -163,6 +163,7 @@ Backend tables:
 - `propertysafe_events`
 - `propertysafe_participants`
 - `agency_profiles`
+- `agency_accounts`
 - `agency_members`
 - `agency_managed_properties`
 - `agency_owner_invites`

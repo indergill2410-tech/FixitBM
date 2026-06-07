@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isSupabasePublicConfigured } from "@/lib/supabase/config";
 
-export type Role = "customer" | "tradie" | "admin" | "super_admin";
+export type Role = "customer" | "agency" | "tradie" | "admin" | "super_admin";
 
 export type AppUser = {
   id: string;
@@ -16,6 +16,7 @@ export type AppUser = {
 };
 
 export function roleHome(role: Role) {
+  if (role === "agency") return "/dashboard/agency";
   if (role === "tradie") return "/dashboard/tradie";
   if (role === "admin" || role === "super_admin") return "/admin";
   return "/dashboard/customer";

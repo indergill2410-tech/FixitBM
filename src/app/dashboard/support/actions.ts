@@ -21,7 +21,7 @@ export async function submitSupportTicketAction(
   _state: SupportTicketState,
   formData: FormData
 ): Promise<SupportTicketState> {
-  const user = await requireRole(["customer", "tradie", "admin", "super_admin"]);
+  const user = await requireRole(["customer", "agency", "tradie", "admin", "super_admin"]);
 
   if (!isSupabaseServerConfigured()) {
     return { ok: false, message: "Support is temporarily unavailable. Please try again shortly." };

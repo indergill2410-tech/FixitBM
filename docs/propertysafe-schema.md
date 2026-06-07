@@ -100,9 +100,18 @@ The signed-in agency workspace for PropertySafe onboarding and portfolio operati
 - `status`
 - `onboarding_stage`
 
+### agency_accounts
+
+First-class PropertySafe agency account record linked to a `users.role = agency` identity.
+
+- `user_id`
+- `agency_id`
+- `contact_role`
+- `status`
+
 ### agency_members
 
-Agency team access without changing the global `users.role` enum.
+Agency team access for principals, property managers, operations users, and viewers.
 
 - `agency_id`
 - `user_id` or `invite_email`

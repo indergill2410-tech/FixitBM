@@ -6,7 +6,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabasePublicConfigured, isSupabaseServerConfigured } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Role } from "@/lib/auth";
-import { notifyCustomerRegistered, notifyFixerRegistered } from "@/lib/email";
+import { notifyAgencyRegistered, notifyCustomerRegistered, notifyFixerRegistered } from "@/lib/email";
 
 export type AuthActionState = {
   ok?: boolean;
@@ -23,6 +23,14 @@ const customerRegistrationSchema = emailPasswordSchema.extend({
   lastName: z.string().min(1),
   phone: z.string().min(8),
   intent: z.enum(["agency"]).optional()
+});
+
+const agencyRegistrationSchema = customerRegistrationSchema.extend({
+  agencyName: z.string().min(2),
+  contactRole: z.enum(["principal", "property_manager", "operations", "owner", "landlord", "other"]),
+  abn: z.string().optional(),
+  serviceArea: z.string().min(2),
+  portfolioSize: z.enum(["1-10", "11-50", "51-150", "151-500", "500+"])
 });
 
 const tradieRegistrationSchema = customerRegistrationSchema.extend({
@@ -50,6 +58,7 @@ export async function signInAction(_state: AuthActionState, formData: FormData):
     email: formData.get("email"),
     password: formData.get("password")
   });
+  const requestedHome = safeRedirectPath(formData.get("redirectTo"));
 
   if (!parsed.success) {
     return { ok: false, message: "Enter a valid email and password." };
@@ -80,7 +89,11 @@ export async function signInAction(_state: AuthActionState, formData: FormData):
     return { ok: false, message: "Account profile could not be prepared. Please contact Fixit247 support." };
   }
 
-  redirect("/dashboard");
+  if (requestedHome === "/dashboard/agency" && !["agency", "admin", "super_admin"].includes(userRole)) {
+    return { ok: false, message: "Use a PropertySafe agency account for agency access." };
+  }
+
+  redirect(requestedHome || roleHomeFor(userRole));
 }
 
 async function resolveSignedInUserRole(
@@ -110,6 +123,7 @@ async function resolveSignedInUserRole(
     return existingByEmail.role as Role;
   }
 
+  const metadataRole = typeof metadata?.role === "string" && metadata.role === "agency" ? "agency" : "customer";
   const firstName = typeof metadata?.first_name === "string" ? metadata.first_name : null;
   const lastName = typeof metadata?.last_name === "string" ? metadata.last_name : null;
   const { data: createdUser, error } = await admin
@@ -119,7 +133,7 @@ async function resolveSignedInUserRole(
       email,
       first_name: firstName,
       last_name: lastName,
-      role: "customer",
+      role: metadataRole,
       status: "active"
     })
     .select("id, role")
@@ -127,7 +141,11 @@ async function resolveSignedInUserRole(
 
   if (error || !createdUser) return null;
 
-  await admin.from("customer_profiles").upsert({ user_id: createdUser.id }, { onConflict: "user_id" });
+  if (metadataRole === "customer") {
+    await admin.from("customer_profiles").upsert({ user_id: createdUser.id }, { onConflict: "user_id" });
+  } else {
+    await admin.from("agency_accounts").upsert({ user_id: createdUser.id }, { onConflict: "user_id" });
+  }
 
   return createdUser.role as Role;
 }
@@ -206,6 +224,158 @@ export async function registerCustomerAction(
   });
 
   redirect(parsed.data.intent === "agency" ? "/dashboard/agency" : "/dashboard/customer");
+}
+
+export async function registerAgencyAction(
+  _state: AuthActionState,
+  formData: FormData
+): Promise<AuthActionState> {
+  if (!isSupabasePublicConfigured() || !isSupabaseServerConfigured()) {
+    return envError();
+  }
+
+  const parsed = agencyRegistrationSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+    firstName: formData.get("firstName"),
+    lastName: formData.get("lastName"),
+    phone: formData.get("phone"),
+    agencyName: formData.get("agencyName"),
+    contactRole: formData.get("contactRole"),
+    abn: formData.get("abn") || undefined,
+    serviceArea: formData.get("serviceArea"),
+    portfolioSize: formData.get("portfolioSize")
+  });
+
+  if (!parsed.success) {
+    return { ok: false, message: "Complete the required agency account details." };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const admin = createSupabaseAdminClient();
+
+  if (!admin) {
+    return envError();
+  }
+
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email: parsed.data.email,
+    password: parsed.data.password,
+    options: {
+      data: {
+        first_name: parsed.data.firstName,
+        last_name: parsed.data.lastName,
+        role: "agency"
+      }
+    }
+  });
+
+  if (authError || !authData.user) {
+    return { ok: false, message: authError?.message ?? "Could not create agency account." };
+  }
+
+  const { data: appUser, error: userError } = await admin
+    .from("users")
+    .upsert(
+      {
+        auth_id: authData.user.id,
+        email: parsed.data.email,
+        phone: parsed.data.phone,
+        first_name: parsed.data.firstName,
+        last_name: parsed.data.lastName,
+        role: "agency",
+        status: "active"
+      },
+      { onConflict: "auth_id" }
+    )
+    .select("id")
+    .single();
+
+  if (userError || !appUser) {
+    return { ok: false, message: userError?.message ?? "Agency user could not be saved." };
+  }
+
+  const { data: agency, error: agencyError } = await admin
+    .from("agency_profiles")
+    .upsert(
+      {
+        owner_user_id: appUser.id,
+        name: parsed.data.agencyName,
+        phone: parsed.data.phone,
+        abn: parsed.data.abn || null,
+        service_area: parsed.data.serviceArea,
+        portfolio_size: parsed.data.portfolioSize,
+        status: "onboarding",
+        onboarding_stage: "properties"
+      },
+      { onConflict: "owner_user_id" }
+    )
+    .select("id")
+    .single();
+
+  if (agencyError || !agency) {
+    return { ok: false, message: agencyError?.message ?? "Agency workspace could not be prepared." };
+  }
+
+  await admin.from("agency_accounts").upsert(
+    {
+      user_id: appUser.id,
+      agency_id: agency.id,
+      contact_role: parsed.data.contactRole,
+      status: "onboarding"
+    },
+    { onConflict: "user_id" }
+  );
+
+  const agencyRole = parsed.data.contactRole === "operations" ? "operations" : "principal";
+  const { data: existingMember } = await admin
+    .from("agency_members")
+    .select("id")
+    .eq("agency_id", agency.id)
+    .eq("user_id", appUser.id)
+    .maybeSingle();
+
+  if (existingMember?.id) {
+    await admin.from("agency_members").update({ role: agencyRole, status: "active" }).eq("id", existingMember.id);
+  } else {
+    await admin.from("agency_members").insert({
+      agency_id: agency.id,
+      user_id: appUser.id,
+      role: agencyRole,
+      status: "active"
+    });
+  }
+
+  await admin.from("agency_maintenance_rules").upsert(
+    {
+      agency_id: agency.id,
+      owner_update_policy: "urgent_and_recommended",
+      default_contact_method: "email"
+    },
+    { onConflict: "agency_id" }
+  );
+
+  await admin.from("audit_logs").insert({
+    actor_id: appUser.id,
+    action: "create_agency_account",
+    entity_type: "agency_profile",
+    entity_id: agency.id,
+    metadata: {
+      agencyName: parsed.data.agencyName,
+      portfolioSize: parsed.data.portfolioSize,
+      serviceArea: parsed.data.serviceArea
+    }
+  });
+
+  await notifyAgencyRegistered({
+    userId: appUser.id,
+    email: parsed.data.email,
+    firstName: parsed.data.firstName,
+    agencyName: parsed.data.agencyName,
+    portfolioSize: parsed.data.portfolioSize
+  });
+
+  redirect("/dashboard/agency");
 }
 
 export async function registerTradieAction(
@@ -348,4 +518,16 @@ export async function signOutAction() {
   }
 
   redirect("/");
+}
+
+function safeRedirectPath(value: FormDataEntryValue | null) {
+  if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//")) return null;
+  return value;
+}
+
+function roleHomeFor(role: Role) {
+  if (role === "agency") return "/dashboard/agency";
+  if (role === "tradie") return "/dashboard/tradie";
+  if (role === "admin" || role === "super_admin") return "/admin";
+  return "/dashboard/customer";
 }

@@ -83,7 +83,7 @@ export async function POST(request: Request) {
 
   const data = payload.data;
   const title = data.title || `${data.category} request`;
-  const isCustomerAccount = user?.role === "customer";
+  const isCustomerAccount = user?.role === "customer" || user?.role === "agency";
   const lane = data.serviceLane ?? (data.type === "road" ? "emergency_road" : data.type === "scheduled" ? "standard_trade_job" : "emergency_home");
   const isProject = lane === "larger_project";
   const isStandard = lane === "standard_trade_job";

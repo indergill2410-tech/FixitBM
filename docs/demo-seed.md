@@ -26,4 +26,12 @@ Demo user password:
 Fixit247Demo!2026
 ```
 
+Seeded demo accounts include:
+
+```text
+Customer: maya.chen.demo@fixit247.test
+Fixer: harbour.plumbing.demo@fixit247.test
+Agency: harbour.agency.demo@fixit247.test
+```
+
 Never expose demo credentials on production UI.

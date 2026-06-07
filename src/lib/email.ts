@@ -1,3 +1,5 @@
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+
 type EmailSection = {
   label?: string;
   lines: Array<string | null | undefined>;
@@ -11,6 +13,7 @@ type EmailCta = {
 type EmailPayload = {
   to: string | string[];
   subject: string;
+  category?: string;
   eyebrow?: string;
   title: string;
   intro: string;
@@ -18,12 +21,32 @@ type EmailPayload = {
   cta?: EmailCta;
   idempotencyKey?: string;
   replyTo?: string;
+  metadata?: Record<string, string | number | boolean | null | undefined>;
 };
 
-type EmailResult = {
+export type EmailResult = {
   ok: boolean;
   skipped?: boolean;
   error?: string;
+  providerId?: string;
+  statusCode?: number;
+  recipients?: string[];
+  subject?: string;
+  category?: string;
+};
+
+export type EmailDeliveryLog = {
+  id: string;
+  recipient: string;
+  subject: string;
+  category: string | null;
+  status: "sent" | "failed" | "skipped";
+  provider: string;
+  provider_message_id: string | null;
+  provider_status: number | null;
+  error: string | null;
+  idempotency_key: string | null;
+  created_at: string;
 };
 
 const resendApiUrl = "https://api.resend.com/emails";
@@ -35,17 +58,54 @@ const adminAlertEmails = splitEmails(
 const supportEmail = process.env.FIXIT_SUPPORT_EMAIL || adminAlertEmails[0] || "support@fixit247.com.au";
 
 export function isEmailConfigured() {
-  return Boolean(process.env.RESEND_API_KEY && fromEmail);
+  const config = getEmailConfig();
+  return Boolean(config.apiKey && config.fromEmail);
+}
+
+export function getEmailRuntimeStatus() {
+  const config = getEmailConfig();
+
+  return {
+    configured: Boolean(config.apiKey && config.fromEmail),
+    hasApiKey: Boolean(config.apiKey),
+    fromEmail: config.fromEmail,
+    hasVerifiedSenderHint: /@fixit247\.com\.au[>\s]*$/i.test(config.fromEmail),
+    adminAlertCount: config.adminAlertEmails.length,
+    supportEmail: config.supportEmail,
+    appUrl: config.appUrl
+  };
 }
 
 export async function sendTransactionalEmail(payload: EmailPayload): Promise<EmailResult> {
+  const config = getEmailConfig();
   const recipients = Array.isArray(payload.to) ? payload.to.filter(Boolean) : [payload.to].filter(Boolean);
-  if (!recipients.length) return { ok: false, skipped: true, error: "No recipient." };
-  if (!process.env.RESEND_API_KEY) return { ok: false, skipped: true, error: "Resend is not configured." };
+  const category = payload.category || deriveCategory(payload);
+
+  if (!recipients.length) return { ok: false, skipped: true, error: "No recipient.", subject: payload.subject, category };
+  if (!config.apiKey) {
+    await logEmailDelivery({
+      recipients,
+      subject: payload.subject,
+      category,
+      status: "skipped",
+      error: "RESEND_API_KEY is not configured.",
+      idempotencyKey: payload.idempotencyKey,
+      metadata: payload.metadata
+    });
+
+    return {
+      ok: false,
+      skipped: true,
+      error: "Resend is not configured.",
+      recipients,
+      subject: payload.subject,
+      category
+    };
+  }
 
   const body = renderEmail(payload);
   const headers: Record<string, string> = {
-    Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+    Authorization: `Bearer ${config.apiKey}`,
     "Content-Type": "application/json"
   };
 
@@ -58,40 +118,91 @@ export async function sendTransactionalEmail(payload: EmailPayload): Promise<Ema
       method: "POST",
       headers,
       body: JSON.stringify({
-        from: fromEmail,
+        from: config.fromEmail,
         to: recipients,
         subject: payload.subject,
         html: body.html,
         text: body.text,
-        reply_to: payload.replyTo || supportEmail
+        reply_to: payload.replyTo || config.supportEmail
       })
     });
 
+    const responseText = await response.text().catch(() => "");
+    const responseJson = safeJson(responseText);
+    const providerId = typeof responseJson?.id === "string" ? responseJson.id : null;
+
     if (!response.ok) {
-      const message = await response.text().catch(() => "");
-      console.error("Fixit247 email send failed", response.status, message.slice(0, 500));
-      return { ok: false, error: `Resend returned ${response.status}.` };
+      const safeMessage = responseText.slice(0, 500);
+      console.error("Fixit247 email send failed", response.status, safeMessage);
+      await logEmailDelivery({
+        recipients,
+        subject: payload.subject,
+        category,
+        status: "failed",
+        providerStatus: response.status,
+        error: safeMessage || `Resend returned ${response.status}.`,
+        idempotencyKey: payload.idempotencyKey,
+        metadata: payload.metadata
+      });
+
+      return {
+        ok: false,
+        error: `Resend returned ${response.status}.`,
+        statusCode: response.status,
+        recipients,
+        subject: payload.subject,
+        category
+      };
     }
 
-    return { ok: true };
+    await logEmailDelivery({
+      recipients,
+      subject: payload.subject,
+      category,
+      status: "sent",
+      providerId,
+      providerStatus: response.status,
+      idempotencyKey: payload.idempotencyKey,
+      metadata: payload.metadata
+    });
+
+    return { ok: true, providerId: providerId ?? undefined, statusCode: response.status, recipients, subject: payload.subject, category };
   } catch (error) {
     console.error("Fixit247 email send failed", error);
-    return { ok: false, error: "Email request failed." };
+    await logEmailDelivery({
+      recipients,
+      subject: payload.subject,
+      category,
+      status: "failed",
+      error: error instanceof Error ? error.message : "Email request failed.",
+      idempotencyKey: payload.idempotencyKey,
+      metadata: payload.metadata
+    });
+
+    return { ok: false, error: "Email request failed.", recipients, subject: payload.subject, category };
   }
 }
 
 export async function sendAdminAlert(payload: Omit<EmailPayload, "to">): Promise<EmailResult> {
-  if (!adminAlertEmails.length) return { ok: false, skipped: true, error: "Admin alert email is not configured." };
-  return sendTransactionalEmail({ ...payload, to: adminAlertEmails });
+  const config = getEmailConfig();
+  if (!config.adminAlertEmails.length) return { ok: false, skipped: true, error: "Admin alert email is not configured.", subject: payload.subject };
+  return sendTransactionalEmail({ ...payload, to: config.adminAlertEmails });
 }
 
-export async function sendBestEffort(emails: Array<Promise<EmailResult> | false | null | undefined>) {
+export async function sendBestEffort(emails: Array<Promise<EmailResult> | false | null | undefined>): Promise<EmailResult[]> {
   const tasks = emails.filter((email): email is Promise<EmailResult> => Boolean(email));
   const results = await Promise.allSettled(tasks);
-  results.forEach((result) => {
+  return results.map((result) => {
     if (result.status === "rejected") {
       console.error("Fixit247 email task failed", result.reason);
+      return { ok: false, error: "Email task failed." };
     }
+
+    if (!result.value.ok && !result.value.skipped) {
+      console.error("Fixit247 email delivery failed", result.value.error);
+    }
+
+    return result.value;
   });
 }
 
@@ -243,6 +354,49 @@ export async function notifyCustomerRegistered(input: { userId: string; email: s
       ],
       cta: { label: "Open my dashboard", href: `${appUrl}/dashboard/customer` },
       idempotencyKey: `customer-welcome-${input.userId}`
+    })
+  ]);
+}
+
+export async function notifyAgencyRegistered(input: {
+  userId: string;
+  email: string;
+  firstName?: string | null;
+  agencyName: string;
+  portfolioSize: string;
+}) {
+  await sendBestEffort([
+    sendTransactionalEmail({
+      to: input.email,
+      subject: "Your PropertySafe agency workspace is ready",
+      category: "agency",
+      eyebrow: "Agency account ready",
+      title: `Welcome${input.firstName ? `, ${input.firstName}` : ""}.`,
+      intro:
+        "Your PropertySafe agency account is ready. Start with the agency profile, add the first managed property, then prepare owner visibility only when the record is ready.",
+      sections: [
+        {
+          label: input.agencyName,
+          lines: [
+            `Portfolio size: ${input.portfolioSize}`,
+            "Agency users manage the workflow.",
+            "Owners and landlords see only the records you explicitly share.",
+            "Maintenance requests still move through Fixit247 so the useful history stays connected."
+          ]
+        }
+      ],
+      cta: { label: "Open agency dashboard", href: `${appUrl}/dashboard/agency` },
+      idempotencyKey: `agency-welcome-${input.userId}`
+    }),
+    sendAdminAlert({
+      subject: `New PropertySafe agency account: ${input.agencyName}`,
+      category: "agency",
+      eyebrow: "Agency onboarding",
+      title: input.agencyName,
+      intro: "A PropertySafe agency account has been created and is ready for onboarding follow-up.",
+      sections: [{ label: "Portfolio", lines: [`Size: ${input.portfolioSize}`, `Email: ${input.email}`] }],
+      cta: { label: "Open PropertySafe admin", href: `${appUrl}/admin/propertysafe` },
+      idempotencyKey: `agency-admin-${input.userId}`
     })
   ]);
 }
@@ -541,7 +695,7 @@ export async function notifyPropertySafeWalkthroughRequested(input: {
           ]
         }
       ],
-      cta: { label: "Create agency account", href: `${appUrl}/register/customer?intent=agency` },
+      cta: { label: "Create agency account", href: `${appUrl}/agency/register` },
       idempotencyKey: `propertysafe-walkthrough-user-${input.email.toLowerCase()}-${input.ticketId ?? input.agencyName}`
     }),
     sendAdminAlert({
@@ -791,6 +945,73 @@ function renderEmail(payload: EmailPayload) {
 function absoluteUrl(path: string) {
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
   return `${appUrl}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+function getEmailConfig() {
+  return {
+    apiKey: process.env.RESEND_API_KEY,
+    appUrl,
+    fromEmail,
+    adminAlertEmails,
+    supportEmail
+  };
+}
+
+function deriveCategory(payload: EmailPayload) {
+  const key = `${payload.idempotencyKey ?? ""} ${payload.subject}`.toLowerCase();
+  if (key.includes("newsletter")) return "newsletter";
+  if (key.includes("walkthrough") || key.includes("propertysafe")) return "propertysafe";
+  if (key.includes("support")) return "support";
+  if (key.includes("safety-check") || key.includes("safety check")) return "safety_check";
+  if (key.includes("lead")) return "lead";
+  if (key.includes("membership")) return "membership";
+  if (key.includes("verification")) return "verification";
+  if (key.includes("fixer")) return "fixer";
+  if (key.includes("customer") || key.includes("welcome")) return "account";
+  if (key.includes("request") || key.includes("job")) return "request";
+  return "transactional";
+}
+
+async function logEmailDelivery(input: {
+  recipients: string[];
+  subject: string;
+  category: string;
+  status: "sent" | "failed" | "skipped";
+  providerId?: string | null;
+  providerStatus?: number | null;
+  error?: string | null;
+  idempotencyKey?: string | null;
+  metadata?: Record<string, string | number | boolean | null | undefined>;
+}) {
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return;
+
+  const rows = input.recipients.map((recipient) => ({
+    recipient,
+    subject: input.subject,
+    category: input.category,
+    status: input.status,
+    provider: "resend",
+    provider_message_id: input.providerId ?? null,
+    provider_status: input.providerStatus ?? null,
+    error: input.error ? input.error.slice(0, 1000) : null,
+    idempotency_key: input.idempotencyKey ? input.idempotencyKey.slice(0, 256) : null,
+    metadata: input.metadata ?? {}
+  }));
+
+  const { error } = await supabase.from("email_delivery_logs").insert(rows);
+  if (error && error.code !== "42P01") {
+    console.error("Fixit247 email log failed", error.message);
+  }
+}
+
+function safeJson(value: string) {
+  if (!value) return null;
+  try {
+    return JSON.parse(value) as { id?: unknown };
+  } catch {
+    return null;
+  }
 }
 
 function trimTrailingSlash(value: string) {

@@ -24,6 +24,9 @@ export default async function LoginPage() {
           </p>
           <LoginForm />
           <div className="mt-5 grid gap-2">
+            <Button href="/agency/login" variant="ghost">
+              Agency sign in
+            </Button>
             <Button href="/register/customer" variant="ghost">
               Create customer account
             </Button>
