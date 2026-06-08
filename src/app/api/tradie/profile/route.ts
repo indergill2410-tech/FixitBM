@@ -152,7 +152,6 @@ function isFixerOnboardingComplete(
       profile.trade_category &&
       profile.service_area &&
       profile.abn &&
-      profile.licence_number &&
       profile.public_liability_insurance === "yes" &&
       profile.services_description &&
       (profile.emergency_available || profile.planned_maintenance_contracts_interest) &&

@@ -6,27 +6,33 @@ const tokenTtlMs = 1000 * 60 * 60 * 24;
 
 export function createEmailVerificationToken(input: { userId: string; email: string }) {
   const expiresAt = Date.now() + tokenTtlMs;
-  const payload = `${input.userId}.${input.email.toLowerCase()}.${expiresAt}`;
+  const payload = Buffer.from(
+    JSON.stringify({
+      userId: input.userId,
+      email: input.email.toLowerCase(),
+      expiresAt
+    })
+  ).toString("base64url");
   const signature = crypto.createHmac("sha256", verificationSecret()).update(payload).digest("base64url");
-  return Buffer.from(`${payload}.${signature}`).toString("base64url");
+  return `${payload}.${signature}`;
 }
 
 export function verifyEmailVerificationToken(token: string) {
   try {
-    const decoded = Buffer.from(token, "base64url").toString("utf8");
-    const [userId, email, expiresAtValue, signature] = decoded.split(".");
+    const [payload, signature, extra] = token.split(".");
+    if (!payload || !signature || extra) return null;
 
-    if (!userId || !email || !expiresAtValue || !signature) return null;
-    const expiresAt = Number(expiresAtValue);
-    if (!Number.isFinite(expiresAt) || expiresAt < Date.now()) return null;
-
-    const payload = `${userId}.${email}.${expiresAt}`;
     const expected = crypto.createHmac("sha256", verificationSecret()).update(payload).digest("base64url");
     const isValid =
       signature.length === expected.length &&
       crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
 
-    return isValid ? { userId, email } : null;
+    if (!isValid) return null;
+
+    const decoded = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as unknown;
+    if (!isVerificationPayload(decoded) || decoded.expiresAt < Date.now()) return null;
+
+    return { userId: decoded.userId, email: decoded.email };
   } catch {
     return null;
   }
@@ -49,8 +55,18 @@ export async function sendAppEmailVerification(input: { userId: string; email: s
       }
     ],
     cta: { label: "Verify email", href },
-    idempotencyKey: `email-verify-${input.userId}-${Date.now()}`
+    idempotencyKey: `email-verify-${input.userId}-${Math.floor(Date.now() / (1000 * 60 * 5))}`
   });
+}
+
+function isVerificationPayload(value: unknown): value is { userId: string; email: string; expiresAt: number } {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as { userId?: unknown }).userId === "string" &&
+    typeof (value as { email?: unknown }).email === "string" &&
+    typeof (value as { expiresAt?: unknown }).expiresAt === "number"
+  );
 }
 
 function verificationSecret() {

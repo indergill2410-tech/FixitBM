@@ -12,11 +12,15 @@ export function EmailVerificationCard({ email }: { email: string }) {
     setIsSending(true);
     setMessage(null);
 
-    const response = await fetch("/api/account/email-verification", { method: "POST" });
-    const result = (await response.json().catch(() => ({}))) as { message?: string; error?: string };
-
-    setIsSending(false);
-    setMessage(result.message || result.error || "Verification email request finished.");
+    try {
+      const response = await fetch("/api/account/email-verification", { method: "POST" });
+      const result = (await response.json().catch(() => ({}))) as { message?: string; error?: string };
+      setMessage(result.message || result.error || "Verification email request finished.");
+    } catch {
+      setMessage("Verification email could not be sent. Please try again.");
+    } finally {
+      setIsSending(false);
+    }
   }
 
   return (
