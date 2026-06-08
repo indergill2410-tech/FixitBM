@@ -28,9 +28,7 @@ export async function POST(request: Request) {
   }
 
   if (!isSupabaseServerConfigured()) {
-    return NextResponse.json({
-      message: "Thanks. You're on the list."
-    });
+    return NextResponse.json({ error: "Newsletter signup is temporarily unavailable. Please try again shortly." }, { status: 503 });
   }
 
   const supabase = createSupabaseAdminClient();
@@ -48,9 +46,8 @@ export async function POST(request: Request) {
   );
 
   if (error) {
-    return NextResponse.json({
-      message: "Thanks. You're on the list."
-    });
+    console.error("Fixit247 newsletter signup failed", error.message);
+    return NextResponse.json({ error: "We could not save your signup yet. Please try again shortly." }, { status: 500 });
   }
 
   await notifyNewsletterSignup({ email: parsed.data.email.toLowerCase(), source: parsed.data.source });
