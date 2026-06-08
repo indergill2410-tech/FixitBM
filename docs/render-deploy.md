@@ -72,6 +72,10 @@ Required for production:
 Email delivery should be verified with a real request, newsletter signup, support ticket, Safety Check booking, Fixer
 signup, and PropertySafe invite.
 
+Fixer recruitment uses this same email setup. New Fixer signups and completed Fixer onboarding profiles send admin alert
+emails to `FIXIT_ALERT_EMAIL` first, then `ADMIN_ALERT_EMAIL`, then `RESEND_ALERT_EMAIL` if configured. The same events
+also create admin dashboard notifications for active `admin` and `super_admin` users.
+
 Protected production email test:
 
 ```bash
