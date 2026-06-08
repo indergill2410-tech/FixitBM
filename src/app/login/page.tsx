@@ -5,7 +5,12 @@ import { getCurrentAppUser, roleHome } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams
+}: {
+  searchParams?: Promise<{ email?: string; notice?: string }>;
+}) {
+  const params = await searchParams;
   const user = await getCurrentAppUser();
 
   if (user) {
@@ -22,7 +27,10 @@ export default async function LoginPage() {
           <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
             Sign in securely to track requests, messages, photos, Fixit Plus, and saved home or road details.
           </p>
-          <LoginForm />
+          <LoginForm
+            initialEmail={params?.email ?? ""}
+            notice={params?.notice === "confirm-email" ? "confirm-email" : undefined}
+          />
           <div className="mt-5 grid gap-2">
             <Button href="/agency/login" variant="ghost">
               Agency sign in

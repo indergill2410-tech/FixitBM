@@ -18,6 +18,7 @@ import {
   Wallet,
   Zap
 } from "lucide-react";
+import { EmailVerificationCard } from "@/components/email-verification-card";
 import { Badge, Button, Card, DashboardHeader } from "@/components/ui";
 import { requireRole } from "@/lib/auth";
 import { showFixerRecruitmentUi, showFixerSubscriptionUi } from "@/lib/featureFlags";
@@ -58,6 +59,7 @@ export default async function TradieDashboardPage() {
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
         <DashboardHeader title={`${displayName} work hub`} role="Fixer account" />
+        {user.email && !user.email_verified_at ? <EmailVerificationCard email={user.email} /> : null}
 
         <section className="grid gap-5 lg:grid-cols-[1fr_.38fr]">
           <Card variant="dark" className="overflow-hidden p-6">
@@ -379,9 +381,10 @@ function ChecklistItem({
 
 function getOnboardingItems(profile: Awaited<ReturnType<typeof getTradieProfileDetail>>) {
   const hasInsuranceDocument = Boolean(profile?.documents.some((document) => document.type === "insurance"));
+  const hasTradeCategory = Boolean(profile?.trade_category && profile.trade_category !== "Profile pending");
   return [
     { icon: BriefcaseBusiness, label: "Complete business profile", done: Boolean(profile?.business_name) },
-    { icon: Hammer, label: "Add trade category", done: Boolean(profile?.trade_category) },
+    { icon: Hammer, label: "Add trade category", done: hasTradeCategory },
     { icon: MapPin, label: "Add service areas", done: Boolean(profile?.service_area) },
     { icon: ShieldCheck, label: "Add ABN", done: Boolean(profile?.abn) },
     { icon: BadgeCheck, label: "Add licence details if applicable", done: Boolean(profile?.licence_number) },

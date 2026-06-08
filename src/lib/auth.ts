@@ -13,6 +13,7 @@ export type AppUser = {
   last_name: string | null;
   role: Role;
   status: "pending" | "active" | "suspended";
+  email_verified_at: string | null;
 };
 
 export function roleHome(role: Role) {
@@ -36,7 +37,7 @@ export async function getCurrentAppUser(): Promise<AppUser | null> {
 
   const { data, error } = await supabase
     .from("users")
-    .select("id, auth_id, email, phone, first_name, last_name, role, status")
+    .select("id, auth_id, email, phone, first_name, last_name, role, status, email_verified_at")
     .eq("auth_id", authData.user.id)
     .maybeSingle();
 

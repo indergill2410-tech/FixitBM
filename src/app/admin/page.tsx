@@ -1,11 +1,17 @@
 import { Badge, Card, DashboardHeader } from "@/components/ui";
 import { AdminQueueItem } from "@/components/job-cards";
-import { getAdminCommandMetrics, getAdminRequestQueue } from "@/lib/jobs";
+import { requireRole } from "@/lib/auth";
+import { getAdminCommandMetrics, getAdminNotifications, getAdminRequestQueue, type AdminNotificationRow } from "@/lib/jobs";
 import { SafetyCheckMiniOpsCard } from "@/components/safety-check-cards";
 import { AdminPriorityCard, AdminStatCard, adminIcons } from "@/components/admin-shell";
 
 export default async function AdminPage() {
-  const [metrics, jobs] = await Promise.all([getAdminCommandMetrics(), getAdminRequestQueue()]);
+  const user = await requireRole(["admin", "super_admin"]);
+  const [metrics, jobs, notifications] = await Promise.all([
+    getAdminCommandMetrics(),
+    getAdminRequestQueue(),
+    getAdminNotifications(user)
+  ]);
 
   return (
     <main className="min-h-screen bg-[#120f0c] text-white">
@@ -53,6 +59,22 @@ export default async function AdminPage() {
             </div>
           </Card>
           <Card variant="dark">
+            <Badge tone="green">Team notifications</Badge>
+            <h2 className="mt-4 text-2xl font-black">Fixer onboarding alerts</h2>
+            <p className="mt-2 text-sm leading-6 text-white/60">
+              New Fixer signups and completed onboarding profiles appear here for review.
+            </p>
+            <div className="mt-5 grid gap-3">
+              {notifications.length ? (
+                notifications.map((notification) => <AdminNotificationItem key={notification.id} notification={notification} />)
+              ) : (
+                <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm font-semibold text-white/65">
+                  No team notifications yet.
+                </div>
+              )}
+            </div>
+          </Card>
+          <Card variant="dark">
             <Badge>Team tools</Badge>
             <div className="mt-5 grid gap-3 text-sm text-white/75">
               {[
@@ -74,5 +96,21 @@ export default async function AdminPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+function AdminNotificationItem({ notification }: { notification: AdminNotificationRow }) {
+  return (
+    <a
+      href={notification.link ?? "/admin"}
+      className="block rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-amber-300/40 hover:bg-white/10"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-black">{notification.title}</p>
+        <span className={notification.read_at ? "h-2.5 w-2.5 rounded-full bg-white/25" : "h-2.5 w-2.5 rounded-full bg-[var(--amber)]"} />
+      </div>
+      <p className="mt-2 text-sm leading-6 text-white/65">{notification.body}</p>
+      <p className="mt-3 text-xs font-semibold text-white/40">{new Date(notification.created_at).toLocaleString()}</p>
+    </a>
   );
 }

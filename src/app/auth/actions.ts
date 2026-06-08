@@ -8,10 +8,14 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Role } from "@/lib/auth";
 import { notifyAgencyRegistered, notifyCustomerRegistered, notifyFixerRegistered } from "@/lib/email";
 import { fixerDirectToDashboard } from "@/lib/featureFlags";
+import { createAdminNotifications } from "@/lib/notifications";
+import { appUrl } from "@/lib/seo";
 
 export type AuthActionState = {
   ok?: boolean;
   message?: string;
+  code?: "email_not_confirmed" | "confirmation_sent";
+  email?: string;
 };
 
 const emailPasswordSchema = z.object({
@@ -35,12 +39,7 @@ const agencyRegistrationSchema = customerRegistrationSchema.extend({
 });
 
 const tradieRegistrationSchema = customerRegistrationSchema.extend({
-  businessName: z.string().min(2),
-  abn: z.string().optional(),
-  tradeCategory: z.string().min(2),
-  licenceNumber: z.string().optional(),
-  serviceArea: z.string().min(2),
-  emergencyAvailable: z.string().optional()
+  businessName: z.string().optional()
 });
 
 function envError(): AuthActionState {
@@ -69,6 +68,15 @@ export async function signInAction(_state: AuthActionState, formData: FormData):
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
+    if (error.message.toLowerCase().includes("email not confirmed")) {
+      return {
+        ok: false,
+        code: "email_not_confirmed",
+        email: parsed.data.email,
+        message: "Your email needs confirmation before you can sign in. Check your inbox, or resend the confirmation email below."
+      };
+    }
+
     return { ok: false, message: error.message };
   }
 
@@ -95,6 +103,48 @@ export async function signInAction(_state: AuthActionState, formData: FormData):
   }
 
   redirect(requestedHome || roleHomeFor(userRole));
+}
+
+export async function resendConfirmationAction(
+  _state: AuthActionState,
+  formData: FormData
+): Promise<AuthActionState> {
+  if (!isSupabasePublicConfigured()) {
+    return envError();
+  }
+
+  const parsed = z.object({ email: z.string().email() }).safeParse({
+    email: formData.get("email")
+  });
+
+  if (!parsed.success) {
+    return { ok: false, code: "email_not_confirmed", message: "Enter the email you used to create the account." };
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: parsed.data.email,
+    options: {
+      emailRedirectTo: authCallbackUrl("/dashboard/tradie")
+    }
+  });
+
+  if (error) {
+    return {
+      ok: false,
+      code: "email_not_confirmed",
+      email: parsed.data.email,
+      message: error.message
+    };
+  }
+
+  return {
+    ok: true,
+    code: "confirmation_sent",
+    email: parsed.data.email,
+    message: "Confirmation email sent. Check your inbox, spam, promotions, or updates folder."
+  };
 }
 
 async function resolveSignedInUserRole(
@@ -187,6 +237,7 @@ export async function registerCustomerAction(
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
+      emailRedirectTo: authCallbackUrl("/dashboard/customer"),
       data: {
         first_name: parsed.data.firstName,
         last_name: parsed.data.lastName,
@@ -228,6 +279,10 @@ export async function registerCustomerAction(
     firstName: parsed.data.firstName
   });
 
+  if (!authData.session) {
+    redirect(`/login?notice=confirm-email&email=${encodeURIComponent(parsed.data.email)}`);
+  }
+
   redirect("/dashboard/customer");
 }
 
@@ -267,6 +322,7 @@ export async function registerAgencyAction(
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
+      emailRedirectTo: authCallbackUrl("/dashboard/agency"),
       data: {
         first_name: parsed.data.firstName,
         last_name: parsed.data.lastName,
@@ -380,6 +436,10 @@ export async function registerAgencyAction(
     portfolioSize: parsed.data.portfolioSize
   });
 
+  if (!authData.session) {
+    redirect(`/login?notice=confirm-email&email=${encodeURIComponent(parsed.data.email)}`);
+  }
+
   redirect("/dashboard/agency");
 }
 
@@ -397,16 +457,11 @@ export async function registerTradieAction(
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
     phone: formData.get("phone"),
-    businessName: formData.get("businessName"),
-    abn: formData.get("abn"),
-    tradeCategory: formData.get("tradeCategory"),
-    licenceNumber: formData.get("licenceNumber"),
-    serviceArea: formData.get("serviceArea"),
-    emergencyAvailable: formData.get("emergencyAvailable")
+    businessName: formData.get("businessName") || undefined
   });
 
   if (!parsed.success) {
-    return { ok: false, message: "Complete the required Fixer onboarding details." };
+    return { ok: false, message: "Complete your name, phone, email, and password to create the Fixer account." };
   }
 
   const supabase = await createSupabaseServerClient();
@@ -416,15 +471,15 @@ export async function registerTradieAction(
     return envError();
   }
 
-  const { data: authData, error: authError } = await supabase.auth.signUp({
+  const { data: authData, error: authError } = await admin.auth.admin.createUser({
     email: parsed.data.email,
     password: parsed.data.password,
-    options: {
-      data: {
-        first_name: parsed.data.firstName,
-        last_name: parsed.data.lastName,
-        role: "tradie"
-      }
+    email_confirm: true,
+    user_metadata: {
+      first_name: parsed.data.firstName,
+      last_name: parsed.data.lastName,
+      role: "tradie",
+      dashboard_email_verification_pending: true
     }
   });
 
@@ -458,13 +513,13 @@ export async function registerTradieAction(
     .upsert(
       {
         user_id: appUser.id,
-        business_name: parsed.data.businessName,
-        abn: parsed.data.abn || null,
-        trade_category: parsed.data.tradeCategory,
-        licence_number: parsed.data.licenceNumber || null,
-        service_area: parsed.data.serviceArea,
-        emergency_available: parsed.data.emergencyAvailable === "on",
-        profile_health: 62
+        business_name: parsed.data.businessName || `${parsed.data.firstName} ${parsed.data.lastName}`,
+        abn: null,
+        trade_category: "Profile pending",
+        licence_number: null,
+        service_area: null,
+        emergency_available: false,
+        profile_health: 20
       },
       { onConflict: "user_id" }
     )
@@ -509,15 +564,31 @@ export async function registerTradieAction(
     userId: appUser.id,
     email: parsed.data.email,
     firstName: parsed.data.firstName,
-    businessName: parsed.data.businessName,
+    businessName: parsed.data.businessName || `${parsed.data.firstName} ${parsed.data.lastName}`,
     bonusCredits: 111
   });
+
+  await createAdminNotifications({
+    type: "fixer_registered",
+    title: `New Fixer signup: ${parsed.data.firstName} ${parsed.data.lastName}`,
+    body: `${parsed.data.firstName} ${parsed.data.lastName} created a Fixer account. Trade, service area, ABN, licence, and documents are pending in dashboard onboarding.`,
+    link: `/admin/tradies/${tradie.id}`
+  });
+
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: parsed.data.email,
+    password: parsed.data.password
+  });
+
+  if (signInError) {
+    redirect(`/login?notice=confirm-email&email=${encodeURIComponent(parsed.data.email)}`);
+  }
 
   redirect(fixerDirectToDashboard ? "/dashboard/tradie" : "/dashboard/tradie/profile");
 }
 
 function safeRedirectPath(value: FormDataEntryValue | null) {
-  if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//")) return null;
+  if (typeof value !== "string" || !value.startsWith("/") || value.startsWith("//") || value.includes("\\")) return null;
   return value;
 }
 
@@ -526,4 +597,12 @@ function roleHomeFor(role: Role) {
   if (role === "tradie") return "/dashboard/tradie";
   if (role === "admin" || role === "super_admin") return "/admin";
   return "/dashboard/customer";
+}
+
+function trimTrailingSlash(value: string) {
+  return value.replace(/\/+$/, "");
+}
+
+function authCallbackUrl(next: string) {
+  return `${trimTrailingSlash(appUrl)}/auth/callback?next=${encodeURIComponent(next)}`;
 }

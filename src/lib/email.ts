@@ -415,14 +415,14 @@ export async function notifyFixerRegistered(input: {
       eyebrow: "Fixer onboarding",
       title: `Welcome${input.firstName ? `, ${input.firstName}` : ""}.`,
       intro:
-        "Your Fixer account is ready. Your launch bonus credits are available so you can begin claiming suitable leads while your business profile grows.",
+        "Your Fixer account has been created. Open your dashboard to complete your profile, verify your contact email, and add the details the team needs for review.",
       sections: [
         {
           label: input.businessName,
           lines: [
-            `${input.bonusCredits} bonus credits are added now.`,
-            "The launch bonus renews monthly for 6 months while eligible.",
-            "Complete verification and profile details to improve customer trust."
+            "Start with the dashboard checklist.",
+            "Add trade, service area, ABN, licence, insurance, documents, and work preferences there.",
+            "Use the dashboard email verification task when you are ready."
           ]
         }
       ],
@@ -433,10 +433,47 @@ export async function notifyFixerRegistered(input: {
       subject: `New Fixer signup: ${input.businessName}`,
       eyebrow: "Fixer onboarding",
       title: input.businessName,
-      intro: "A new Fixer has joined and received launch bonus credits.",
-      sections: [{ label: "Bonus", lines: [`${input.bonusCredits} credits granted for month 1 of 6.`] }],
+      intro: "A new Fixer has created an account and can complete the full onboarding checklist from the dashboard.",
+      sections: [{ label: "Signup", lines: ["Account created.", "Email verification, trade details, ABN, licence, insurance, and documents are dashboard tasks."] }],
       cta: { label: "Open Fixer directory", href: `${appUrl}/admin/tradies` },
       idempotencyKey: `fixer-admin-${input.userId}`
+    })
+  ]);
+}
+
+export async function notifyFixerOnboardingCompleted(input: {
+  userId: string;
+  email?: string | null;
+  firstName?: string | null;
+  businessName: string;
+  tradeCategory?: string | null;
+  serviceArea?: string | null;
+  emergencyAvailable: boolean;
+  agencyInterest: boolean;
+  plannedMaintenanceInterest: boolean;
+}) {
+  await sendBestEffort([
+    sendAdminAlert({
+      subject: `Fixer profile completed: ${input.businessName}`,
+      category: "fixer",
+      eyebrow: "Fixer onboarding complete",
+      title: input.businessName,
+      intro: "A Fixer has completed the core dashboard onboarding details and is ready for admin review.",
+      sections: [
+        {
+          label: "Profile",
+          lines: [
+            input.email ? `Email: ${input.email}` : null,
+            input.tradeCategory ? `Trade: ${input.tradeCategory}` : null,
+            input.serviceArea ? `Service area: ${input.serviceArea}` : null,
+            `Emergency availability: ${input.emergencyAvailable ? "Yes" : "No"}`,
+            `Agency/property maintenance interest: ${input.agencyInterest ? "Yes" : "No"}`,
+            `Planned maintenance/contracts interest: ${input.plannedMaintenanceInterest ? "Yes" : "No"}`
+          ]
+        }
+      ],
+      cta: { label: "Review Fixer profile", href: `${appUrl}/admin/tradies` },
+      idempotencyKey: `fixer-onboarding-complete-admin-${input.userId}`
     })
   ]);
 }

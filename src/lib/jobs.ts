@@ -294,6 +294,16 @@ export type AdminCommandMetrics = {
   verificationPending: number;
 };
 
+export type AdminNotificationRow = {
+  id: string;
+  type: string;
+  title: string;
+  body: string;
+  link: string | null;
+  read_at: string | null;
+  created_at: string;
+};
+
 export type AdminRequestFilters = {
   lane?: RequestLaneLabel | "all";
   status?: JobStatus | "all";
@@ -995,6 +1005,25 @@ export async function getAdminCommandMetrics(): Promise<AdminCommandMetrics> {
     disputesOpen: disputesOpen.count ?? 0,
     verificationPending: verificationPending.count ?? 0
   };
+}
+
+export async function getAdminNotifications(user: AppUser): Promise<AdminNotificationRow[]> {
+  noStore();
+
+  if (!isSupabaseServerConfigured()) return [];
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from("notifications")
+    .select("id, type, title, body, link, read_at, created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(8);
+
+  if (error) return [];
+  return (data ?? []) as AdminNotificationRow[];
 }
 
 export async function getAdminRequestQueue(filters: AdminRequestFilters = {}) {
