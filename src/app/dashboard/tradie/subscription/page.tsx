@@ -3,10 +3,32 @@ import { tradiePlans } from "@/lib/data";
 import { requireRole } from "@/lib/auth";
 import { getTradieSubscription } from "@/lib/jobs";
 import { CheckoutButton, PortalButton } from "@/components/billing-buttons";
+import { showFixerSubscriptionUi } from "@/lib/featureFlags";
 
 export default async function TradieSubscriptionPage() {
   const user = await requireRole(["tradie", "admin", "super_admin"]);
   const subscription = await getTradieSubscription(user);
+
+  if (!showFixerSubscriptionUi) {
+    return (
+      <main className="premium-shell min-h-screen">
+        <section className="container py-8">
+          <DashboardHeader title="Fixer profile review" role="Fixer" />
+          <Card variant="membership">
+            <Badge tone="green">Recruitment mode</Badge>
+            <h1 className="mt-4 text-3xl font-black">Paid Fixer plans are not shown right now.</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text2)]">
+              Complete your Fixer profile, documents, service areas, and work interests so the Fixit 247 team can review
+              your readiness for suitable job opportunities.
+            </p>
+            <Button href="/dashboard/tradie/profile" className="mt-5">
+              Complete profile
+            </Button>
+          </Card>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="premium-shell min-h-screen">

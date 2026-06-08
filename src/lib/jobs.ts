@@ -89,6 +89,11 @@ export type TradieProfileSummary = {
   rating?: number | null;
   total_reviews?: number | null;
   response_rate?: number | null;
+  public_liability_insurance?: "yes" | "no" | "not_supplied" | null;
+  years_experience?: number | null;
+  services_description?: string | null;
+  agency_property_maintenance_interest?: boolean | null;
+  planned_maintenance_contracts_interest?: boolean | null;
 };
 
 export type TradieVerificationDocument = {
@@ -660,7 +665,7 @@ export async function getTradieProfileForUser(user: AppUser) {
 
   const { data, error } = await supabase
     .from("tradie_profiles")
-    .select("id, business_name, abn, trade_category, licence_number, service_area, emergency_available, availability_status, verification_status, profile_health, rating, total_reviews, response_rate")
+    .select("id, business_name, abn, trade_category, licence_number, service_area, emergency_available, availability_status, verification_status, profile_health, rating, total_reviews, response_rate, public_liability_insurance, years_experience, services_description, agency_property_maintenance_interest, planned_maintenance_contracts_interest")
     .eq("user_id", user.id)
     .maybeSingle();
 

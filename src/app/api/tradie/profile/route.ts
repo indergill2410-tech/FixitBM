@@ -11,8 +11,13 @@ const profileSchema = z.object({
   serviceArea: z.string().trim().min(2).max(160),
   abn: z.string().trim().max(40).optional(),
   licenceNumber: z.string().trim().max(80).optional(),
+  publicLiabilityInsurance: z.enum(["yes", "no", "not_supplied"]),
+  yearsExperience: z.coerce.number().int().min(0).max(80).optional().nullable(),
+  servicesDescription: z.string().trim().max(1000).optional(),
   availabilityStatus: z.enum(["available", "busy", "offline"]),
-  emergencyAvailable: z.boolean()
+  emergencyAvailable: z.boolean(),
+  agencyPropertyMaintenanceInterest: z.boolean(),
+  plannedMaintenanceContractsInterest: z.boolean()
 });
 
 export async function POST(request: Request) {
@@ -33,8 +38,13 @@ export async function POST(request: Request) {
     serviceArea: String(formData.get("serviceArea") ?? ""),
     abn: String(formData.get("abn") ?? ""),
     licenceNumber: String(formData.get("licenceNumber") ?? ""),
+    publicLiabilityInsurance: String(formData.get("publicLiabilityInsurance") ?? "not_supplied"),
+    yearsExperience: formData.get("yearsExperience") ? String(formData.get("yearsExperience")) : null,
+    servicesDescription: String(formData.get("servicesDescription") ?? ""),
     availabilityStatus: String(formData.get("availabilityStatus") ?? "available"),
-    emergencyAvailable: formData.get("emergencyAvailable") === "on"
+    emergencyAvailable: formData.get("emergencyAvailable") === "on",
+    agencyPropertyMaintenanceInterest: formData.get("agencyPropertyMaintenanceInterest") === "on",
+    plannedMaintenanceContractsInterest: formData.get("plannedMaintenanceContractsInterest") === "on"
   });
 
   if (!parsed.success) {
@@ -54,8 +64,13 @@ export async function POST(request: Request) {
       service_area: parsed.data.serviceArea,
       abn: parsed.data.abn || null,
       licence_number: parsed.data.licenceNumber || null,
+      public_liability_insurance: parsed.data.publicLiabilityInsurance,
+      years_experience: parsed.data.yearsExperience,
+      services_description: parsed.data.servicesDescription || null,
       availability_status: parsed.data.availabilityStatus,
       emergency_available: parsed.data.emergencyAvailable,
+      agency_property_maintenance_interest: parsed.data.agencyPropertyMaintenanceInterest,
+      planned_maintenance_contracts_interest: parsed.data.plannedMaintenanceContractsInterest,
       profile_health: profileHealth
     })
     .eq("user_id", user.id);
@@ -77,5 +92,8 @@ function calculateProfileHealth(profile: z.infer<typeof profileSchema>) {
   if (profile.abn) score += 10;
   if (profile.licenceNumber) score += 10;
   if (profile.emergencyAvailable) score += 5;
+  if (profile.publicLiabilityInsurance === "yes") score += 5;
+  if (profile.servicesDescription) score += 5;
+  if (profile.agencyPropertyMaintenanceInterest || profile.plannedMaintenanceContractsInterest) score += 5;
   return Math.min(score, 100);
 }

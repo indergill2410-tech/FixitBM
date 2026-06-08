@@ -45,6 +45,32 @@ export function TradieProfileForm({ profile }: { profile: TradieProfileDetail })
         <Field name="abn" label="ABN" defaultValue={profile.abn ?? ""} />
         <Field name="licenceNumber" label="Licence number" defaultValue={profile.licence_number ?? ""} />
       </div>
+      <div className="grid gap-3 md:grid-cols-2">
+        <Select
+          name="publicLiabilityInsurance"
+          label="Public liability insurance"
+          defaultValue={profile.public_liability_insurance ?? "not_supplied"}
+          options={[
+            ["not_supplied", "Not supplied"],
+            ["yes", "Yes"],
+            ["no", "No"]
+          ]}
+        />
+        <Field
+          name="yearsExperience"
+          label="Years of experience"
+          type="number"
+          defaultValue={profile.years_experience?.toString() ?? ""}
+        />
+      </div>
+      <label className="grid gap-2">
+        <span className="text-xs font-bold uppercase tracking-wide text-[var(--text3)]">Short description of services</span>
+        <textarea
+          name="servicesDescription"
+          defaultValue={profile.services_description ?? ""}
+          className="focus-ring min-h-28 rounded-xl border border-[var(--border)] bg-[var(--bg)] px-3 py-3"
+        />
+      </label>
       <select
         name="availabilityStatus"
         defaultValue={profile.availability_status ?? "available"}
@@ -57,6 +83,14 @@ export function TradieProfileForm({ profile }: { profile: TradieProfileDetail })
       <label className="flex gap-3 rounded-xl border border-[var(--border)] bg-white p-3 text-sm text-[var(--text2)]">
         <input name="emergencyAvailable" type="checkbox" defaultChecked={profile.emergency_available} />
         Available for emergency jobs
+      </label>
+      <label className="flex gap-3 rounded-xl border border-[var(--border)] bg-white p-3 text-sm text-[var(--text2)]">
+        <input name="agencyPropertyMaintenanceInterest" type="checkbox" defaultChecked={Boolean(profile.agency_property_maintenance_interest)} />
+        Interested in agency and property maintenance work
+      </label>
+      <label className="flex gap-3 rounded-xl border border-[var(--border)] bg-white p-3 text-sm text-[var(--text2)]">
+        <input name="plannedMaintenanceContractsInterest" type="checkbox" defaultChecked={Boolean(profile.planned_maintenance_contracts_interest)} />
+        Interested in planned maintenance and contract work
       </label>
       <div className="flex flex-wrap items-center gap-3">
         <Button disabled={isSaving}>
@@ -73,11 +107,13 @@ function Field({
   name,
   label,
   defaultValue,
+  type = "text",
   required
 }: {
   name: string;
   label: string;
   defaultValue: string;
+  type?: string;
   required?: boolean;
 }) {
   return (
@@ -85,10 +121,40 @@ function Field({
       <span className="text-xs font-bold uppercase tracking-wide text-[var(--text3)]">{label}</span>
       <input
         name={name}
+        type={type}
         required={required}
         defaultValue={defaultValue}
         className="focus-ring min-h-11 rounded-xl border border-[var(--border)] bg-[var(--bg)] px-3"
       />
+    </label>
+  );
+}
+
+function Select({
+  name,
+  label,
+  defaultValue,
+  options
+}: {
+  name: string;
+  label: string;
+  defaultValue: string;
+  options: Array<[string, string]>;
+}) {
+  return (
+    <label className="grid gap-2">
+      <span className="text-xs font-bold uppercase tracking-wide text-[var(--text3)]">{label}</span>
+      <select
+        name={name}
+        defaultValue={defaultValue}
+        className="focus-ring min-h-11 rounded-xl border border-[var(--border)] bg-[var(--bg)] px-3"
+      >
+        {options.map(([value, optionLabel]) => (
+          <option key={value} value={value}>
+            {optionLabel}
+          </option>
+        ))}
+      </select>
     </label>
   );
 }
