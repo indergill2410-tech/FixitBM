@@ -4,6 +4,7 @@ import { Badge, Button, Card, DashboardHeader, EmergencyCTA, StatCard } from "@/
 import { customerTimeline } from "@/lib/data";
 import { requireRole } from "@/lib/auth";
 import { formatJobLocation, getCustomerDashboardInsights, getCustomerJobs, requestLaneLabel, statusLabel } from "@/lib/jobs";
+import { EmailVerificationCard } from "@/components/email-verification-card";
 import { CustomerJobCard } from "@/components/job-cards";
 import { getHomeProtectionSummary } from "@/lib/safety-checks";
 import { getCustomerPropertySafeSummary } from "@/lib/propertysafe";
@@ -40,6 +41,7 @@ export default async function CustomerDashboardPage() {
           Your home and road protection account. Track requests, manage Fixit Plus, book your Safety Check, and keep
           your household ready before the next emergency.
         </p>
+        {user.email && !user.email_verified_at ? <EmailVerificationCard email={user.email} /> : null}
         <div className="mb-5 grid gap-3 md:grid-cols-4">
           <Button href="/post-job">Get help now</Button>
           <Button href="/dashboard/customer/safety-checks/book" variant="ghost">Book my Safety Check</Button>

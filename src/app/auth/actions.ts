@@ -7,9 +7,9 @@ import { isSupabasePublicConfigured, isSupabaseServerConfigured } from "@/lib/su
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Role } from "@/lib/auth";
 import { notifyAgencyRegistered, notifyCustomerRegistered, notifyFixerRegistered } from "@/lib/email";
+import { sendAppEmailVerification } from "@/lib/email-verification";
 import { fixerDirectToDashboard } from "@/lib/featureFlags";
 import { createAdminNotifications } from "@/lib/notifications";
-import { appUrl } from "@/lib/seo";
 
 export type AuthActionState = {
   ok?: boolean;
@@ -109,7 +109,7 @@ export async function resendConfirmationAction(
   _state: AuthActionState,
   formData: FormData
 ): Promise<AuthActionState> {
-  if (!isSupabasePublicConfigured()) {
+  if (!isSupabaseServerConfigured()) {
     return envError();
   }
 
@@ -121,29 +121,29 @@ export async function resendConfirmationAction(
     return { ok: false, code: "email_not_confirmed", message: "Enter the email you used to create the account." };
   }
 
-  const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.auth.resend({
-    type: "signup",
-    email: parsed.data.email,
-    options: {
-      emailRedirectTo: authCallbackUrl("/dashboard/tradie")
-    }
-  });
+  const admin = createSupabaseAdminClient();
+  if (!admin) return envError();
 
-  if (error) {
-    return {
-      ok: false,
-      code: "email_not_confirmed",
-      email: parsed.data.email,
-      message: error.message
-    };
+  const email = parsed.data.email.toLowerCase();
+  const { data: appUser } = await admin
+    .from("users")
+    .select("id, email, first_name, email_verified_at")
+    .ilike("email", email)
+    .maybeSingle();
+
+  if (appUser?.email && !appUser.email_verified_at) {
+    await sendVerificationBestEffort({
+      userId: appUser.id,
+      email: appUser.email,
+      firstName: appUser.first_name
+    });
   }
 
   return {
     ok: true,
     code: "confirmation_sent",
-    email: parsed.data.email,
-    message: "Confirmation email sent. Check your inbox, spam, promotions, or updates folder."
+    email,
+    message: "If that account exists, a Fixit247 verification email has been sent. Check your inbox, spam, promotions, or updates folder."
   };
 }
 
@@ -233,16 +233,16 @@ export async function registerCustomerAction(
     return envError();
   }
 
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email: parsed.data.email,
+  const email = parsed.data.email.toLowerCase();
+  const { data: authData, error: authError } = await admin.auth.admin.createUser({
+    email,
     password: parsed.data.password,
-    options: {
-      emailRedirectTo: authCallbackUrl("/dashboard/customer"),
-      data: {
-        first_name: parsed.data.firstName,
-        last_name: parsed.data.lastName,
-        role: "customer"
-      }
+    email_confirm: true,
+    user_metadata: {
+      first_name: parsed.data.firstName,
+      last_name: parsed.data.lastName,
+      role: "customer",
+      dashboard_email_verification_pending: true
     }
   });
 
@@ -255,7 +255,7 @@ export async function registerCustomerAction(
     .upsert(
       {
         auth_id: authData.user.id,
-        email: parsed.data.email,
+        email,
         phone: parsed.data.phone,
         first_name: parsed.data.firstName,
         last_name: parsed.data.lastName,
@@ -275,12 +275,23 @@ export async function registerCustomerAction(
 
   await notifyCustomerRegistered({
     userId: appUser.id,
-    email: parsed.data.email,
+    email,
     firstName: parsed.data.firstName
   });
 
-  if (!authData.session) {
-    redirect(`/login?notice=confirm-email&email=${encodeURIComponent(parsed.data.email)}`);
+  await sendVerificationBestEffort({
+    userId: appUser.id,
+    email,
+    firstName: parsed.data.firstName
+  });
+
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password: parsed.data.password
+  });
+
+  if (signInError) {
+    redirect(`/login?email=${encodeURIComponent(email)}`);
   }
 
   redirect("/dashboard/customer");
@@ -318,16 +329,16 @@ export async function registerAgencyAction(
     return envError();
   }
 
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email: parsed.data.email,
+  const email = parsed.data.email.toLowerCase();
+  const { data: authData, error: authError } = await admin.auth.admin.createUser({
+    email,
     password: parsed.data.password,
-    options: {
-      emailRedirectTo: authCallbackUrl("/dashboard/agency"),
-      data: {
-        first_name: parsed.data.firstName,
-        last_name: parsed.data.lastName,
-        role: "agency"
-      }
+    email_confirm: true,
+    user_metadata: {
+      first_name: parsed.data.firstName,
+      last_name: parsed.data.lastName,
+      role: "agency",
+      dashboard_email_verification_pending: true
     }
   });
 
@@ -340,7 +351,7 @@ export async function registerAgencyAction(
     .upsert(
       {
         auth_id: authData.user.id,
-        email: parsed.data.email,
+        email,
         phone: parsed.data.phone,
         first_name: parsed.data.firstName,
         last_name: parsed.data.lastName,
@@ -430,14 +441,25 @@ export async function registerAgencyAction(
 
   await notifyAgencyRegistered({
     userId: appUser.id,
-    email: parsed.data.email,
+    email,
     firstName: parsed.data.firstName,
     agencyName: parsed.data.agencyName,
     portfolioSize: parsed.data.portfolioSize
   });
 
-  if (!authData.session) {
-    redirect(`/login?notice=confirm-email&email=${encodeURIComponent(parsed.data.email)}`);
+  await sendVerificationBestEffort({
+    userId: appUser.id,
+    email,
+    firstName: parsed.data.firstName
+  });
+
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email,
+    password: parsed.data.password
+  });
+
+  if (signInError) {
+    redirect(`/login?email=${encodeURIComponent(email)}`);
   }
 
   redirect("/dashboard/agency");
@@ -471,8 +493,9 @@ export async function registerTradieAction(
     return envError();
   }
 
+  const email = parsed.data.email.toLowerCase();
   const { data: authData, error: authError } = await admin.auth.admin.createUser({
-    email: parsed.data.email,
+    email,
     password: parsed.data.password,
     email_confirm: true,
     user_metadata: {
@@ -492,7 +515,7 @@ export async function registerTradieAction(
     .upsert(
       {
         auth_id: authData.user.id,
-        email: parsed.data.email,
+        email,
         phone: parsed.data.phone,
         first_name: parsed.data.firstName,
         last_name: parsed.data.lastName,
@@ -562,7 +585,7 @@ export async function registerTradieAction(
 
   await notifyFixerRegistered({
     userId: appUser.id,
-    email: parsed.data.email,
+    email,
     firstName: parsed.data.firstName,
     businessName: parsed.data.businessName || `${parsed.data.firstName} ${parsed.data.lastName}`,
     bonusCredits: 111
@@ -575,13 +598,19 @@ export async function registerTradieAction(
     link: `/admin/tradies/${tradie.id}`
   });
 
+  await sendVerificationBestEffort({
+    userId: appUser.id,
+    email,
+    firstName: parsed.data.firstName
+  });
+
   const { error: signInError } = await supabase.auth.signInWithPassword({
-    email: parsed.data.email,
+    email,
     password: parsed.data.password
   });
 
   if (signInError) {
-    redirect(`/login?notice=confirm-email&email=${encodeURIComponent(parsed.data.email)}`);
+    redirect(`/login?email=${encodeURIComponent(email)}`);
   }
 
   redirect(fixerDirectToDashboard ? "/dashboard/tradie" : "/dashboard/tradie/profile");
@@ -599,10 +628,9 @@ function roleHomeFor(role: Role) {
   return "/dashboard/customer";
 }
 
-function trimTrailingSlash(value: string) {
-  return value.replace(/\/+$/, "");
-}
-
-function authCallbackUrl(next: string) {
-  return `${trimTrailingSlash(appUrl)}/auth/callback?next=${encodeURIComponent(next)}`;
+async function sendVerificationBestEffort(input: { userId: string; email: string; firstName?: string | null }) {
+  const result = await sendAppEmailVerification(input);
+  if (!result.ok && !result.skipped) {
+    console.error("Fixit247 verification email failed", result.error);
+  }
 }

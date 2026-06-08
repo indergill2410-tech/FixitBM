@@ -73,20 +73,39 @@ Required for production:
 Email delivery should be verified with a real request, newsletter signup, support ticket, Safety Check booking, Fixer
 signup, and PropertySafe invite.
 
-Supabase Auth confirmation emails are separate from Resend app emails. In Supabase Auth URL Configuration, set the
-production Site URL to `https://fixit247.com.au` when the custom domain is live, and add redirect allow-list entries for:
+Normal customer, agency, and Fixer signup creates a sign-in-capable Supabase Auth user and sends branded Fixit247
+verification through Resend. This avoids the default Supabase confirmation email during standard onboarding.
+
+Supabase Auth URL Configuration still matters for fallback auth links and any future passwordless/recovery flows. Set the
+production Site URL to `https://fixit247.com.au` when the custom domain is live, never leave it at `http://localhost:3000`,
+and add redirect allow-list entries for:
 
 ```text
 https://fixit247.com.au/**
 https://fixitbm.onrender.com/**
 ```
 
-The app sends signup confirmation redirects to `/auth/callback`, which exchanges the Supabase code for a browser
-session before sending the user to the right dashboard. If using a custom Supabase email template with token hashes, point
-the confirmation link at `/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next=/dashboard/tradie`.
+If Supabase Auth confirmation emails are enabled for fallback flows, replace the default Supabase template with branded
+Fixit247 copy and point the confirmation link at
+`{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/dashboard`.
 
-For Fixer recruitment, first signup should open the dashboard immediately. Fixer contact email verification is handled as
-a dashboard task through Resend and `EMAIL_VERIFICATION_SECRET`; it does not block first dashboard onboarding.
+Suggested fallback Supabase confirmation subject:
+
+```text
+Verify your Fixit247 email
+```
+
+Suggested fallback Supabase confirmation body:
+
+```html
+<h2>Verify your Fixit247 email</h2>
+<p>Confirm this email address so Fixit247 can keep your account, dashboard updates, and support messages connected.</p>
+<p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/dashboard">Verify email</a></p>
+<p>If you did not create a Fixit247 account, you can ignore this email.</p>
+```
+
+First signup should open the dashboard immediately. Contact email verification is handled as a dashboard task through
+Resend and `EMAIL_VERIFICATION_SECRET`; it does not block first dashboard onboarding.
 
 Fixer recruitment uses this same email setup. New Fixer signups and completed Fixer onboarding profiles send admin alert
 emails to `FIXIT_ALERT_EMAIL` first, then `ADMIN_ALERT_EMAIL`, then `RESEND_ALERT_EMAIL` if configured. The same events
