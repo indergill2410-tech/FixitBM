@@ -2,6 +2,8 @@ import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentAppUser } from "@/lib/auth";
+import { notifyFixerOnboardingCompleted } from "@/lib/email";
+import { createAdminNotifications } from "@/lib/notifications";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
 
@@ -56,6 +58,13 @@ export async function POST(request: Request) {
 
   const profileHealth = calculateProfileHealth(parsed.data);
 
+  const { data: existingProfile } = await supabase
+    .from("tradie_profiles")
+    .select("id, business_name, trade_category, service_area, abn, licence_number, emergency_available, public_liability_insurance, services_description, agency_property_maintenance_interest, planned_maintenance_contracts_interest")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const wasComplete = isFixerOnboardingComplete(existingProfile);
+
   const { error } = await supabase
     .from("tradie_profiles")
     .update({
@@ -77,11 +86,78 @@ export async function POST(request: Request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  const completedProfile = {
+    ...existingProfile,
+    business_name: parsed.data.businessName,
+    trade_category: parsed.data.tradeCategory,
+    service_area: parsed.data.serviceArea,
+    abn: parsed.data.abn || null,
+    licence_number: parsed.data.licenceNumber || null,
+    emergency_available: parsed.data.emergencyAvailable,
+    public_liability_insurance: parsed.data.publicLiabilityInsurance,
+    services_description: parsed.data.servicesDescription || null,
+    agency_property_maintenance_interest: parsed.data.agencyPropertyMaintenanceInterest,
+    planned_maintenance_contracts_interest: parsed.data.plannedMaintenanceContractsInterest
+  };
+
+  if (!wasComplete && isFixerOnboardingComplete(completedProfile)) {
+    const profileId = existingProfile?.id;
+    await Promise.all([
+      notifyFixerOnboardingCompleted({
+        userId: user.id,
+        email: user.email,
+        firstName: user.first_name,
+        businessName: parsed.data.businessName,
+        tradeCategory: parsed.data.tradeCategory,
+        serviceArea: parsed.data.serviceArea,
+        emergencyAvailable: parsed.data.emergencyAvailable,
+        agencyInterest: parsed.data.agencyPropertyMaintenanceInterest,
+        plannedMaintenanceInterest: parsed.data.plannedMaintenanceContractsInterest
+      }),
+      createAdminNotifications({
+        type: "fixer_onboarding_completed",
+        title: `Fixer onboarding completed: ${parsed.data.businessName}`,
+        body: `${parsed.data.businessName} completed core profile details for ${parsed.data.tradeCategory} in ${parsed.data.serviceArea}.`,
+        link: profileId ? `/admin/tradies/${profileId}` : "/admin/tradies"
+      })
+    ]);
+  }
+
   revalidatePath("/dashboard/tradie");
   revalidatePath("/dashboard/tradie/profile");
   revalidatePath("/dashboard/tradie/leads");
 
   return NextResponse.json({ ok: true });
+}
+
+function isFixerOnboardingComplete(
+  profile:
+    | {
+        business_name?: string | null;
+        trade_category?: string | null;
+        service_area?: string | null;
+        abn?: string | null;
+        licence_number?: string | null;
+        emergency_available?: boolean | null;
+        public_liability_insurance?: string | null;
+        services_description?: string | null;
+        agency_property_maintenance_interest?: boolean | null;
+        planned_maintenance_contracts_interest?: boolean | null;
+      }
+    | null
+    | undefined
+) {
+  return Boolean(
+    profile?.business_name &&
+      profile.trade_category &&
+      profile.service_area &&
+      profile.abn &&
+      profile.licence_number &&
+      profile.public_liability_insurance === "yes" &&
+      profile.services_description &&
+      (profile.emergency_available || profile.planned_maintenance_contracts_interest) &&
+      profile.agency_property_maintenance_interest
+  );
 }
 
 function calculateProfileHealth(profile: z.infer<typeof profileSchema>) {

@@ -8,6 +8,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Role } from "@/lib/auth";
 import { notifyAgencyRegistered, notifyCustomerRegistered, notifyFixerRegistered } from "@/lib/email";
 import { fixerDirectToDashboard } from "@/lib/featureFlags";
+import { createAdminNotifications } from "@/lib/notifications";
 
 export type AuthActionState = {
   ok?: boolean;
@@ -511,6 +512,13 @@ export async function registerTradieAction(
     firstName: parsed.data.firstName,
     businessName: parsed.data.businessName,
     bonusCredits: 111
+  });
+
+  await createAdminNotifications({
+    type: "fixer_registered",
+    title: `New Fixer signup: ${parsed.data.businessName}`,
+    body: `${parsed.data.businessName} created a Fixer account for ${parsed.data.tradeCategory} in ${parsed.data.serviceArea}.`,
+    link: `/admin/tradies/${tradie.id}`
   });
 
   redirect(fixerDirectToDashboard ? "/dashboard/tradie" : "/dashboard/tradie/profile");

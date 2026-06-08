@@ -119,35 +119,81 @@ export function TradieRegisterForm() {
   const [state, action, pending] = useActionState(registerTradieAction, initialState);
 
   return (
-    <form action={action} className="mt-6 grid gap-3">
+    <form action={action} className="mt-6 grid gap-5">
       <FormMessage message={state.message} />
-      <div className="grid gap-3 md:grid-cols-2">
-        <Input name="firstName" label="First name" />
-        <Input name="lastName" label="Last name" />
+      <FormSection title="Account contact">
+        <div className="grid gap-3 md:grid-cols-2">
+          <Input name="firstName" label="First name" />
+          <Input name="lastName" label="Last name" />
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
+          <Input name="phone" label="Phone" />
+          <Input name="email" label="Email" type="email" />
+        </div>
+        <Input name="password" label="Password" type="password" />
+      </FormSection>
+
+      <FormSection title="Business details">
+        <Input name="businessName" label="Business name" />
+        <div className="grid gap-3 md:grid-cols-2">
+          <Input name="abn" label="ABN optional" />
+          <Input name="licenceNumber" label="Licence number optional" />
+        </div>
+      </FormSection>
+
+      <FormSection title="Trade and coverage">
+        <div className="grid gap-3 md:grid-cols-2">
+          <Select
+            name="tradeCategory"
+            label="Trade category"
+            options={[
+              ["Plumbing", "Plumbing"],
+              ["Electrical", "Electrical"],
+              ["Locksmith", "Locksmith"],
+              ["Handyman", "Handyman"],
+              ["Painting", "Painting"],
+              ["Carpentry", "Carpentry"],
+              ["Roof and gutter repairs", "Roof and gutter repairs"],
+              ["Heating and cooling", "Heating and cooling"],
+              ["Gardening and landscaping", "Gardening and landscaping"],
+              ["Cleaning and end-of-lease repairs", "Cleaning and end-of-lease repairs"],
+              ["General property maintenance", "General property maintenance"]
+            ]}
+          />
+          <Input name="serviceArea" label="Service area" helper="Suburbs, regions, or postcodes you service" />
+        </div>
+      </FormSection>
+
+      <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4">
+        <label className="flex gap-3 text-sm text-[var(--text2)]">
+          <input name="emergencyAvailable" type="checkbox" className="mt-1" />
+          <span>
+            <strong className="block text-[var(--text)]">Available for emergency requests</strong>
+            Let Fixit 247 know if you can support urgent or after-hours repair demand.
+          </span>
+        </label>
       </div>
-      <Input name="businessName" label="Business name" />
-      <div className="grid gap-3 md:grid-cols-2">
-        <Input name="phone" label="Phone" />
-        <Input name="email" label="Email" type="email" />
+
+      <div>
+        <Button disabled={pending} className="min-h-12 w-full md:w-auto">
+          {pending ? <Loader2 className="animate-spin" size={17} /> : <BriefcaseBusiness size={17} />}
+          Create Your Fixer Account
+        </Button>
+        <p className="mt-3 text-xs font-semibold leading-5 text-[var(--text3)]">
+          After signup, you&apos;ll go straight to your Fixer dashboard to complete insurance, service preferences, and
+          verification details.
+        </p>
       </div>
-      <Input name="password" label="Password" type="password" />
-      <div className="grid gap-3 md:grid-cols-2">
-        <Input name="abn" label="ABN optional" />
-        <Input name="licenceNumber" label="Licence number optional" />
-      </div>
-      <div className="grid gap-3 md:grid-cols-2">
-        <Input name="tradeCategory" label="Trade category" />
-        <Input name="serviceArea" label="Service area" />
-      </div>
-      <label className="flex gap-3 rounded-2xl border border-[var(--border)] bg-white p-4 text-sm text-[var(--text2)]">
-        <input name="emergencyAvailable" type="checkbox" />
-        Available for emergency requests
-      </label>
-      <Button disabled={pending}>
-        {pending ? <Loader2 className="animate-spin" size={17} /> : <BriefcaseBusiness size={17} />}
-        Create Fixer account
-      </Button>
     </form>
+  );
+}
+
+function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <fieldset className="grid gap-3">
+      <legend className="mb-1 text-sm font-black text-[var(--text)]">{title}</legend>
+      {children}
+    </fieldset>
   );
 }
 
@@ -178,7 +224,17 @@ function Select({
   );
 }
 
-function Input({ name, label, type = "text" }: { name: string; label: string; type?: string }) {
+function Input({
+  name,
+  label,
+  type = "text",
+  helper
+}: {
+  name: string;
+  label: string;
+  type?: string;
+  helper?: string;
+}) {
   return (
     <label className="grid gap-2">
       <span className="text-xs font-bold uppercase tracking-wide text-[var(--text3)]">{label}</span>
@@ -188,6 +244,7 @@ function Input({ name, label, type = "text" }: { name: string; label: string; ty
         required={!label.includes("optional")}
         className="focus-ring min-h-12 rounded-xl border border-[var(--border)] bg-[var(--bg)] px-4"
       />
+      {helper ? <span className="text-xs font-semibold text-[var(--text3)]">{helper}</span> : null}
     </label>
   );
 }

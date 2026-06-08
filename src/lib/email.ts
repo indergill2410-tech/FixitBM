@@ -441,6 +441,43 @@ export async function notifyFixerRegistered(input: {
   ]);
 }
 
+export async function notifyFixerOnboardingCompleted(input: {
+  userId: string;
+  email?: string | null;
+  firstName?: string | null;
+  businessName: string;
+  tradeCategory?: string | null;
+  serviceArea?: string | null;
+  emergencyAvailable: boolean;
+  agencyInterest: boolean;
+  plannedMaintenanceInterest: boolean;
+}) {
+  await sendBestEffort([
+    sendAdminAlert({
+      subject: `Fixer profile completed: ${input.businessName}`,
+      category: "fixer",
+      eyebrow: "Fixer onboarding complete",
+      title: input.businessName,
+      intro: "A Fixer has completed the core dashboard onboarding details and is ready for admin review.",
+      sections: [
+        {
+          label: "Profile",
+          lines: [
+            input.email ? `Email: ${input.email}` : null,
+            input.tradeCategory ? `Trade: ${input.tradeCategory}` : null,
+            input.serviceArea ? `Service area: ${input.serviceArea}` : null,
+            `Emergency availability: ${input.emergencyAvailable ? "Yes" : "No"}`,
+            `Agency/property maintenance interest: ${input.agencyInterest ? "Yes" : "No"}`,
+            `Planned maintenance/contracts interest: ${input.plannedMaintenanceInterest ? "Yes" : "No"}`
+          ]
+        }
+      ],
+      cta: { label: "Review Fixer profile", href: `${appUrl}/admin/tradies` },
+      idempotencyKey: `fixer-onboarding-complete-admin-${input.userId}`
+    })
+  ]);
+}
+
 export async function notifySafetyCheckBooked(input: {
   safetyCheckId: string;
   userEmail?: string | null;
