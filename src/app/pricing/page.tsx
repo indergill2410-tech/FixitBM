@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Check } from "lucide-react";
 import { Badge, Button, Card, PublicFooter, PublicHeader } from "@/components/ui";
 import { CheckoutButton } from "@/components/billing-buttons";
+import { showFixerSubscriptionUi } from "@/lib/featureFlags";
 import { appUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -93,9 +94,13 @@ export default function PricingPage() {
         <Card>
           <h2 className="text-xl font-black">Are you a verified provider?</h2>
           <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
-            Fixers keep 100% of the job value and can choose plans, credits, verification, and priority access.
+            {showFixerSubscriptionUi
+              ? "Fixers keep 100% of the job value and can choose plans, credits, verification, and priority access."
+              : "Fixit 247 is onboarding reliable trades for emergency repairs, planned maintenance, agency work, and property service opportunities."}
           </p>
-          <Button href="/become-a-fixer" variant="ghost" className="mt-5 w-full">See Fixer plans</Button>
+          <Button href="/become-a-fixer" variant="ghost" className="mt-5 w-full">
+            {showFixerSubscriptionUi ? "See Fixer plans" : "Become a Fixer"}
+          </Button>
         </Card>
       </section>
       <PublicFooter />

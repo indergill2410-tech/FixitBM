@@ -3,9 +3,14 @@ import {
   ArrowRight,
   BadgeCheck,
   BriefcaseBusiness,
+  Building2,
   CalendarCheck,
+  CheckCircle2,
   Clock3,
+  ClipboardCheck,
+  FileImage,
   Headphones,
+  Hammer,
   MapPin,
   Radar,
   ShieldCheck,
@@ -15,11 +20,12 @@ import {
 } from "lucide-react";
 import { Badge, Button, Card, DashboardHeader } from "@/components/ui";
 import { requireRole } from "@/lib/auth";
+import { showFixerRecruitmentUi, showFixerSubscriptionUi } from "@/lib/featureFlags";
 import {
   formatJobLocation,
   getTradieAssignedJobs,
   getTradieLeads,
-  getTradieProfileForUser,
+  getTradieProfileDetail,
   getTradieWallet,
   requestLaneLabel,
   requestLaneTone,
@@ -35,7 +41,7 @@ export default async function TradieDashboardPage() {
     getTradieWallet(user),
     getTradieLeads(user),
     getTradieAssignedJobs(user),
-    getTradieProfileForUser(user),
+    getTradieProfileDetail(user),
     getTradieAssignedSafetyChecks(user)
   ]);
   const activeJobs = jobs.filter((job) => !["completed", "reviewed", "closed", "cancelled"].includes(job.status));
@@ -46,6 +52,7 @@ export default async function TradieDashboardPage() {
   const availability = profile?.availability_status ? labelize(profile.availability_status) : "Profile needed";
   const emergencyMode = profile?.emergency_available ? "Emergency-ready" : "Standard requests";
   const displayName = profile?.business_name ?? user.first_name ?? "Fixer";
+  const onboardingItems = getOnboardingItems(profile);
 
   return (
     <main className="premium-shell min-h-screen">
@@ -92,18 +99,58 @@ export default async function TradieDashboardPage() {
             </div>
           </Card>
 
-          <Card variant="membership">
-            <Badge tone="green">No commission</Badge>
-            <h2 className="mt-4 text-2xl font-black">Keep the work value.</h2>
-            <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
-              Credits pay for access to qualified opportunities. You keep 100% of the job value you agree with the customer.
-            </p>
-            <div className="mt-5 grid gap-2">
-              <Button href="/dashboard/tradie/wallet">Manage credits</Button>
-              <Button href="/dashboard/tradie/subscription" variant="ghost">View plans</Button>
-            </div>
-          </Card>
+          {showFixerSubscriptionUi ? (
+            <Card variant="membership">
+              <Badge tone="green">No commission</Badge>
+              <h2 className="mt-4 text-2xl font-black">Keep the work value.</h2>
+              <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
+                Credits pay for access to qualified opportunities. You keep 100% of the job value you agree with the customer.
+              </p>
+              <div className="mt-5 grid gap-2">
+                <Button href="/dashboard/tradie/wallet">Manage credits</Button>
+                <Button href="/dashboard/tradie/subscription" variant="ghost">View plans</Button>
+              </div>
+            </Card>
+          ) : (
+            <Card variant="membership">
+              <Badge tone="green">Profile review</Badge>
+              <h2 className="mt-4 text-2xl font-black">Complete your Fixer readiness profile.</h2>
+              <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
+                Add your business details, service areas, verification documents, and work interests so the team can review your fit for suitable opportunities.
+              </p>
+              <Button href="/dashboard/tradie/profile" className="mt-5 w-full">
+                Complete profile
+              </Button>
+            </Card>
+          )}
         </section>
+
+        {showFixerRecruitmentUi ? (
+          <Card className="mt-5">
+            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div>
+                <Badge tone="blue">Onboarding checklist</Badge>
+                <h2 className="mt-3 text-2xl font-black">Prepare your Fixer account for review.</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text2)]">
+                  Keep these details current so Fixit 247 can assess your profile for emergency repairs, planned jobs,
+                  agency maintenance work, and partnership opportunities.
+                </p>
+              </div>
+              <Button href="/dashboard/tradie/profile" variant="ghost">
+                Update profile
+                <ArrowRight size={16} />
+              </Button>
+            </div>
+            <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+              {onboardingItems.map((item) => (
+                <ChecklistItem key={item.label} {...item} />
+              ))}
+            </div>
+            <p className="mt-4 text-xs font-semibold leading-5 text-[var(--text3)]">
+              Fixit 247 may offer optional paid partner, premium visibility, or subscription features in the future.
+            </p>
+          </Card>
+        ) : null}
 
         <section className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
           <SignalCard icon={Activity} label="Availability" value={availability} detail={emergencyMode} tone={profile?.emergency_available ? "green" : "amber"} />
@@ -187,16 +234,18 @@ export default async function TradieDashboardPage() {
                 <ControlLink href="/dashboard/tradie/support" icon={Headphones} title="Fixer support" />
               </div>
             </Card>
-            <Card variant="membership">
-              <Badge>Signup bonus</Badge>
-              <h2 className="mt-4 text-xl font-black">111 credits every month for 6 months.</h2>
-              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                Claim request leads on Free Starter before choosing a paid subscription.
-              </p>
-              <Button href="/dashboard/tradie/wallet" className="mt-5 w-full">
-                View wallet
-              </Button>
-            </Card>
+            {showFixerSubscriptionUi ? (
+              <Card variant="membership">
+                <Badge>Signup bonus</Badge>
+                <h2 className="mt-4 text-xl font-black">111 credits every month for 6 months.</h2>
+                <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
+                  Claim request leads on Free Starter before choosing a paid subscription.
+                </p>
+                <Button href="/dashboard/tradie/wallet" className="mt-5 w-full">
+                  View wallet
+                </Button>
+              </Card>
+            ) : null}
             <Card>
               <BadgeCheck className="text-[var(--green)]" />
               <h2 className="mt-4 text-xl font-black">Trust signals</h2>
@@ -305,6 +354,43 @@ function ControlLink({ href, icon: Icon, title }: { href: string; icon: typeof A
       {title}
     </a>
   );
+}
+
+function ChecklistItem({
+  icon: Icon,
+  label,
+  done
+}: {
+  icon: typeof Activity;
+  label: string;
+  done: boolean;
+}) {
+  return (
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4">
+      <div className="flex items-center justify-between gap-3">
+        <Icon className={done ? "text-[var(--green)]" : "text-[var(--amber2)]"} size={18} />
+        <CheckCircle2 className={done ? "text-[var(--green)]" : "text-[var(--text3)]"} size={18} />
+      </div>
+      <p className="mt-4 text-sm font-black leading-5">{label}</p>
+      <p className="mt-1 text-xs font-semibold text-[var(--text3)]">{done ? "Added" : "Needs attention"}</p>
+    </div>
+  );
+}
+
+function getOnboardingItems(profile: Awaited<ReturnType<typeof getTradieProfileDetail>>) {
+  const hasInsuranceDocument = Boolean(profile?.documents.some((document) => document.type === "insurance"));
+  return [
+    { icon: BriefcaseBusiness, label: "Complete business profile", done: Boolean(profile?.business_name) },
+    { icon: Hammer, label: "Add trade category", done: Boolean(profile?.trade_category) },
+    { icon: MapPin, label: "Add service areas", done: Boolean(profile?.service_area) },
+    { icon: ShieldCheck, label: "Add ABN", done: Boolean(profile?.abn) },
+    { icon: BadgeCheck, label: "Add licence details if applicable", done: Boolean(profile?.licence_number) },
+    { icon: ClipboardCheck, label: "Add insurance status", done: profile?.public_liability_insurance === "yes" || hasInsuranceDocument },
+    { icon: Zap, label: "Add emergency availability", done: Boolean(profile?.emergency_available) },
+    { icon: FileImage, label: "Add previous work photos if supported", done: Boolean(profile?.documents.length) },
+    { icon: Building2, label: "Confirm agency/property interest", done: Boolean(profile?.agency_property_maintenance_interest) },
+    { icon: CalendarCheck, label: "Confirm emergency and planned job interest", done: Boolean(profile?.emergency_available || profile?.planned_maintenance_contracts_interest) }
+  ];
 }
 
 function labelize(value: string) {

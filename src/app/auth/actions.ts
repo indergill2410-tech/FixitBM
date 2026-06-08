@@ -7,6 +7,7 @@ import { isSupabasePublicConfigured, isSupabaseServerConfigured } from "@/lib/su
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { Role } from "@/lib/auth";
 import { notifyAgencyRegistered, notifyCustomerRegistered, notifyFixerRegistered } from "@/lib/email";
+import { fixerDirectToDashboard } from "@/lib/featureFlags";
 
 export type AuthActionState = {
   ok?: boolean;
@@ -512,7 +513,7 @@ export async function registerTradieAction(
     bonusCredits: 111
   });
 
-  redirect("/dashboard/tradie");
+  redirect(fixerDirectToDashboard ? "/dashboard/tradie" : "/dashboard/tradie/profile");
 }
 
 function safeRedirectPath(value: FormDataEntryValue | null) {
