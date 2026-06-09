@@ -650,7 +650,7 @@ export async function notifyPropertySafeInvite(input: {
           ]
         }
       ],
-      cta: { label: "Open PropertySafe", href: `${appUrl}/dashboard/customer` },
+      cta: { label: "Open PropertySafe", href: `${appUrl}/dashboard/customer/propertysafe` },
       idempotencyKey: `propertysafe-invite-${input.participantId}`
     })
   ]);

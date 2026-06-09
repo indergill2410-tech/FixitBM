@@ -525,3 +525,257 @@ const propertySafeRecommendationSelect =
 
 const propertySafeParticipantSelect =
   "id, propertysafe_profile_id, user_id, invite_email, relationship, agency_name, can_view, can_request_work, can_manage_record, can_view_financials, status, created_at, updated_at";
+
+export type PropertySafeSharedInvite = {
+  participant_id: string;
+  propertysafe_profile_id: string;
+  relationship: PropertySafeParticipant["relationship"];
+  agency_name: string | null;
+  can_request_work: boolean;
+  can_view_financials: boolean;
+  property_label: string;
+  shared_by: string;
+};
+
+export type PropertySafeSharedRecordRow = {
+  profile_id: string;
+  property_label: string;
+  relationship: PropertySafeParticipant["relationship"];
+  protection_level: PropertySafeProfile["protection_level"];
+  last_assessed_at: string | null;
+  next_review_at: string | null;
+  shared_by: string;
+  can_request_work: boolean;
+};
+
+export type PropertySafeSharedAccess = {
+  pendingInvites: PropertySafeSharedInvite[];
+  records: PropertySafeSharedRecordRow[];
+};
+
+export type PropertySafeFinding = {
+  id: string;
+  category: string | null;
+  title: string;
+  severity: "low" | "medium" | "high" | "urgent";
+  notes: string | null;
+  status: string;
+};
+
+export type PropertySafeSharedRecord = {
+  profile: PropertySafeProfile;
+  property_label: string;
+  shared_by: string;
+  relationship: PropertySafeParticipant["relationship"];
+  can_request_work: boolean;
+  can_view_financials: boolean;
+  latestAssessment: PropertySafeAssessment | null;
+  findings: PropertySafeFinding[];
+  recommendations: PropertySafeRecommendation[];
+};
+
+function relationshipLabel(relationship: string) {
+  return relationship.replaceAll("_", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+async function buildPropertyLabelMap(
+  supabase: ReturnType<typeof createSupabaseAdminClient>,
+  profiles: PropertySafeProfile[]
+) {
+  const labels = new Map<string, string>();
+  if (!supabase) return labels;
+  const propertyIds = profiles.map((p) => p.property_id).filter((id): id is string => Boolean(id));
+  const { data: properties } = propertyIds.length
+    ? await supabase.from("saved_properties").select("id, label, address, suburb, state").in("id", propertyIds)
+    : { data: [] };
+  const propertyById = new Map((properties ?? []).map((row) => [row.id as string, row]));
+  profiles.forEach((profile) => {
+    const property = profile.property_id ? propertyById.get(profile.property_id) : null;
+    const label =
+      profile.display_name ||
+      property?.label ||
+      [property?.address, property?.suburb, property?.state].filter(Boolean).join(", ") ||
+      "PropertySafe record";
+    labels.set(profile.id, label);
+  });
+  return labels;
+}
+
+async function buildOwnerNameMap(
+  supabase: ReturnType<typeof createSupabaseAdminClient>,
+  profiles: PropertySafeProfile[]
+) {
+  const names = new Map<string, string>();
+  if (!supabase) return names;
+  const ownerIds = Array.from(new Set(profiles.map((p) => p.customer_id)));
+  const { data: owners } = ownerIds.length
+    ? await supabase.from("users").select("id, first_name, last_name, email").in("id", ownerIds)
+    : { data: [] };
+  const ownerById = new Map((owners ?? []).map((row) => [row.id as string, row]));
+  profiles.forEach((profile) => {
+    const owner = ownerById.get(profile.customer_id);
+    names.set(
+      profile.id,
+      owner ? [owner.first_name, owner.last_name].filter(Boolean).join(" ") || owner.email || "Property owner" : "Property owner"
+    );
+  });
+  return names;
+}
+
+// Surfaces PropertySafe records shared with this user: pending invitations (matched
+// by linked user_id OR by the email the invite was sent to) and active records they
+// can view. This is the missing half of the share flow — admins/agencies could
+// invite, but invitees had nowhere to accept or view.
+export async function getPropertySafeSharedAccess(user: AppUser): Promise<PropertySafeSharedAccess> {
+  noStore();
+  const empty: PropertySafeSharedAccess = { pendingInvites: [], records: [] };
+  if (!isSupabaseServerConfigured()) return empty;
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return empty;
+
+  const email = (user.email ?? "").trim().toLowerCase();
+  const orFilter = email ? `user_id.eq.${user.id},invite_email.eq.${email}` : `user_id.eq.${user.id}`;
+
+  const { data: participantRows } = await supabase
+    .from("propertysafe_participants")
+    .select(propertySafeParticipantSelect)
+    .or(orFilter)
+    .in("status", ["invited", "active"]);
+
+  const participants = (participantRows ?? []) as PropertySafeParticipant[];
+  if (!participants.length) return empty;
+
+  const profileIds = Array.from(new Set(participants.map((p) => p.propertysafe_profile_id)));
+  const { data: profileRows } = await supabase
+    .from("propertysafe_profiles")
+    .select(propertySafeProfileSelect)
+    .in("id", profileIds)
+    .neq("status", "archived");
+  const profiles = (profileRows ?? []) as PropertySafeProfile[];
+  const profileById = new Map(profiles.map((p) => [p.id, p]));
+
+  const [labels, owners] = await Promise.all([
+    buildPropertyLabelMap(supabase, profiles),
+    buildOwnerNameMap(supabase, profiles)
+  ]);
+
+  const pendingInvites: PropertySafeSharedInvite[] = [];
+  const records: PropertySafeSharedRecordRow[] = [];
+
+  participants.forEach((participant) => {
+    const profile = profileById.get(participant.propertysafe_profile_id);
+    if (!profile) return;
+    const label = labels.get(profile.id) ?? "PropertySafe record";
+    const sharedBy = participant.agency_name || owners.get(profile.id) || "Property owner";
+
+    if (participant.status === "invited") {
+      pendingInvites.push({
+        participant_id: participant.id,
+        propertysafe_profile_id: profile.id,
+        relationship: participant.relationship,
+        agency_name: participant.agency_name,
+        can_request_work: participant.can_request_work,
+        can_view_financials: participant.can_view_financials,
+        property_label: label,
+        shared_by: sharedBy
+      });
+    } else if (participant.status === "active" && participant.can_view) {
+      records.push({
+        profile_id: profile.id,
+        property_label: label,
+        relationship: participant.relationship,
+        protection_level: profile.protection_level,
+        last_assessed_at: profile.last_assessed_at,
+        next_review_at: profile.next_review_at,
+        shared_by: sharedBy,
+        can_request_work: participant.can_request_work
+      });
+    }
+  });
+
+  return { pendingInvites, records };
+}
+
+// Loads a single shared record, enforcing that the requesting user is an ACTIVE
+// participant with can_view. Permission flags are returned so the UI can gate
+// request-work and financials. Returns null when the user has no active access.
+export async function getPropertySafeSharedRecord(
+  user: AppUser,
+  profileId: string
+): Promise<PropertySafeSharedRecord | null> {
+  noStore();
+  if (!isSupabaseServerConfigured()) return null;
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return null;
+
+  const email = (user.email ?? "").trim().toLowerCase();
+  const orFilter = email ? `user_id.eq.${user.id},invite_email.eq.${email}` : `user_id.eq.${user.id}`;
+
+  const { data: participant } = await supabase
+    .from("propertysafe_participants")
+    .select(propertySafeParticipantSelect)
+    .eq("propertysafe_profile_id", profileId)
+    .eq("status", "active")
+    .or(orFilter)
+    .maybeSingle();
+
+  const access = participant as PropertySafeParticipant | null;
+  if (!access || !access.can_view) return null;
+
+  const { data: profileRow } = await supabase
+    .from("propertysafe_profiles")
+    .select(propertySafeProfileSelect)
+    .eq("id", profileId)
+    .neq("status", "archived")
+    .maybeSingle();
+  const profile = profileRow as PropertySafeProfile | null;
+  if (!profile) return null;
+
+  const [labels, owners] = await Promise.all([
+    buildPropertyLabelMap(supabase, [profile]),
+    buildOwnerNameMap(supabase, [profile])
+  ]);
+
+  const { data: latestAssessment } = await supabase
+    .from("propertysafe_assessments")
+    .select(propertySafeAssessmentSelect)
+    .eq("propertysafe_profile_id", profileId)
+    .eq("status", "published")
+    .order("published_at", { ascending: false, nullsFirst: false })
+    .limit(1)
+    .maybeSingle();
+
+  const assessment = (latestAssessment ?? null) as PropertySafeAssessment | null;
+
+  const [{ data: findings }, { data: recommendations }] = assessment
+    ? await Promise.all([
+        supabase
+          .from("propertysafe_findings")
+          .select("id, category, title, severity, notes, status")
+          .eq("assessment_id", assessment.id)
+          .order("severity", { ascending: false }),
+        supabase
+          .from("propertysafe_recommendations")
+          .select(propertySafeRecommendationSelect)
+          .eq("assessment_id", assessment.id)
+          .neq("status", "dismissed")
+          .order("created_at", { ascending: false })
+      ])
+    : [{ data: [] }, { data: [] }];
+
+  return {
+    profile,
+    property_label: labels.get(profile.id) ?? "PropertySafe record",
+    shared_by: access.agency_name || owners.get(profile.id) || "Property owner",
+    relationship: access.relationship,
+    can_request_work: access.can_request_work,
+    can_view_financials: access.can_view_financials,
+    latestAssessment: assessment,
+    findings: (findings ?? []) as PropertySafeFinding[],
+    recommendations: (recommendations ?? []) as PropertySafeRecommendation[]
+  };
+}
+
+export { relationshipLabel as propertySafeRelationshipLabel };
