@@ -28,7 +28,7 @@ services:
       - key: SUPABASE_URL
         value: https://gmmxioltehahaqbgpzpv.supabase.co
       - key: VOICE_MODEL
-        value: claude-haiku-4-5
+        value: claude-haiku-4-5-20251001
       - key: VOICE_TTS_PROVIDER
         value: Google
       - key: VOICE_TTS_VOICE
