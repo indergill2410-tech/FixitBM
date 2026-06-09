@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
+import { createTransfer } from "@/lib/connect";
 import {
   notifyFixerVerificationReviewed,
   notifyJobStatusChanged,
@@ -15,6 +16,7 @@ import {
 } from "@/lib/email";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
+import { notifyCustomerStatusSms, notifyFixerAssignedSms } from "@/lib/sms";
 
 export type AdminActionState = {
   ok?: boolean;
@@ -238,18 +240,26 @@ export async function assignTradieAction(
 
   if (job) {
     const [{ data: customer }, { data: fixerUser }] = await Promise.all([
-      job.customer_id ? supabase.from("users").select("email").eq("id", job.customer_id).maybeSingle() : Promise.resolve({ data: null }),
-      tradie?.user_id ? supabase.from("users").select("email").eq("id", tradie.user_id).maybeSingle() : Promise.resolve({ data: null })
+      job.customer_id ? supabase.from("users").select("email, phone").eq("id", job.customer_id).maybeSingle() : Promise.resolve({ data: null }),
+      tradie?.user_id ? supabase.from("users").select("email, phone").eq("id", tradie.user_id).maybeSingle() : Promise.resolve({ data: null })
     ]);
 
-    await notifyJobStatusChanged({
-      jobId: job.id,
-      reference: job.public_reference,
-      title: job.title,
-      status: "tradie_accepted",
-      customerEmail: customer?.email ?? job.guest_email ?? null,
-      fixerEmail: fixerUser?.email ?? null
-    });
+    await Promise.all([
+      notifyJobStatusChanged({
+        jobId: job.id,
+        reference: job.public_reference,
+        title: job.title,
+        status: "tradie_accepted",
+        customerEmail: customer?.email ?? job.guest_email ?? null,
+        fixerEmail: fixerUser?.email ?? null
+      }),
+      notifyFixerAssignedSms({
+        fixerPhone: fixerUser?.phone,
+        jobTitle: job.title,
+        reference: job.public_reference,
+        urgency: (job as { urgency?: string }).urgency ?? "standard"
+      })
+    ]);
   }
 
   revalidatePath("/admin");
@@ -826,4 +836,55 @@ export async function invitePropertySafeParticipantAction(
     ok: true,
     message: invitedUser ? "PropertySafe access is active for that account." : "PropertySafe invite saved and emailed."
   };
+}
+
+export async function issueFixerPayoutAction(
+  _state: AdminActionState,
+  formData: FormData
+): Promise<AdminActionState> {
+  const { user, supabase } = await getAdminClient();
+  if (!supabase) return configError();
+
+  const jobId = String(formData.get("jobId") ?? "").trim();
+  const tradieId = String(formData.get("tradieId") ?? "").trim();
+  const amountDollars = parseFloat(String(formData.get("amountDollars") ?? "0"));
+  const note = String(formData.get("note") ?? "").trim();
+
+  if (!jobId || !tradieId) {
+    return { ok: false, message: "Job and Fixer are required." };
+  }
+
+  const amountCents = Math.round(amountDollars * 100);
+  if (!Number.isFinite(amountCents) || amountCents <= 0) {
+    return { ok: false, message: "Enter a valid payout amount greater than zero." };
+  }
+
+  const { data: account } = await supabase
+    .from("fixer_payout_accounts")
+    .select("payouts_enabled, stripe_account_id")
+    .eq("tradie_id", tradieId)
+    .maybeSingle();
+
+  if (!account?.payouts_enabled) {
+    return { ok: false, message: "Fixer has not completed Stripe Connect onboarding." };
+  }
+
+  try {
+    const { transferId } = await createTransfer(jobId, tradieId, amountCents, note, user.id);
+
+    await supabase.from("audit_logs").insert({
+      actor_id: user.id,
+      action: "issue_fixer_payout",
+      entity_type: "job",
+      entity_id: jobId,
+      metadata: { tradieId, amountCents, note, transferId }
+    });
+
+    revalidatePath(`/admin/jobs/${jobId}`);
+
+    return { ok: true, message: "Payout issued." };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Payout failed.";
+    return { ok: false, message };
+  }
 }
