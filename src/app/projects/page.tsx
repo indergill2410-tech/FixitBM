@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Larger Projects & Renovation Quotes",
+  description:
+    "Describe your renovation, upgrade, or larger property project once and get quotes from suitable verified Fixers.",
+  alternates: {
+    canonical: "/projects"
+  }
+};
+
 import { Badge, Button, IconTile, MobileBottomActionBar, PublicFooter, PublicHeader } from "@/components/ui";
 import { projectCategories } from "@/lib/data";
 

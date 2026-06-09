@@ -2,6 +2,7 @@ import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentAppUser } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
 
@@ -16,6 +17,11 @@ export async function POST(request: Request) {
 
   if (!user || user.role !== "customer") {
     return NextResponse.json({ error: "Customer access required." }, { status: 401 });
+  }
+
+  const limit = await rateLimit({ key: `reviews:${user.id}`, limit: 10, windowMs: 60 * 60 * 1000 });
+  if (!limit.ok) {
+    return NextResponse.json({ error: "Too many reviews submitted. Please try again later." }, { status: 429 });
   }
 
   if (!isSupabaseServerConfigured()) {

@@ -2,6 +2,7 @@ import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentAppUser } from "@/lib/auth";
+import { rateLimit } from "@/lib/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
 
@@ -15,6 +16,11 @@ export async function POST(request: Request) {
 
   if (!user) {
     return NextResponse.json({ error: "Sign in before sending a message." }, { status: 401 });
+  }
+
+  const limit = await rateLimit({ key: `messages:${user.id}`, limit: 30, windowMs: 10 * 60 * 1000 });
+  if (!limit.ok) {
+    return NextResponse.json({ error: "You are sending messages too quickly. Please wait a moment." }, { status: 429 });
   }
 
   if (!isSupabaseServerConfigured()) {

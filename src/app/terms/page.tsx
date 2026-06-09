@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description:
+    "The terms that govern use of Fixit247 for customers, Fixers, and agencies.",
+  alternates: {
+    canonical: "/terms"
+  }
+};
+
 import { PublicFooter, PublicHeader } from "@/components/ui";
 
 export default function TermsPage() {

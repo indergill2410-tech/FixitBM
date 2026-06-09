@@ -11,7 +11,7 @@ const newsletterSchema = z.object({
 });
 
 export async function POST(request: Request) {
-  const limit = rateLimit({
+  const limit = await rateLimit({
     key: `newsletter:${getClientIp(request)}`,
     limit: 5,
     windowMs: 60 * 60 * 1000
