@@ -123,6 +123,35 @@ const agencyInviteSelect =
 const agencyRulesSelect =
   "id, agency_id, owner_update_policy, default_contact_method, after_hours_notes, urgent_authority_notes, preferred_trades_notes, created_at, updated_at";
 
+export type AgencySubscription = {
+  id: string;
+  agency_id: string;
+  plan_code: string;
+  status: "inactive" | "pending_activation" | "active" | "past_due" | "cancelled";
+  price_cents: number | null;
+  current_period_end: string | null;
+};
+
+// Current PropertySafe subscription for the agency this user belongs to (or null).
+export async function getAgencySubscription(user: AppUser): Promise<AgencySubscription | null> {
+  noStore();
+  if (!isSupabaseServerConfigured()) return null;
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return null;
+
+  const access = await getAgencyAccessForUser(user);
+  if (!access.agency) return null;
+
+  const { data } = await supabase
+    .from("agency_subscriptions")
+    .select("id, agency_id, plan_code, status, price_cents, current_period_end")
+    .eq("agency_id", access.agency.id)
+    .maybeSingle();
+
+  return (data as AgencySubscription | null) ?? null;
+}
+
 export async function getAgencyAccessForUser(user: AppUser): Promise<AgencyAccess> {
   noStore();
 

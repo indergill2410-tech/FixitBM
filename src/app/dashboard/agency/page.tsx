@@ -24,9 +24,11 @@ import {
 } from "@/components/agency-dashboard-forms";
 import { EmailVerificationCard } from "@/components/email-verification-card";
 import { Badge, Button, Card, DashboardHeader } from "@/components/ui";
+import { AgencyBillingCard } from "@/components/agency-billing-card";
 import { requireRole } from "@/lib/auth";
 import {
   getAgencyDashboard,
+  getAgencySubscription,
   type AgencyDashboardSummary,
   type AgencyManagedProperty,
   type AgencyOwnerInvite
@@ -36,7 +38,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AgencyDashboardPage() {
   const user = await requireRole(["agency", "admin", "super_admin"]);
-  const summary = await getAgencyDashboard(user);
+  const [summary, subscription] = await Promise.all([getAgencyDashboard(user), getAgencySubscription(user)]);
   const canManage = summary.memberRole !== "viewer";
   const displayName = summary.agency?.name ?? "PropertySafe agency setup";
   const commandQueue = buildCommandQueue(summary);
@@ -229,6 +231,12 @@ export default async function AgencyDashboardPage() {
             </div>
           </Card>
         </section>
+
+        {summary.agency && canManage ? (
+          <section className="mt-5">
+            <AgencyBillingCard subscription={subscription} />
+          </section>
+        ) : null}
 
         <section className="mt-5 grid gap-5 xl:grid-cols-[.48fr_.52fr]">
           <Card id="owner-access">
