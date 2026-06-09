@@ -79,6 +79,10 @@ wss.on("connection", (ws) => {
     history: [] // Anthropic message array
   };
 
+  // Without a per-socket error listener, ws surfaces connection resets as an
+  // unhandled exception that would crash the process and drop every live call.
+  ws.on("error", (err) => console.error("WebSocket connection error:", err.message));
+
   ws.on("message", async (raw) => {
     let msg;
     try {
@@ -163,6 +167,8 @@ async function logCallRequest(session) {
 
   let summary = null;
   try {
+    // Tool use is the portable way to force structured JSON out of Claude — it
+    // works across SDK/model versions without the newer output_config surface.
     const response = await anthropic.messages.create({
       model: CONVERSATION_MODEL,
       max_tokens: 500,
@@ -173,28 +179,29 @@ async function logCallRequest(session) {
           content: `Transcript:\n\n${transcript}\n\nExtract the job request.`
         }
       ],
-      output_config: {
-        format: {
-          type: "json_schema",
-          schema: {
+      tools: [
+        {
+          name: "extract_job_request",
+          description: "Extract the structured job request details from the call transcript.",
+          input_schema: {
             type: "object",
-            additionalProperties: false,
             properties: {
-              caller_name: { type: ["string", "null"] },
-              callback_number: { type: ["string", "null"] },
-              suburb_or_address: { type: ["string", "null"] },
-              issue: { type: ["string", "null"] },
-              urgency: { type: ["string", "null"], enum: ["emergency", "planned", null] },
-              summary: { type: ["string", "null"] }
+              caller_name: { anyOf: [{ type: "string" }, { type: "null" }] },
+              callback_number: { anyOf: [{ type: "string" }, { type: "null" }] },
+              suburb_or_address: { anyOf: [{ type: "string" }, { type: "null" }] },
+              issue: { anyOf: [{ type: "string" }, { type: "null" }] },
+              urgency: { anyOf: [{ type: "string", enum: ["emergency", "planned"] }, { type: "null" }] },
+              summary: { anyOf: [{ type: "string" }, { type: "null" }] }
             },
             required: ["caller_name", "callback_number", "suburb_or_address", "issue", "urgency", "summary"]
           }
         }
-      }
+      ],
+      tool_choice: { type: "tool", name: "extract_job_request" }
     });
 
-    const block = response.content.find((b) => b.type === "text");
-    if (block) summary = JSON.parse(block.text);
+    const toolUse = response.content.find((b) => b.type === "tool_use");
+    if (toolUse) summary = toolUse.input;
   } catch (err) {
     console.error("Summary extraction failed:", err.message);
   }
@@ -327,7 +334,7 @@ async function sendSmsAlert(summary, callback, reference) {
   const sid = process.env.TWILIO_ACCOUNT_SID;
   const token = process.env.TWILIO_AUTH_TOKEN;
   const from = process.env.TWILIO_SMS_FROM || process.env.TWILIO_PHONE_NUMBER;
-  const to = process.env.ADMIN_SMS_ALERT_PHONE;
+  const to = normaliseAuPhone(process.env.ADMIN_SMS_ALERT_PHONE);
   // Dormant until an SMS-capable number + admin mobile are configured.
   if (!sid || !token || !from || !to) return;
 
@@ -351,6 +358,15 @@ async function sendSmsAlert(summary, callback, reference) {
 // --- Helpers -----------------------------------------------------------------
 function send(ws, payload) {
   if (ws.readyState === ws.OPEN) ws.send(JSON.stringify(payload));
+}
+
+function normaliseAuPhone(phone) {
+  if (!phone) return null;
+  const digits = String(phone).replace(/\D/g, "");
+  if (digits.startsWith("61") && digits.length === 11) return "+" + digits;
+  if (digits.startsWith("0") && digits.length === 10) return "+61" + digits.slice(1);
+  if (digits.length === 9) return "+61" + digits;
+  return phone;
 }
 
 function escapeXml(value) {
