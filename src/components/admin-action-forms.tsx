@@ -5,6 +5,7 @@ import {
   assignSafetyCheckFixerAction,
   assignTradieAction,
   invitePropertySafeParticipantAction,
+  issueFixerPayoutAction,
   refundLeadCreditsAction,
   reviewVerificationAction,
   updateDisputeStatusAction,
@@ -313,6 +314,53 @@ export function PropertySafeInviteForm({ profileId }: { profileId: string }) {
         Can view financial details
       </label>
       <Button disabled={pending}>Share PropertySafe access</Button>
+    </form>
+  );
+}
+
+export function FixerPayoutForm({
+  jobId,
+  tradieId,
+  payoutsEnabled
+}: {
+  jobId: string;
+  tradieId: string;
+  payoutsEnabled: boolean;
+}) {
+  const [state, action, pending] = useActionState(issueFixerPayoutAction, initialState);
+
+  if (!payoutsEnabled) {
+    return (
+      <div className="mt-4 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
+        <p className="text-xs font-black uppercase tracking-wide text-[var(--text3)]">Fixer payout</p>
+        <p className="mt-2 text-sm text-[var(--text2)]">
+          Fixer has not completed Stripe Connect onboarding. They must set up payouts before a transfer can be issued.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <form action={action} className="mt-4 grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
+      <p className="text-xs font-black uppercase tracking-wide text-[var(--text3)]">Issue fixer payout</p>
+      <FormMessage state={state} />
+      <input type="hidden" name="jobId" value={jobId} />
+      <input type="hidden" name="tradieId" value={tradieId} />
+      <input
+        name="amountDollars"
+        type="number"
+        min="0.01"
+        step="0.01"
+        required
+        placeholder="Amount (AUD)"
+        className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
+      />
+      <input
+        name="note"
+        className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
+        placeholder="Note (optional)"
+      />
+      <Button disabled={pending}>Issue payout</Button>
     </form>
   );
 }
