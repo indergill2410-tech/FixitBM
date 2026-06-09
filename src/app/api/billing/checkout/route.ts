@@ -95,6 +95,10 @@ function checkoutRoleError(role: string, productType: string) {
     return "Fixer plans and lead credits must be purchased from a Fixer account.";
   }
 
+  if (productType === "agency_subscription" && role !== "agency") {
+    return "PropertySafe plans must be purchased from an agency account.";
+  }
+
   return null;
 }
 
@@ -112,5 +116,29 @@ async function recordPendingPlan(userId: string, planCode: string) {
       },
       { onConflict: "customer_id,plan" }
     );
+    return;
+  }
+
+  const plan = getBillingPlan(planCode);
+  if (plan?.type === "agency_subscription") {
+    // Resolve the agency this owner controls, then stage an inactive subscription
+    // row so the dashboard reflects the pending purchase before Stripe confirms.
+    const { data: agency } = await supabase
+      .from("agency_profiles")
+      .select("id")
+      .eq("owner_user_id", userId)
+      .maybeSingle();
+    if (agency) {
+      await supabase.from("agency_subscriptions").upsert(
+        {
+          agency_id: agency.id,
+          user_id: userId,
+          plan_code: plan.code,
+          price_cents: plan.priceCents,
+          status: "inactive"
+        },
+        { onConflict: "agency_id" }
+      );
+    }
   }
 }

@@ -167,6 +167,26 @@ async function reconcileSubscriptionEvent(subscription: StripeSubscription | nul
     return { ok: true, reconciled: Boolean(updatedSubscriptions?.length), message: "Fixer subscription reconciled.", status: 200 };
   }
 
+  if (productType === "agency_subscription") {
+    const { data: updatedAgencies, error } = await supabase
+      .from("agency_subscriptions")
+      .update({
+        ...commonPatch,
+        ...(mappedStatus === "cancelled" ? { cancelled_at: new Date().toISOString() } : {})
+      })
+      .eq("stripe_subscription_id", subscription.id)
+      .select("id");
+
+    if (error) return { ok: false, reconciled: false, message: error.message, status: 500 };
+    await writeBillingAudit(subscription.metadata?.user_id ?? null, `stripe_${eventType}`, "agency_subscription", subscription.id, {
+      eventId,
+      stripeStatus: subscription.status ?? null,
+      mappedStatus,
+      planCode
+    });
+    return { ok: true, reconciled: Boolean(updatedAgencies?.length), message: "Agency subscription reconciled.", status: 200 };
+  }
+
   return { ok: true, reconciled: false, message: "Subscription product type was not recognised.", status: 200 };
 }
 
@@ -195,17 +215,19 @@ async function reconcileInvoiceEvent(invoice: StripeInvoice | null, eventType: s
     .eq("stripe_subscription_id", invoice.subscription)
     .maybeSingle();
   const membershipStatus = preserveActivationWindow(mappedStatus, membership?.activation_effective_at ?? null);
-  const [membershipResult, subscriptionResult] = await Promise.all([
+  const [membershipResult, subscriptionResult, agencyResult] = await Promise.all([
     supabase
       .from("memberships")
       .update({ ...patch, status: membershipStatus })
       .eq("stripe_subscription_id", invoice.subscription)
       .select("id"),
-    supabase.from("tradie_subscriptions").update(patch).eq("stripe_subscription_id", invoice.subscription).select("id")
+    supabase.from("tradie_subscriptions").update(patch).eq("stripe_subscription_id", invoice.subscription).select("id"),
+    supabase.from("agency_subscriptions").update(patch).eq("stripe_subscription_id", invoice.subscription).select("id")
   ]);
 
   if (membershipResult.error) return { ok: false, reconciled: false, message: membershipResult.error.message, status: 500 };
   if (subscriptionResult.error) return { ok: false, reconciled: false, message: subscriptionResult.error.message, status: 500 };
+  if (agencyResult.error) return { ok: false, reconciled: false, message: agencyResult.error.message, status: 500 };
 
   await writeBillingAudit(null, `stripe_${eventType}`, "subscription_payment", invoice.subscription, {
     eventId,
@@ -215,7 +237,7 @@ async function reconcileInvoiceEvent(invoice: StripeInvoice | null, eventType: s
 
   return {
     ok: true,
-    reconciled: Boolean((membershipResult.data?.length ?? 0) + (subscriptionResult.data?.length ?? 0)),
+    reconciled: Boolean((membershipResult.data?.length ?? 0) + (subscriptionResult.data?.length ?? 0) + (agencyResult.data?.length ?? 0)),
     message: "Invoice subscription state reconciled.",
     status: 200
   };
@@ -276,6 +298,39 @@ async function reconcileCheckoutSession(session: StripeCheckoutSession | null, e
       subscription: session.subscription ?? null
     });
     return { ok: true, reconciled: true, message: "Membership reconciled.", status: 200 };
+  }
+
+  if (plan.type === "agency_subscription") {
+    const { data: agency } = await supabase
+      .from("agency_profiles")
+      .select("id")
+      .eq("owner_user_id", userId)
+      .maybeSingle();
+    if (!agency) return { ok: true, reconciled: false, message: "Checkout account does not own an agency.", status: 200 };
+
+    const { error } = await supabase.from("agency_subscriptions").upsert(
+      {
+        agency_id: agency.id,
+        user_id: userId,
+        plan_code: plan.code,
+        price_cents: plan.priceCents,
+        status: "active",
+        stripe_customer_id: session.customer ?? null,
+        stripe_subscription_id: session.subscription ?? null,
+        current_period_start: now.toISOString(),
+        current_period_end: currentPeriodEnd
+      },
+      { onConflict: "agency_id" }
+    );
+
+    if (error) return { ok: false, reconciled: false, message: error.message, status: 500 };
+    await writeBillingAudit(userId, "checkout_agency_plan_paid", "agency_subscription", session.id, {
+      eventId,
+      planCode: plan.code,
+      customer: session.customer ?? null,
+      subscription: session.subscription ?? null
+    });
+    return { ok: true, reconciled: true, message: "Agency plan reconciled.", status: 200 };
   }
 
   const { data: tradie, error: tradieError } = await supabase

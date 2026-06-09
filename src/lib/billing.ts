@@ -1,4 +1,4 @@
-export type BillingProductType = "customer_membership" | "tradie_subscription" | "credit_pack";
+export type BillingProductType = "customer_membership" | "tradie_subscription" | "credit_pack" | "agency_subscription";
 
 export type BillingPlan = {
   code: string;
@@ -95,8 +95,46 @@ export const billingPlans: BillingPlan[] = [
     priceCents: 99900,
     stripePriceEnv: "STRIPE_PRICE_CREDITS_AGENCY",
     description: "Agency lead-credit pack."
+  },
+  {
+    code: "agency_starter",
+    name: "PropertySafe Starter",
+    type: "agency_subscription",
+    priceCents: 4900,
+    interval: "month",
+    stripePriceEnv: "STRIPE_PRICE_AGENCY_STARTER",
+    description: "PropertySafe for small portfolios (up to 10 properties)."
+  },
+  {
+    code: "agency_growth",
+    name: "PropertySafe Growth",
+    type: "agency_subscription",
+    priceCents: 14900,
+    interval: "month",
+    stripePriceEnv: "STRIPE_PRICE_AGENCY_GROWTH",
+    description: "PropertySafe for growing portfolios (11–50 properties)."
+  },
+  {
+    code: "agency_pro",
+    name: "PropertySafe Pro",
+    type: "agency_subscription",
+    priceCents: 34900,
+    interval: "month",
+    stripePriceEnv: "STRIPE_PRICE_AGENCY_PRO",
+    description: "PropertySafe for established portfolios (51–150 properties)."
+  },
+  {
+    code: "agency_enterprise",
+    name: "PropertySafe Enterprise",
+    type: "agency_subscription",
+    priceCents: 69900,
+    interval: "month",
+    stripePriceEnv: "STRIPE_PRICE_AGENCY_ENTERPRISE",
+    description: "PropertySafe for large portfolios (151+ properties)."
   }
 ];
+
+export const agencyPlanCodes = ["agency_starter", "agency_growth", "agency_pro", "agency_enterprise"] as const;
 
 export const creditPackCredits: Record<string, number> = {
   credits_starter: 55,
