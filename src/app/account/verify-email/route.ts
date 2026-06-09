@@ -40,12 +40,21 @@ export async function GET(request: NextRequest) {
     .eq("id", verified.userId)
     .eq("email", appUser.email);
 
+  if (updateError) {
+    redirectTo.pathname = "/login";
+    redirectTo.searchParams.set("emailVerified", "failed");
+    return NextResponse.redirect(redirectTo);
+  }
+
   if (appUser.auth_id) {
-    await supabase.auth.admin.updateUserById(appUser.auth_id, { email_confirm: true });
+    const { error: authError } = await supabase.auth.admin.updateUserById(appUser.auth_id, { email_confirm: true });
+    if (authError) {
+      console.error("Failed to confirm email in Supabase Auth", authError.message);
+    }
   }
 
   redirectTo.pathname = roleHomeFor(appUser.role as AccountRole);
-  redirectTo.searchParams.set("emailVerified", updateError ? "failed" : "success");
+  redirectTo.searchParams.set("emailVerified", "success");
   return NextResponse.redirect(redirectTo);
 }
 
