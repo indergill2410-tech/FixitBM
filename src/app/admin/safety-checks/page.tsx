@@ -13,7 +13,7 @@ export default async function AdminSafetyChecksPage() {
   const overdue = checks.filter((check) => check.status === "overdue").length;
 
   return (
-    <main className="min-h-screen bg-[#120f0c] text-white">
+    <main className="premium-shell min-h-screen text-[var(--text)]">
       <section className="container py-8">
         <DashboardHeader title="Safety Check operations" role="Admin" />
         <div className="mb-5 grid gap-4 md:grid-cols-4">
@@ -23,10 +23,10 @@ export default async function AdminSafetyChecksPage() {
           <StatCard label="Overdue" value={String(overdue)} detail="Needs follow-up" />
         </div>
         <div className="grid gap-5 lg:grid-cols-[.62fr_.38fr]">
-          <Card variant="dark">
+          <Card>
             <Badge>Operations shell</Badge>
             <h1 className="mt-4 text-2xl font-black">Safety Check queue</h1>
-            <p className="mt-3 leading-7 text-white/70">
+            <p className="mt-3 leading-7 text-[var(--text2)]">
               Safety Checks help members prepare before emergencies and create follow-up repair opportunities. Assign a
               Fixer, move each check through its status, and publish the report from the live queue below.
             </p>
@@ -40,21 +40,21 @@ export default async function AdminSafetyChecksPage() {
           </div>
           {checks.length ? (
             checks.map((check) => (
-              <Card key={check.id} variant="dark">
+              <Card key={check.id}>
                 <div className="grid gap-5 lg:grid-cols-[1fr_.45fr]">
                   <div>
                     <Badge tone={check.status === "completed" ? "green" : check.status === "overdue" ? "red" : "amber"}>
                       {check.status.replaceAll("_", " ")}
                     </Badge>
                     <h3 className="mt-4 text-xl font-black">{check.customer_name}</h3>
-                    <p className="mt-2 text-sm leading-6 text-white/70">{check.property_label}</p>
-                    <p className="mt-2 text-sm leading-6 text-white/70">
+                    <p className="mt-2 text-sm leading-6 text-[var(--text2)]">{check.property_label}</p>
+                    <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
                       {check.preferred_window ? `Requested window: ${check.preferred_window}` : "No preferred window supplied"}
                     </p>
-                    <p className="mt-2 text-sm leading-6 text-white/70">
+                    <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
                       {check.assigned_fixer_name ? `Assigned to ${check.assigned_fixer_name}` : "No Fixer assigned yet"}
                     </p>
-                    {check.customer_notes ? <p className="mt-3 rounded-xl bg-white/5 p-3 text-sm text-white/70">{check.customer_notes}</p> : null}
+                    {check.customer_notes ? <p className="mt-3 rounded-xl bg-[var(--bg2)] p-3 text-sm text-[var(--text2)]">{check.customer_notes}</p> : null}
                   </div>
                   <div className="grid gap-3">
                     <AssignSafetyCheckFixerForm safetyCheckId={check.id} tradies={fixers} />
@@ -63,7 +63,7 @@ export default async function AdminSafetyChecksPage() {
                       <div className="grid gap-3">
                         <div>
                           <Badge tone="blue">Report builder</Badge>
-                          <p className="mt-2 text-sm text-white/65">Publish checklist results, readiness score, and follow-up recommendations.</p>
+                          <p className="mt-2 text-sm text-[var(--text2)]">Publish checklist results, readiness score, and follow-up recommendations.</p>
                         </div>
                         <SafetyCheckReportForm safetyCheckId={check.id} />
                       </div>
@@ -73,9 +73,9 @@ export default async function AdminSafetyChecksPage() {
               </Card>
             ))
           ) : (
-            <Card variant="dark">
+            <Card>
               <h3 className="font-black">No Safety Check bookings yet</h3>
-              <p className="mt-2 text-sm text-white/70">Member booking requests are reviewed from this queue.</p>
+              <p className="mt-2 text-sm text-[var(--text2)]">Member booking requests are reviewed from this queue.</p>
             </Card>
           )}
         </div>

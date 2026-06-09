@@ -17,39 +17,39 @@ export default async function AdminSearchPage({ searchParams }: { searchParams: 
   const results = await searchAdminConsole(query);
 
   return (
-    <main className="min-h-screen bg-[#120f0c] text-white">
+    <main className="premium-shell min-h-screen text-[var(--text)]">
       <section className="container py-8">
         <DashboardHeader title="Search" role="Admin" />
 
-        <Card variant="dark">
+        <Card>
           <form action="/admin/search" method="get">
-            <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 focus-within:border-amber-300/40">
-              <Search size={18} className="shrink-0 text-white/45" />
+            <div className="flex items-center gap-2 rounded-2xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 focus-within:border-amber-300/40">
+              <Search size={18} className="shrink-0 text-[var(--text3)]" />
               <input
                 type="search"
                 name="q"
                 defaultValue={query}
                 autoFocus
                 placeholder="Search by request reference, address, Fixer, ABN, customer name or email…"
-                className="min-w-0 flex-1 bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none"
+                className="min-w-0 flex-1 bg-transparent text-sm text-[var(--text)] placeholder:text-[var(--text3)] focus:outline-none"
               />
-              <button type="submit" className="shrink-0 rounded-xl bg-[var(--amber)] px-4 py-1.5 text-sm font-black text-white">
+              <button type="submit" className="shrink-0 rounded-xl bg-[var(--amber)] px-4 py-1.5 text-sm font-black text-[var(--text)]">
                 Search
               </button>
             </div>
           </form>
           {query.length >= 2 ? (
-            <p className="mt-3 text-sm text-white/55">
+            <p className="mt-3 text-sm text-[var(--text3)]">
               {results.total} {results.total === 1 ? "match" : "matches"} for “{query}”.
             </p>
           ) : (
-            <p className="mt-3 text-sm text-white/55">Enter at least two characters to search across the console.</p>
+            <p className="mt-3 text-sm text-[var(--text3)]">Enter at least two characters to search across the console.</p>
           )}
         </Card>
 
         {query.length >= 2 && results.total === 0 ? (
-          <Card variant="dark" className="mt-4">
-            <p className="text-white/70">No requests, Fixers, or customers match “{query}”.</p>
+          <Card className="mt-4">
+            <p className="text-[var(--text2)]">No requests, Fixers, or customers match “{query}”.</p>
           </Card>
         ) : null}
 
@@ -69,25 +69,25 @@ function ResultGroup({ kind, items }: { kind: keyof typeof sectionMeta; items: A
   const Icon = meta.icon;
 
   return (
-    <Card variant="dark">
+    <Card>
       <div className="flex items-center gap-3">
         <Icon className="text-[var(--amber)]" size={18} />
         <Badge tone={meta.tone}>{meta.label}</Badge>
-        <span className="text-sm text-white/50">{items.length}</span>
+        <span className="text-sm text-[var(--text3)]">{items.length}</span>
       </div>
       <div className="mt-4 grid gap-2">
         {items.map((item) => (
           <Link
             key={`${item.type}-${item.id}`}
             href={item.href}
-            className="block rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-amber-300/40 hover:bg-white/10"
+            className="block rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4 transition hover:border-amber-300/40 hover:bg-[var(--bg2)]"
           >
             <div className="flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
               <div className="min-w-0">
                 <p className="truncate font-black">{item.title}</p>
-                <p className="mt-0.5 truncate text-sm text-white/60">{item.subtitle}</p>
+                <p className="mt-0.5 truncate text-sm text-[var(--text2)]">{item.subtitle}</p>
               </div>
-              <span className="shrink-0 text-xs font-semibold text-white/45">{item.meta}</span>
+              <span className="shrink-0 text-xs font-semibold text-[var(--text3)]">{item.meta}</span>
             </div>
           </Link>
         ))}

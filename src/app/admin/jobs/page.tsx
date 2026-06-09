@@ -18,7 +18,7 @@ export default async function AdminJobsPage({ searchParams }: { searchParams: Pr
   const jobs = await getAdminRequestQueue(filters);
 
   return (
-    <main className="min-h-screen bg-[#120f0c] text-white">
+    <main className="premium-shell min-h-screen text-[var(--text)]">
       <section className="container py-8">
         <DashboardHeader title="Requests" role="Admin" />
         <div className="mb-5 grid gap-4">
@@ -26,17 +26,17 @@ export default async function AdminJobsPage({ searchParams }: { searchParams: Pr
           <FilterGroup label="Status" param="status" value={filters.status ?? "all"} options={statuses} params={params} />
           <FilterGroup label="Assignment" param="assignment" value={filters.assignment ?? "all"} options={assignments} params={params} />
         </div>
-        <Card variant="dark">
+        <Card>
           <Badge tone="red">Dispatch queue</Badge>
           <h2 className="mt-4 text-2xl font-black">{jobs.length} requests in this view</h2>
-          <p className="mt-2 text-sm leading-6 text-white/65">
+          <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
             Filter live requests by lane, operational status, and whether a Fixer has been assigned.
           </p>
           <div className="grid gap-3">
             {jobs.length ? (
               jobs.map((job) => <AdminQueueItem key={job.id} job={job} />)
             ) : (
-              <p className="text-white/70">No active requests in the queue.</p>
+              <p className="text-[var(--text2)]">No active requests in the queue.</p>
             )}
           </div>
         </Card>
@@ -59,8 +59,8 @@ function FilterGroup({
   params: { lane?: string; status?: string; assignment?: string };
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
-      <p className="text-xs font-black uppercase tracking-wide text-white/45">{label}</p>
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg2)] p-4">
+      <p className="text-xs font-black uppercase tracking-wide text-[var(--text3)]">{label}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {options.map((option) => {
           const next = new URLSearchParams();
@@ -75,7 +75,7 @@ function FilterGroup({
               key={option}
               href={href}
               className={`rounded-full px-3 py-1 text-xs font-bold transition ${
-                value === option ? "bg-[var(--amber)] text-white" : "bg-white/8 text-white/65 hover:bg-white/14"
+                value === option ? "bg-[var(--amber)] text-[var(--text)]" : "bg-[var(--bg2)] text-[var(--text2)] hover:bg-[var(--bg2)]"
               }`}
             >
               {option.replaceAll("_", " ")}

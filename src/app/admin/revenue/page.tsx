@@ -8,7 +8,7 @@ export default async function AdminRevenuePage() {
   const revenue = await getAdminRevenueSummary();
 
   return (
-    <main className="min-h-screen bg-[#120f0c] text-white">
+    <main className="premium-shell min-h-screen text-[var(--text)]">
       <section className="container py-8">
         <DashboardHeader title="Revenue" role="Admin" />
 
@@ -20,18 +20,18 @@ export default async function AdminRevenuePage() {
         </div>
 
         <div className="mt-5 grid gap-5 lg:grid-cols-[1.1fr_.9fr]">
-          <Card variant="dark">
+          <Card>
             <h2 className="text-xl font-black">MRR by plan</h2>
-            <p className="mt-2 text-sm leading-6 text-white/70">
+            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
               Active subscriptions priced from the billing catalogue. Credit-pack purchases are one-off and excluded from MRR.
             </p>
             <div className="mt-5 grid gap-2">
               {revenue.plan_lines.length ? (
                 revenue.plan_lines.map((line) => (
-                  <div key={line.code} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+                  <div key={line.code} className="flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
                     <div className="min-w-0">
                       <p className="truncate font-black">{line.name}</p>
-                      <p className="mt-0.5 text-xs text-white/55">
+                      <p className="mt-0.5 text-xs text-[var(--text3)]">
                         {line.count} × {formatMoney(line.unit_price_cents)}/mo ·{" "}
                         {line.type === "customer_membership" ? "Customer membership" : "Fixer subscription"}
                       </p>
@@ -40,7 +40,7 @@ export default async function AdminRevenuePage() {
                   </div>
                 ))
               ) : (
-                <p className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm text-white/65">
+                <p className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4 text-sm text-[var(--text2)]">
                   No active subscriptions yet. MRR will populate as memberships and Fixer plans activate.
                 </p>
               )}
@@ -48,28 +48,28 @@ export default async function AdminRevenuePage() {
           </Card>
 
           <div className="grid gap-5">
-            <Card variant="dark">
+            <Card>
               <h2 className="text-xl font-black">Lead credits</h2>
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
                 One-off credit revenue and outstanding liability held by Fixers.
               </p>
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-xs font-bold uppercase text-white/45">Lead claims</p>
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
+                  <p className="text-xs font-bold uppercase text-[var(--text3)]">Lead claims</p>
                   <p className="mt-2 text-3xl font-black">{revenue.lead_claims}</p>
-                  <p className="mt-1 text-xs text-white/50">{revenue.credit_spend} credits spent</p>
+                  <p className="mt-1 text-xs text-[var(--text3)]">{revenue.credit_spend} credits spent</p>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-xs font-bold uppercase text-white/45">Paid credits held</p>
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
+                  <p className="text-xs font-bold uppercase text-[var(--text3)]">Paid credits held</p>
                   <p className="mt-2 text-3xl font-black">{revenue.paid_credits}</p>
-                  <p className="mt-1 text-xs text-white/50">{revenue.bonus_credits} bonus credits</p>
+                  <p className="mt-1 text-xs text-[var(--text3)]">{revenue.bonus_credits} bonus credits</p>
                 </div>
               </div>
             </Card>
 
-            <Card variant="dark">
+            <Card>
               <h2 className="text-xl font-black">Stripe processing</h2>
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
                 MRR above is derived from active subscription records. Settled payment totals, refunds, and failed-charge
                 recovery will appear here once Stripe price IDs and webhook reconciliation are connected.
               </p>

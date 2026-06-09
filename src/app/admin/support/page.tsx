@@ -9,7 +9,7 @@ export default async function AdminSupportPage() {
   const resolved = tickets.filter((ticket) => ["resolved", "closed"].includes(ticket.status ?? "")).length;
 
   return (
-    <main className="min-h-screen bg-[#120f0c] text-white">
+    <main className="premium-shell min-h-screen text-[var(--text)]">
       <section className="container py-8">
         <DashboardHeader title="Support" role="Admin" />
         <div className="mb-5 grid gap-4 md:grid-cols-3">
@@ -17,21 +17,21 @@ export default async function AdminSupportPage() {
           <StatCard label="Waiting" value={String(waiting)} detail="Needs follow-up" />
           <StatCard label="Resolved" value={String(resolved)} detail="Closed or resolved" />
         </div>
-        <Card variant="dark">
+        <Card>
           <Badge tone="blue">Support queue</Badge>
           <h2 className="mt-4 text-2xl font-black">Tickets and customer escalations</h2>
           <div className="mt-5 grid gap-3">
             {tickets.length ? (
               tickets.map((ticket) => (
-                <div key={ticket.id} className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <div key={ticket.id} className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
                   <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="font-black">{ticket.subject ?? ticket.title ?? "Support ticket"}</p>
                         <Badge tone="gray">{ticket.status ?? "open"}</Badge>
                       </div>
-                      <p className="mt-2 text-sm font-bold text-white/55">{ticket.customer_name}</p>
-                      <p className="mt-1 text-sm text-white/65">
+                      <p className="mt-2 text-sm font-bold text-[var(--text3)]">{ticket.customer_name}</p>
+                      <p className="mt-1 text-sm text-[var(--text2)]">
                         {ticket.body ?? ticket.message ?? ticket.description ?? ticket.notes ?? "No message recorded."}
                       </p>
                     </div>
@@ -40,7 +40,7 @@ export default async function AdminSupportPage() {
                 </div>
               ))
             ) : (
-              <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-white/70">No support tickets yet.</div>
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4 text-[var(--text2)]">No support tickets yet.</div>
             )}
           </div>
         </Card>

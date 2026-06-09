@@ -55,31 +55,31 @@ export default async function AdminSettingsPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#120f0c] text-white">
+    <main className="premium-shell min-h-screen text-[var(--text)]">
       <section className="container py-8">
         <DashboardHeader title="Settings" role="Admin" />
         <div className="grid gap-4 lg:grid-cols-[1fr_0.8fr]">
-          <Card variant="dark">
+          <Card>
             <h1 className="text-2xl font-black">Production readiness</h1>
-            <p className="mt-2 text-white/70">
+            <p className="mt-2 text-[var(--text2)]">
               Environment status only; secret values are never shown here.
             </p>
             <div className="mt-5 grid gap-3">
               {checks.map((check) => (
-                <div key={check.label} className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <div key={check.label} className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
                   <div className="flex items-center justify-between gap-3">
                     <p className="font-bold">{check.label}</p>
                     <Badge tone={check.ready ? "green" : "red"}>{check.ready ? "Ready" : "Needed"}</Badge>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-white/65">{check.detail}</p>
+                  <p className="mt-2 text-sm leading-6 text-[var(--text2)]">{check.detail}</p>
                 </div>
               ))}
             </div>
           </Card>
 
-          <Card variant="dark">
+          <Card>
             <h2 className="text-xl font-black">Business rules</h2>
-            <div className="mt-4 grid gap-3 text-sm leading-6 text-white/75">
+            <div className="mt-4 grid gap-3 text-sm leading-6 text-[var(--text2)]">
               <p>Customers start requests free, with guest-first posting kept open for emergencies.</p>
               <p>Fixers keep 100% of the work value; Fixit247 monetises subscriptions, lead credits, verification, priority, and tools.</p>
               <p>Launch bonus grants Fixers 111 lead credits every month for 6 months, including Free Starter accounts.</p>
@@ -88,29 +88,29 @@ export default async function AdminSettingsPage() {
           </Card>
         </div>
 
-        <Card variant="dark" className="mt-4">
+        <Card className="mt-4">
           <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
             <div>
               <Badge tone={emailStatus.configured ? "green" : "red"}>{emailStatus.configured ? "Email ready" : "Email needs attention"}</Badge>
               <h2 className="mt-4 text-2xl font-black">Email delivery</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-white/65">
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text2)]">
                 Newsletter welcome, agency onboarding, support, Safety Check, request, and owner-invite emails should be
                 visible here after the delivery log migration is applied.
               </p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm leading-6 text-white/70">
-              <p><span className="font-black text-white">Support:</span> {emailStatus.supportEmail}</p>
-              <p><span className="font-black text-white">Site:</span> {emailStatus.appUrl}</p>
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg2)] p-4 text-sm leading-6 text-[var(--text2)]">
+              <p><span className="font-black text-[var(--text)]">Support:</span> {emailStatus.supportEmail}</p>
+              <p><span className="font-black text-[var(--text)]">Site:</span> {emailStatus.appUrl}</p>
             </div>
           </div>
           <div className="mt-5 grid gap-3">
             {recentEmailLogs.length ? (
               recentEmailLogs.map((log) => (
-                <div key={log.id} className="rounded-xl border border-white/10 bg-white/5 p-4">
+                <div key={log.id} className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
                   <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                     <div>
                       <p className="font-black">{log.subject}</p>
-                      <p className="mt-1 text-sm text-white/60">{log.recipient} · {log.category ?? "transactional"}</p>
+                      <p className="mt-1 text-sm text-[var(--text2)]">{log.recipient} · {log.category ?? "transactional"}</p>
                     </div>
                     <Badge tone={log.status === "sent" ? "green" : log.status === "skipped" ? "amber" : "red"}>
                       {log.status}
@@ -120,7 +120,7 @@ export default async function AdminSettingsPage() {
                 </div>
               ))
             ) : (
-              <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-white/65">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4 text-[var(--text2)]">
                 No email delivery logs yet. Send a newsletter signup or agency walkthrough after deployment.
               </div>
             )}

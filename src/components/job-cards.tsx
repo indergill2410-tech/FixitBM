@@ -65,13 +65,13 @@ export function AdminQueueItem({ job }: { job: JobSummary }) {
   return (
     <Link
       href={`/admin/jobs/${job.id}`}
-      className="block rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-[var(--amber)]"
+      className="block rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-[var(--shadow)] transition hover:border-[var(--amber)] hover:shadow-[var(--shadow-md)]"
     >
       <div className="flex flex-col gap-3 md:flex-row md:items-center">
         <div>
           <Badge tone={requestLaneTone(job)}>{requestLaneLabel(job)}</Badge>
-          <h3 className="mt-2 font-black text-white">{job.title}</h3>
-          <p className="mt-1 flex items-center gap-2 text-sm text-white/65">
+          <h3 className="mt-2 font-black text-[var(--text)]">{job.title}</h3>
+          <p className="mt-1 flex items-center gap-2 text-sm text-[var(--text2)]">
             <MapPin size={14} />
             {formatJobLocation(job)} · {job.public_reference}
           </p>
