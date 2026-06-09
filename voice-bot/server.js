@@ -199,8 +199,11 @@ async function logCallRequest(session) {
     console.error("Summary extraction failed:", err.message);
   }
 
+  const isEmergency = summary?.urgency === "emergency";
+
   if (!supabase) {
     console.log("Voice call (no Supabase configured):", { from: session.from, summary });
+    if (isEmergency) await sendEmergencyAlerts(session, summary, null);
     return;
   }
 
@@ -216,7 +219,133 @@ async function logCallRequest(session) {
     transcript
   });
 
-  if (error) console.error("Supabase insert failed:", error.message);
+  if (error) console.error("voice_call_logs insert failed:", error.message);
+
+  // Phase 3 — drop the captured request into the admin dispatch queue.
+  let reference = null;
+  if (summary?.issue) {
+    reference = await createDispatchJob(session, summary);
+  }
+
+  // Phase 1 + 2 — alert the desk the instant an emergency comes in.
+  if (isEmergency) {
+    await sendEmergencyAlerts(session, summary, reference);
+  }
+}
+
+// Insert a guest job so the request lands in /admin/jobs with Fixer suggestions.
+async function createDispatchJob(session, summary) {
+  if (!supabase) return null;
+
+  const callback = summary?.callback_number ?? session.from ?? "Unknown";
+  const isEmergency = summary?.urgency === "emergency";
+  const title = (summary?.issue || "Phone request").slice(0, 120);
+  const description = [
+    "Captured by the Fixit247 voice line.",
+    summary?.summary ? `Summary: ${summary.summary}` : null,
+    `Issue: ${summary?.issue ?? "Not stated"}`,
+    `Urgency: ${summary?.urgency ?? "Not stated"}`,
+    `Caller: ${summary?.caller_name ?? "Unknown"} · ${callback}`,
+    `Location: ${summary?.suburb_or_address ?? "Not stated"}`
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const { data: job, error } = await supabase
+    .from("jobs")
+    .insert({
+      customer_id: null,
+      type: "home",
+      category: "Phone enquiry",
+      urgency: isEmergency ? "emergency" : "flexible",
+      title,
+      description,
+      suburb: summary?.suburb_or_address ?? null,
+      guest_name: summary?.caller_name ?? "Phone caller",
+      guest_phone: callback,
+      guest_email: null,
+      preferred_contact_method: "call",
+      consent_to_contact: true,
+      status: "received",
+      credit_cost: isEmergency ? 120 : 50
+    })
+    .select("id, public_reference")
+    .single();
+
+  if (error) {
+    console.error("dispatch job insert failed:", error.message);
+    return null;
+  }
+
+  await supabase.from("job_status_events").insert({
+    job_id: job.id,
+    status: "received",
+    title: isEmergency ? "Emergency phone request posted" : "Phone request posted",
+    note: "Captured by the Fixit247 voice line."
+  });
+
+  return job.public_reference ?? null;
+}
+
+// Email (Resend) + optional SMS (Twilio) alert for emergency calls.
+async function sendEmergencyAlerts(session, summary, reference) {
+  const callback = summary?.callback_number ?? session.from ?? "Unknown";
+  const lines = [
+    `Caller: ${summary?.caller_name ?? "Unknown"}`,
+    `Callback: ${callback}`,
+    `Location: ${summary?.suburb_or_address ?? "Not stated"}`,
+    `Issue: ${summary?.issue ?? "Not stated"}`,
+    summary?.summary ? `Summary: ${summary.summary}` : null,
+    reference ? `Request reference: ${reference}` : null
+  ].filter(Boolean);
+
+  await Promise.all([sendEmailAlert(lines), sendSmsAlert(summary, callback, reference)]);
+}
+
+async function sendEmailAlert(lines) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const to = process.env.FIXIT_ALERT_EMAIL;
+  const from = process.env.RESEND_FROM_EMAIL || "Fixit247 <hello@fixit247.com.au>";
+  if (!apiKey || !to) return;
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://fixit247.com.au";
+  const html = `<h2>🚨 Emergency call received</h2><p>${lines.join("<br>")}</p><p><a href="${appUrl}/admin/calls">Open the call in the admin console</a></p>`;
+
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from, to, subject: "🚨 Emergency call — Fixit247", html })
+    });
+    if (!res.ok) console.error("Resend alert failed:", res.status, await res.text());
+  } catch (err) {
+    console.error("Resend alert error:", err.message);
+  }
+}
+
+async function sendSmsAlert(summary, callback, reference) {
+  const sid = process.env.TWILIO_ACCOUNT_SID;
+  const token = process.env.TWILIO_AUTH_TOKEN;
+  const from = process.env.TWILIO_SMS_FROM || process.env.TWILIO_PHONE_NUMBER;
+  const to = process.env.ADMIN_SMS_ALERT_PHONE;
+  // Dormant until an SMS-capable number + admin mobile are configured.
+  if (!sid || !token || !from || !to) return;
+
+  const body = `🚨 Fixit247 EMERGENCY call. ${summary?.caller_name ?? "Caller"} (${callback}) — ${summary?.issue ?? "no detail"} @ ${summary?.suburb_or_address ?? "?"}.${reference ? ` Ref ${reference}.` : ""} Check admin.`;
+
+  try {
+    const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString("base64")}`,
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({ To: to, From: from, Body: body }).toString()
+    });
+    if (!res.ok) console.error("Twilio SMS alert failed:", res.status, await res.text());
+  } catch (err) {
+    console.error("Twilio SMS alert error:", err.message);
+  }
 }
 
 // --- Helpers -----------------------------------------------------------------

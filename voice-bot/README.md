@@ -43,6 +43,17 @@ Twilio opens a WebSocket to /conversation
 | `VOICE_TTS_VOICE` | optional | Default `en-AU-Neural2-B` (male Australian). See voices below. |
 | `VOICE_TTS_PROVIDER` | optional | Default `Google`. Can be `Amazon` or `ElevenLabs` (ElevenLabs needs a key configured in the Twilio console). |
 | `VOICE_WELCOME` | optional | Override the spoken opening line |
+| `RESEND_API_KEY` | optional | Enables **emergency email alerts** |
+| `RESEND_FROM_EMAIL` | optional | From address for alert emails |
+| `FIXIT_ALERT_EMAIL` | optional | Where emergency alert emails go |
+| `TWILIO_ACCOUNT_SID` / `TWILIO_AUTH_TOKEN` | optional | Enables **emergency SMS alerts** |
+| `TWILIO_SMS_FROM` | optional | SMS-capable from number (a Twilio mobile/sender ID — **not** the landline) |
+| `ADMIN_SMS_ALERT_PHONE` | optional | Mobile that receives emergency SMS alerts |
+
+### What happens on every call
+- The transcript is summarised and written to `voice_call_logs` (admin → Phone calls).
+- A request is created in the **admin dispatch queue** (`/admin/jobs`) so the team can assign a Fixer — emergencies are flagged `emergency`, others `flexible`.
+- If the call is an **emergency**, an alert fires immediately: an **email** (if Resend is configured) and an **SMS** (if a Twilio SMS-capable number + `ADMIN_SMS_ALERT_PHONE` are configured). Both channels are best-effort and never block the call.
 
 4. Run the DB migration `supabase/migrations/20260609160000_voice_call_logs.sql`.
 
