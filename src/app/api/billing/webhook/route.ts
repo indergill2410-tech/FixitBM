@@ -66,8 +66,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid Stripe event payload." }, { status: 400 });
   }
 
-  // Idempotency: Stripe retries deliveries. Claim the event id before doing
-  // any work; a conflict means we already processed this exact event.
   if (event.id && isSupabaseServerConfigured()) {
     const dedupeClient = createSupabaseAdminClient();
     if (dedupeClient) {
@@ -75,8 +73,11 @@ export async function POST(request: Request) {
         .from("stripe_webhook_events")
         .insert({ id: event.id, type: event.type ?? "unknown" });
 
-      if (dedupeError?.code === "23505") {
-        return NextResponse.json({ received: true, duplicate: true, eventId: event.id });
+      if (dedupeError) {
+        if (dedupeError.code === "23505") {
+          return NextResponse.json({ received: true, duplicate: true, eventId: event.id });
+        }
+        return NextResponse.json({ error: "Failed to record webhook event for idempotency." }, { status: 500 });
       }
     }
   }
