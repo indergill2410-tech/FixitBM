@@ -55,7 +55,9 @@ export default async function AdminCallsPage() {
                   <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4 text-sm text-[var(--text2)] lg:min-w-64">
                     <p>Callback: {call.callback_number || call.from_number || "—"}</p>
                     <p>Location: {call.suburb_or_address || "—"}</p>
-                    <p className="mt-2 text-xs text-[var(--text3)]">{new Date(call.created_at).toLocaleString()}</p>
+                    <p className="mt-2 text-xs text-[var(--text3)]">
+                      {new Date(call.created_at).toLocaleString("en-AU", { timeZone: "Australia/Sydney" })}
+                    </p>
                   </div>
                 </div>
                 {call.transcript ? (
