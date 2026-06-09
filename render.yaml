@@ -1,0 +1,57 @@
+# Render Blueprint for the Fixit247 AI voice receptionist ("Jack").
+# Deploy: Render dashboard → New → Blueprint → pick this repo.
+# Non-secret config is filled in below. Secrets are marked `sync: false`,
+# so Render will prompt you to paste them once during the Blueprint deploy
+# (they are never stored in the repo). VOICE_PUBLIC_HOST is wired
+# automatically from the service's own hostname.
+services:
+  - type: web
+    name: fixit247-voice
+    runtime: node
+    rootDir: voice-bot
+    plan: starter # always-on, no cold starts — important for a phone line
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      # --- Wired automatically ---
+      - key: VOICE_PUBLIC_HOST
+        fromService:
+          type: web
+          name: fixit247-voice
+          property: host
+      # --- Non-secret config ---
+      - key: NEXT_PUBLIC_APP_URL
+        value: https://fixit247.com.au
+      - key: SUPABASE_URL
+        value: https://gmmxioltehahaqbgpzpv.supabase.co
+      - key: VOICE_MODEL
+        value: claude-haiku-4-5-20251001
+      - key: VOICE_TTS_PROVIDER
+        value: Google
+      - key: VOICE_TTS_VOICE
+        value: en-AU-Neural2-B
+      - key: VOICE_TTS_LANGUAGE
+        value: en-AU
+      - key: RESEND_FROM_EMAIL
+        value: Fixit247 <hello@fixit247.com.au>
+      - key: FIXIT_ALERT_EMAIL
+        value: indergill2410@gmail.com
+      # --- Secrets: paste once in the Render prompt (not stored in the repo) ---
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: RESEND_API_KEY
+        sync: false
+      # Optional — only needed for emergency SMS alerts (requires an SMS-capable number)
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_SMS_FROM
+        sync: false
+      - key: ADMIN_SMS_ALERT_PHONE
+        sync: false

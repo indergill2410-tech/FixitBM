@@ -67,8 +67,8 @@ export default async function TradieSafetyChecksPage() {
               <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
                 Assigned member Safety Checks are shown here with the report form and readiness checklist.
               </p>
-              <Button href="/dashboard/tradie/leads" className="mt-5">
-                View available requests
+              <Button href="/dashboard/tradie/jobs" className="mt-5">
+                View assigned jobs
               </Button>
             </Card>
           )}

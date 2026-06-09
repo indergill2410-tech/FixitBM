@@ -7,7 +7,7 @@ import { createClient } from "@supabase/supabase-js";
 // --- Configuration -----------------------------------------------------------
 const PORT = process.env.PORT || 8080;
 const PUBLIC_HOST = process.env.VOICE_PUBLIC_HOST || ""; // e.g. fixit247-voice.onrender.com (no protocol)
-const CONVERSATION_MODEL = process.env.VOICE_MODEL || "claude-haiku-4-5"; // low latency for natural phone turns
+const CONVERSATION_MODEL = process.env.VOICE_MODEL || "claude-haiku-4-5-20251001"; // low latency for natural phone turns
 const TTS_PROVIDER = process.env.VOICE_TTS_PROVIDER || "Google";
 const TTS_VOICE = process.env.VOICE_TTS_VOICE || "en-AU-Neural2-B"; // male Australian English
 const TTS_LANGUAGE = process.env.VOICE_TTS_LANGUAGE || "en-AU";

@@ -17,7 +17,7 @@ export default async function TradieJobsPage() {
           ) : (
             <Card>
               <h2 className="font-black">No assigned requests yet</h2>
-              <p className="mt-2 text-[var(--text2)]">Claim a lead or wait for admin dispatch to assign confirmed work.</p>
+              <p className="mt-2 text-[var(--text2)]">Admin dispatch will assign confirmed work to you here.</p>
             </Card>
           )}
         </div>
