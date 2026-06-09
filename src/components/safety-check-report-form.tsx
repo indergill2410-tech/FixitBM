@@ -27,63 +27,63 @@ export function SafetyCheckReportForm({ safetyCheckId }: { safetyCheckId: string
   const [state, action, pending] = useActionState(submitSafetyCheckReportAction, initialState);
 
   return (
-    <form action={action} className="grid gap-4 rounded-xl border border-white/10 bg-white/5 p-4">
+    <form action={action} className="grid gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
       {state.message ? (
-        <div className={`rounded-lg p-3 text-sm font-semibold ${state.ok ? "bg-green-500/15 text-green-200" : "bg-red-500/15 text-red-200"}`}>
+        <div className={`rounded-lg p-3 text-sm font-semibold ${state.ok ? "bg-green-500/15 text-[var(--green)]" : "bg-red-500/15 text-[var(--red)]"}`}>
           {state.message}
         </div>
       ) : null}
       <input type="hidden" name="safetyCheckId" value={safetyCheckId} />
       <div className="grid gap-3 md:grid-cols-2">
-        <label className="grid gap-2 text-sm font-bold">
+        <label className="grid gap-2 text-sm font-bold text-[var(--text)]">
           Score before
-          <input name="scoreBefore" type="number" min="0" max="100" className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white" required />
+          <input name="scoreBefore" type="number" min="0" max="100" className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)] placeholder:text-[var(--text3)]" required />
         </label>
-        <label className="grid gap-2 text-sm font-bold">
+        <label className="grid gap-2 text-sm font-bold text-[var(--text)]">
           Score after
-          <input name="scoreAfter" type="number" min="0" max="100" className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white" required />
+          <input name="scoreAfter" type="number" min="0" max="100" className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)] placeholder:text-[var(--text3)]" required />
         </label>
       </div>
-      <label className="grid gap-2 text-sm font-bold">
+      <label className="grid gap-2 text-sm font-bold text-[var(--text)]">
         Report summary
         <textarea
           name="summary"
-          className="min-h-28 rounded-lg border border-white/10 bg-[#201915] p-3 text-white"
+          className="min-h-28 rounded-lg border border-[var(--border)] bg-white p-3 text-[var(--text)] placeholder:text-[var(--text3)]"
           placeholder="Summarise visible concerns, readiness improvements, and practical next steps."
           required
         />
       </label>
       <div className="grid gap-3">
-        <p className="text-sm font-black">Checklist</p>
+        <p className="text-sm font-black text-[var(--text)]">Checklist</p>
         {checklist.map((item) => (
-          <div key={item} className="grid gap-2 rounded-xl bg-white/5 p-3 md:grid-cols-[1fr_170px_1fr]">
+          <div key={item} className="grid gap-2 rounded-xl border border-[var(--border)] bg-white p-3 md:grid-cols-[1fr_170px_1fr]">
             <input type="hidden" name="itemLabel" value={item} />
             <input type="hidden" name="itemCategory" value="Readiness" />
-            <p className="text-sm font-semibold text-white/80">{item}</p>
-            <select name="itemStatus" className="min-h-10 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+            <p className="text-sm font-semibold text-[var(--text2)]">{item}</p>
+            <select name="itemStatus" className="min-h-10 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]">
               {statuses.map(([value, label]) => (
                 <option key={value} value={value}>{label}</option>
               ))}
             </select>
-            <input name="itemNotes" className="min-h-10 rounded-lg border border-white/10 bg-[#201915] px-3 text-white" placeholder="Notes optional" />
+            <input name="itemNotes" className="min-h-10 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)] placeholder:text-[var(--text3)]" placeholder="Notes optional" />
           </div>
         ))}
       </div>
       <div className="grid gap-3">
-        <p className="text-sm font-black">Recommended fixes</p>
+        <p className="text-sm font-black text-[var(--text)]">Recommended fixes</p>
         {[0, 1, 2].map((index) => (
-          <div key={index} className="grid gap-2 rounded-xl bg-white/5 p-3">
-            <input name="recommendationTitle" className="min-h-10 rounded-lg border border-white/10 bg-[#201915] px-3 text-white" placeholder="Recommended fix title" />
+          <div key={index} className="grid gap-2 rounded-xl border border-[var(--border)] bg-white p-3">
+            <input name="recommendationTitle" className="min-h-10 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 text-[var(--text)] placeholder:text-[var(--text3)]" placeholder="Recommended fix title" />
             <div className="grid gap-2 md:grid-cols-3">
-              <input name="recommendationCategory" className="min-h-10 rounded-lg border border-white/10 bg-[#201915] px-3 text-white" placeholder="Category" />
-              <input name="recommendationTradeType" className="min-h-10 rounded-lg border border-white/10 bg-[#201915] px-3 text-white" placeholder="Trade type" />
-              <select name="recommendationPriority" className="min-h-10 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+              <input name="recommendationCategory" className="min-h-10 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 text-[var(--text)] placeholder:text-[var(--text3)]" placeholder="Category" />
+              <input name="recommendationTradeType" className="min-h-10 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 text-[var(--text)] placeholder:text-[var(--text3)]" placeholder="Trade type" />
+              <select name="recommendationPriority" className="min-h-10 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 text-[var(--text)]">
                 {priorities.map((priority) => (
                   <option key={priority} value={priority}>{priority}</option>
                 ))}
               </select>
             </div>
-            <textarea name="recommendationDescription" className="min-h-20 rounded-lg border border-white/10 bg-[#201915] p-3 text-white" placeholder="Why this is recommended" />
+            <textarea name="recommendationDescription" className="min-h-20 rounded-lg border border-[var(--border)] bg-[var(--bg2)] p-3 text-[var(--text)] placeholder:text-[var(--text3)]" placeholder="Why this is recommended" />
           </div>
         ))}
       </div>
