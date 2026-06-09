@@ -220,11 +220,11 @@ export function VehicleProtectionCard({ summary }: { summary: HomeProtectionSumm
 
 export function SafetyCheckMiniOpsCard() {
   return (
-    <Card variant="dark">
+    <Card>
       <ShieldCheck className="text-[var(--amber)]" />
       <Badge className="mt-4">Safety Checks</Badge>
       <h2 className="mt-4 text-xl font-black">Prepare members before emergencies.</h2>
-      <p className="mt-2 text-sm leading-6 text-white/70">
+      <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
         Safety Check operations will track due checks, bookings, completed reports, recommended fixes, and follow-up quote opportunities.
       </p>
     </Card>

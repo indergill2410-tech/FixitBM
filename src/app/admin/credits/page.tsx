@@ -3,12 +3,12 @@ import { RefundLeadCreditsForm } from "@/components/admin-action-forms";
 
 export default function AdminCreditsPage() {
   return (
-    <main className="min-h-screen bg-[#120f0c] text-white">
+    <main className="premium-shell min-h-screen text-[var(--text)]">
       <section className="container py-8">
         <DashboardHeader title="Credits" role="Admin" />
-        <Card variant="dark">
+        <Card>
           <h2 className="text-xl font-black">Credit refund review</h2>
-          <p className="mt-2 text-sm leading-6 text-white/70">
+          <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
             Refund credits when a request cannot be contacted, is not genuine, or was already resolved before first
             contact.
           </p>

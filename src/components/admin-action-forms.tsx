@@ -44,10 +44,10 @@ export function JobStatusForm({ jobId }: { jobId: string }) {
   const [state, action, pending] = useActionState(updateJobStatusAction, initialState);
 
   return (
-    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+    <form action={action} className="grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
       <FormMessage state={state} />
       <input type="hidden" name="jobId" value={jobId} />
-      <select name="status" className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+      <select name="status" className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]">
         {statuses.map((status) => (
           <option key={status} value={status}>
             {status.replaceAll("_", " ")}
@@ -56,7 +56,7 @@ export function JobStatusForm({ jobId }: { jobId: string }) {
       </select>
       <input
         name="note"
-        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
         placeholder="Admin note optional"
       />
       <Button disabled={pending}>Update status</Button>
@@ -74,11 +74,11 @@ export function AssignTradieForm({
   const [state, action, pending] = useActionState(assignTradieAction, initialState);
 
   return (
-    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+    <form action={action} className="grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
       <FormMessage state={state} />
       <input type="hidden" name="jobId" value={jobId} />
       {tradies.length ? (
-        <select name="tradieId" className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white" required>
+        <select name="tradieId" className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]" required>
           <option value="">Choose Fixer</option>
           {tradies.map((tradie) => {
             const score = "match_score" in tradie ? tradie.match_score : null;
@@ -94,7 +94,7 @@ export function AssignTradieForm({
       ) : (
         <input
           name="tradieId"
-          className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+          className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
           placeholder="Fixer profile UUID"
           required
         />
@@ -108,25 +108,25 @@ export function VerificationDecisionForm({ documentId }: { documentId?: string }
   const [state, action, pending] = useActionState(reviewVerificationAction, initialState);
 
   return (
-    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+    <form action={action} className="grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
       <FormMessage state={state} />
       {documentId ? (
         <input type="hidden" name="documentId" value={documentId} />
       ) : (
         <input
           name="documentId"
-          className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+          className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
           placeholder="Verification document UUID"
           required
         />
       )}
-      <select name="status" className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+      <select name="status" className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]">
         <option value="approved">Approve</option>
         <option value="rejected">Reject</option>
       </select>
       <input
         name="notes"
-        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
         placeholder="Review notes"
       />
       <Button disabled={pending}>Save decision</Button>
@@ -138,17 +138,17 @@ export function RefundLeadCreditsForm() {
   const [state, action, pending] = useActionState(refundLeadCreditsAction, initialState);
 
   return (
-    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+    <form action={action} className="grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
       <FormMessage state={state} />
       <input
         name="leadClaimId"
-        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
         placeholder="Lead claim UUID"
         required
       />
       <input
         name="reason"
-        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
         placeholder="Refund reason"
         required
       />
@@ -161,10 +161,10 @@ export function SupportTicketStatusForm({ ticketId, currentStatus }: { ticketId:
   const [state, action, pending] = useActionState(updateSupportTicketStatusAction, initialState);
 
   return (
-    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+    <form action={action} className="grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
       <FormMessage state={state} />
       <input type="hidden" name="ticketId" value={ticketId} />
-      <select name="status" defaultValue={currentStatus ?? "open"} className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+      <select name="status" defaultValue={currentStatus ?? "open"} className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]">
         {supportStatuses.map((status) => (
           <option key={status} value={status}>
             {status.replaceAll("_", " ")}
@@ -173,7 +173,7 @@ export function SupportTicketStatusForm({ ticketId, currentStatus }: { ticketId:
       </select>
       <input
         name="note"
-        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
         placeholder="Internal note optional"
       />
       <Button disabled={pending}>Update ticket</Button>
@@ -185,10 +185,10 @@ export function DisputeStatusForm({ disputeId, currentStatus }: { disputeId: str
   const [state, action, pending] = useActionState(updateDisputeStatusAction, initialState);
 
   return (
-    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+    <form action={action} className="grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
       <FormMessage state={state} />
       <input type="hidden" name="disputeId" value={disputeId} />
-      <select name="status" defaultValue={currentStatus ?? "open"} className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+      <select name="status" defaultValue={currentStatus ?? "open"} className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]">
         {disputeStatuses.map((status) => (
           <option key={status} value={status}>
             {status.replaceAll("_", " ")}
@@ -197,7 +197,7 @@ export function DisputeStatusForm({ disputeId, currentStatus }: { disputeId: str
       </select>
       <input
         name="note"
-        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
         placeholder="Resolution note optional"
       />
       <Button disabled={pending}>Update dispute</Button>
@@ -209,10 +209,10 @@ export function MembershipStatusForm({ membershipId, currentStatus }: { membersh
   const [state, action, pending] = useActionState(updateMembershipStatusAction, initialState);
 
   return (
-    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+    <form action={action} className="grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
       <FormMessage state={state} />
       <input type="hidden" name="membershipId" value={membershipId} />
-      <select name="status" defaultValue={currentStatus ?? "pending_activation"} className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+      <select name="status" defaultValue={currentStatus ?? "pending_activation"} className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]">
         {membershipStatuses.map((status) => (
           <option key={status} value={status}>
             {status.replaceAll("_", " ")}
@@ -221,7 +221,7 @@ export function MembershipStatusForm({ membershipId, currentStatus }: { membersh
       </select>
       <input
         name="note"
-        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
         placeholder="Member note optional"
       />
       <Button disabled={pending}>Update membership</Button>
@@ -233,10 +233,10 @@ export function SafetyCheckStatusForm({ safetyCheckId, currentStatus }: { safety
   const [state, action, pending] = useActionState(updateSafetyCheckStatusAction, initialState);
 
   return (
-    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+    <form action={action} className="grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
       <FormMessage state={state} />
       <input type="hidden" name="safetyCheckId" value={safetyCheckId} />
-      <select name="status" defaultValue={currentStatus} className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+      <select name="status" defaultValue={currentStatus} className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]">
         {safetyCheckStatuses.map((status) => (
           <option key={status} value={status}>
             {status.replaceAll("_", " ")}
@@ -245,7 +245,7 @@ export function SafetyCheckStatusForm({ safetyCheckId, currentStatus }: { safety
       </select>
       <input
         name="note"
-        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
         placeholder="Status note optional"
       />
       <Button disabled={pending}>Update Safety Check</Button>
@@ -257,10 +257,10 @@ export function AssignSafetyCheckFixerForm({ safetyCheckId, tradies = [] }: { sa
   const [state, action, pending] = useActionState(assignSafetyCheckFixerAction, initialState);
 
   return (
-    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+    <form action={action} className="grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
       <FormMessage state={state} />
       <input type="hidden" name="safetyCheckId" value={safetyCheckId} />
-      <select name="fixerId" className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white" required>
+      <select name="fixerId" className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]" required>
         <option value="">Choose Fixer</option>
         {tradies.map((tradie) => (
           <option key={tradie.id} value={tradie.id}>
@@ -278,17 +278,17 @@ export function PropertySafeInviteForm({ profileId }: { profileId: string }) {
   const [state, action, pending] = useActionState(invitePropertySafeParticipantAction, initialState);
 
   return (
-    <form action={action} className="grid gap-3 rounded-xl border border-white/10 bg-white/5 p-4">
+    <form action={action} className="grid gap-3 rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
       <FormMessage state={state} />
       <input type="hidden" name="profileId" value={profileId} />
       <input
         name="email"
         type="email"
-        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
         placeholder="Owner, landlord, or agency email"
         required
       />
-      <select name="relationship" className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white">
+      <select name="relationship" className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]">
         {propertySafeRelationships.map((relationship) => (
           <option key={relationship} value={relationship}>
             {relationship.replaceAll("_", " ")}
@@ -297,18 +297,18 @@ export function PropertySafeInviteForm({ profileId }: { profileId: string }) {
       </select>
       <input
         name="agencyName"
-        className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white"
+        className="min-h-11 rounded-lg border border-[var(--border)] bg-white px-3 text-[var(--text)]"
         placeholder="Agency name optional"
       />
-      <label className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold text-white/75">
+      <label className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-sm font-bold text-[var(--text2)]">
         <input name="canRequestWork" type="checkbox" className="size-4" />
         Can start maintenance requests
       </label>
-      <label className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold text-white/75">
+      <label className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-sm font-bold text-[var(--text2)]">
         <input name="canManageRecord" type="checkbox" className="size-4" />
         Can manage PropertySafe record
       </label>
-      <label className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold text-white/75">
+      <label className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--bg2)] px-3 py-2 text-sm font-bold text-[var(--text2)]">
         <input name="canViewFinancials" type="checkbox" className="size-4" />
         Can view financial details
       </label>

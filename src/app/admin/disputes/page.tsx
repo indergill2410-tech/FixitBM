@@ -6,16 +6,16 @@ export default async function AdminDisputesPage() {
   const disputes = await getAdminDisputes();
 
   return (
-    <main className="min-h-screen bg-[#120f0c] text-white">
+    <main className="premium-shell min-h-screen text-[var(--text)]">
       <section className="container py-8">
         <DashboardHeader title="Disputes" role="Admin" />
         <div className="grid gap-5 lg:grid-cols-[.62fr_.38fr]">
-          <Card variant="dark">
+          <Card>
             <Badge tone="red">Dispute queue</Badge>
             <div className="mt-5 grid gap-3">
               {disputes.length ? (
                 disputes.map((dispute) => (
-                  <div key={dispute.id} className="rounded-xl border border-white/10 bg-white/5 p-4">
+                  <div key={dispute.id} className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4">
                     <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
                       <div>
                         <div className="flex flex-wrap items-center gap-2">
@@ -24,21 +24,21 @@ export default async function AdminDisputesPage() {
                             {dispute.status ?? "open"}
                           </Badge>
                         </div>
-                        <p className="mt-1 text-sm text-white/65">{dispute.description ?? dispute.notes ?? "Awaiting admin review."}</p>
-                        {dispute.job_id ? <p className="mt-2 text-xs font-bold text-white/45">Request {dispute.job_id}</p> : null}
+                        <p className="mt-1 text-sm text-[var(--text2)]">{dispute.description ?? dispute.notes ?? "Awaiting admin review."}</p>
+                        {dispute.job_id ? <p className="mt-2 text-xs font-bold text-[var(--text3)]">Request {dispute.job_id}</p> : null}
                       </div>
                       <DisputeStatusForm disputeId={dispute.id} currentStatus={dispute.status} />
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-white/70">No open disputes.</div>
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4 text-[var(--text2)]">No open disputes.</div>
               )}
             </div>
           </Card>
-          <Card variant="dark">
+          <Card>
             <h2 className="text-xl font-black">Lead credit refund</h2>
-            <p className="mt-2 text-sm leading-6 text-white/70">
+            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
               Refund credits when a request is not genuine, unreachable, or already resolved.
             </p>
             <div className="mt-5">

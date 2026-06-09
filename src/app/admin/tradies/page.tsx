@@ -9,23 +9,23 @@ export default async function AdminTradiesPage() {
   const ranked = [...fixers].sort((a, b) => b.assigned_count - a.assigned_count);
 
   return (
-    <main className="min-h-screen bg-[#120f0c] text-white">
+    <main className="premium-shell min-h-screen text-[var(--text)]">
       <section className="container py-8">
         <DashboardHeader title="Fixer network" role="Admin" />
-        <Card variant="dark">
+        <Card>
           <Badge tone="green">Live directory</Badge>
           <h1 className="mt-4 text-2xl font-black">{fixers.length} Fixers in the network</h1>
-          <p className="mt-2 text-sm leading-6 text-white/65">
+          <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
             Ranked by active load. Compare rating, response rate, and profile health before dispatching new work.
           </p>
           <div className="mt-5 grid gap-3">
             {ranked.length ? (
               ranked.map((fixer) => (
-                <Link key={fixer.id} href={`/admin/tradies/${fixer.id}`} className="block rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-amber-300/40 hover:bg-white/10">
+                <Link key={fixer.id} href={`/admin/tradies/${fixer.id}`} className="block rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4 transition hover:border-amber-300/40 hover:bg-[var(--bg2)]">
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
                     <div className="min-w-0">
                       <p className="font-black">{fixer.business_name || fixer.trade_category}</p>
-                      <p className="mt-1 text-sm text-white/65">
+                      <p className="mt-1 text-sm text-[var(--text2)]">
                         {fixer.trade_category} · {fixer.service_area ?? "Area pending"}
                       </p>
                     </div>
@@ -44,7 +44,7 @@ export default async function AdminTradiesPage() {
                 </Link>
               ))
             ) : (
-              <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-white/70">No Fixer profiles yet.</div>
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4 text-[var(--text2)]">No Fixer profiles yet.</div>
             )}
           </div>
         </Card>
@@ -57,7 +57,7 @@ function PerfMetric({ label, value }: { label: string; value: string }) {
   return (
     <div className="text-center">
       <p className="text-lg font-black tabular-nums">{value}</p>
-      <p className="text-[10px] font-bold uppercase tracking-wide text-white/40">{label}</p>
+      <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--text3)]">{label}</p>
     </div>
   );
 }

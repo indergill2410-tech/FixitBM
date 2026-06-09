@@ -14,10 +14,10 @@ export default async function AdminPage() {
   ]);
 
   return (
-    <main className="min-h-screen bg-[#120f0c] text-white">
+    <main className="premium-shell min-h-screen text-[var(--text)]">
       <section className="container py-8">
         <DashboardHeader title="Request operations centre" role="Admin" />
-        <p className="-mt-3 mb-6 max-w-3xl text-sm leading-6 text-white/60">
+        <p className="-mt-3 mb-6 max-w-3xl text-sm leading-6 text-[var(--text2)]">
           Live operating view for emergency requests, standard trade work, project quotes, Fixer supply, memberships,
           Safety Checks, support, and credit control.
         </p>
@@ -42,41 +42,41 @@ export default async function AdminPage() {
         </div>
 
         <div className="mt-6 grid gap-5 xl:grid-cols-[.72fr_.28fr]">
-          <Card variant="dark">
+          <Card>
             <Badge tone="red">Live request queue</Badge>
             <h2 className="mt-4 text-2xl font-black">Emergency, trade, and project requests</h2>
-            <p className="mt-2 text-sm leading-6 text-white/60">
+            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
               Active requests are grouped here so the team can assign, update, and resolve them faster.
             </p>
             <div className="mt-5 grid gap-3">
               {jobs.length ? (
                 jobs.slice(0, 8).map((job) => <AdminQueueItem key={job.id} job={job} />)
               ) : (
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-white/70">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4 text-[var(--text2)]">
                   No live requests in the queue.
                 </div>
               )}
             </div>
           </Card>
-          <Card variant="dark">
+          <Card>
             <Badge tone="green">Team notifications</Badge>
             <h2 className="mt-4 text-2xl font-black">Fixer onboarding alerts</h2>
-            <p className="mt-2 text-sm leading-6 text-white/60">
+            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
               New Fixer signups and completed onboarding profiles appear here for review.
             </p>
             <div className="mt-5 grid gap-3">
               {notifications.length ? (
                 notifications.map((notification) => <AdminNotificationItem key={notification.id} notification={notification} />)
               ) : (
-                <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm font-semibold text-white/65">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4 text-sm font-semibold text-[var(--text2)]">
                   No team notifications yet.
                 </div>
               )}
             </div>
           </Card>
-          <Card variant="dark">
+          <Card>
             <Badge>Team tools</Badge>
-            <div className="mt-5 grid gap-3 text-sm text-white/75">
+            <div className="mt-5 grid gap-3 text-sm text-[var(--text2)]">
               {[
                 ["Assign Fixer", "/admin/jobs"],
                 ["Change status", "/admin/jobs"],
@@ -86,7 +86,7 @@ export default async function AdminPage() {
                 ["Refund credits", "/admin/credits"],
                 ["Create support ticket", "/admin/support"]
               ].map(([label, href]) => (
-                <a key={label} href={href} className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 font-semibold transition hover:border-amber-300/40 hover:bg-white/10">
+                <a key={label} href={href} className="rounded-xl border border-[var(--border)] bg-[var(--bg2)] px-4 py-3 font-semibold transition hover:border-amber-300/40 hover:bg-[var(--bg2)]">
                   {label}
                 </a>
               ))}
@@ -103,14 +103,14 @@ function AdminNotificationItem({ notification }: { notification: AdminNotificati
   return (
     <a
       href={notification.link ?? "/admin"}
-      className="block rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-amber-300/40 hover:bg-white/10"
+      className="block rounded-xl border border-[var(--border)] bg-[var(--bg2)] p-4 transition hover:border-amber-300/40 hover:bg-[var(--bg2)]"
     >
       <div className="flex items-center justify-between gap-3">
         <p className="text-sm font-black">{notification.title}</p>
-        <span className={notification.read_at ? "h-2.5 w-2.5 rounded-full bg-white/25" : "h-2.5 w-2.5 rounded-full bg-[var(--amber)]"} />
+        <span className={notification.read_at ? "h-2.5 w-2.5 rounded-full bg-[var(--bg2)]" : "h-2.5 w-2.5 rounded-full bg-[var(--amber)]"} />
       </div>
-      <p className="mt-2 text-sm leading-6 text-white/65">{notification.body}</p>
-      <p className="mt-3 text-xs font-semibold text-white/40">{new Date(notification.created_at).toLocaleString()}</p>
+      <p className="mt-2 text-sm leading-6 text-[var(--text2)]">{notification.body}</p>
+      <p className="mt-3 text-xs font-semibold text-[var(--text3)]">{new Date(notification.created_at).toLocaleString()}</p>
     </a>
   );
 }
