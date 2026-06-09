@@ -3,6 +3,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabasePublicConfigured, isSupabaseServerConfigured } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { AppUser } from "@/lib/auth";
+import { getBillingPlan } from "@/lib/billing";
 import { jobPhotoBucket } from "@/lib/uploads";
 
 export type JobStatus =
@@ -191,6 +192,15 @@ export type AdminVerificationRow = {
   tradie_name: string;
 };
 
+export type AdminRevenuePlanLine = {
+  code: string;
+  name: string;
+  type: "customer_membership" | "tradie_subscription";
+  count: number;
+  unit_price_cents: number;
+  mrr_cents: number;
+};
+
 export type AdminRevenueSummary = {
   active_memberships: number;
   active_tradie_subscriptions: number;
@@ -198,6 +208,11 @@ export type AdminRevenueSummary = {
   credit_spend: number;
   paid_credits: number;
   bonus_credits: number;
+  membership_mrr_cents: number;
+  subscription_mrr_cents: number;
+  total_mrr_cents: number;
+  arr_cents: number;
+  plan_lines: AdminRevenuePlanLine[];
 };
 
 export type AdminAuditLog = {
@@ -329,6 +344,23 @@ export type AdminFixerDirectoryRow = TradieProfileSummary & {
   user_id: string | null;
   assigned_count: number;
   claimed_count: number;
+};
+
+export type AdminSearchResult = {
+  type: "request" | "fixer" | "customer";
+  id: string;
+  href: string;
+  title: string;
+  subtitle: string;
+  meta: string;
+};
+
+export type AdminSearchResults = {
+  query: string;
+  requests: AdminSearchResult[];
+  fixers: AdminSearchResult[];
+  customers: AdminSearchResult[];
+  total: number;
 };
 
 export type AdminFixerDetail = TradieProfileSummary & {
@@ -1390,6 +1422,83 @@ export async function getAdminFixers(): Promise<AdminFixerDirectoryRow[]> {
   }));
 }
 
+// Cross-entity operations search: one query spans requests (reference / title /
+// suburb / address / contact), Fixers (business / trade / area / ABN) and
+// customers (name / email). Powers the sidebar search box.
+export async function searchAdminConsole(rawQuery: string): Promise<AdminSearchResults> {
+  noStore();
+
+  const query = rawQuery.trim();
+  const empty: AdminSearchResults = { query, requests: [], fixers: [], customers: [], total: 0 };
+  if (query.length < 2) return empty;
+
+  if (!isSupabaseServerConfigured()) return empty;
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return empty;
+
+  // Strip PostgREST `or()` control characters so the term is treated as data.
+  const term = query.replace(/[(),*]/g, " ").trim();
+  if (!term) return empty;
+  const like = `%${term}%`;
+
+  const [{ data: jobs }, { data: fixers }, { data: customers }] = await Promise.all([
+    supabase
+      .from("jobs")
+      .select("id, public_reference, title, category, status, suburb, postcode, state, guest_name")
+      .or(`public_reference.ilike.${like},title.ilike.${like},suburb.ilike.${like},address.ilike.${like},guest_name.ilike.${like}`)
+      .order("created_at", { ascending: false })
+      .limit(12),
+    supabase
+      .from("tradie_profiles")
+      .select("id, business_name, trade_category, service_area, abn, verification_status")
+      .or(`business_name.ilike.${like},trade_category.ilike.${like},service_area.ilike.${like},abn.ilike.${like}`)
+      .order("business_name", { ascending: true })
+      .limit(12),
+    supabase
+      .from("users")
+      .select("id, first_name, last_name, email, phone, status")
+      .eq("role", "customer")
+      .or(`first_name.ilike.${like},last_name.ilike.${like},email.ilike.${like},phone.ilike.${like}`)
+      .order("created_at", { ascending: false })
+      .limit(12)
+  ]);
+
+  const requests: AdminSearchResult[] = (jobs ?? []).map((job) => ({
+    type: "request",
+    id: job.id,
+    href: `/admin/jobs/${job.id}`,
+    title: job.title || job.public_reference,
+    subtitle: `${job.public_reference} · ${job.category ?? "Request"}`,
+    meta: [statusLabel(job.status as JobStatus), [job.suburb, job.state].filter(Boolean).join(" ")].filter(Boolean).join(" · ")
+  }));
+
+  const fixerResults: AdminSearchResult[] = (fixers ?? []).map((fixer) => ({
+    type: "fixer",
+    id: fixer.id,
+    href: `/admin/tradies/${fixer.id}`,
+    title: fixer.business_name || fixer.trade_category || "Fixer",
+    subtitle: [fixer.trade_category, fixer.service_area].filter(Boolean).join(" · ") || "Fixer profile",
+    meta: fixer.verification_status ? `Verification: ${fixer.verification_status}` : "Verification pending"
+  }));
+
+  const customerResults: AdminSearchResult[] = (customers ?? []).map((customer) => ({
+    type: "customer",
+    id: customer.id,
+    href: `/admin/customers/${customer.id}`,
+    title: [customer.first_name, customer.last_name].filter(Boolean).join(" ") || customer.email || "Customer",
+    subtitle: customer.email || customer.phone || "Customer profile",
+    meta: customer.status ? `Status: ${customer.status}` : "Customer"
+  }));
+
+  return {
+    query,
+    requests,
+    fixers: fixerResults,
+    customers: customerResults,
+    total: requests.length + fixerResults.length + customerResults.length
+  };
+}
+
 export async function getAdminFixerDetail(id: string): Promise<AdminFixerDetail | null> {
   noStore();
 
@@ -1478,29 +1587,75 @@ export async function getAdminVerificationQueue() {
 export async function getAdminRevenueSummary(): Promise<AdminRevenueSummary> {
   noStore();
 
-  if (!isSupabaseServerConfigured()) {
-    return { active_memberships: 0, active_tradie_subscriptions: 0, lead_claims: 0, credit_spend: 0, paid_credits: 0, bonus_credits: 0 };
-  }
+  const empty: AdminRevenueSummary = {
+    active_memberships: 0,
+    active_tradie_subscriptions: 0,
+    lead_claims: 0,
+    credit_spend: 0,
+    paid_credits: 0,
+    bonus_credits: 0,
+    membership_mrr_cents: 0,
+    subscription_mrr_cents: 0,
+    total_mrr_cents: 0,
+    arr_cents: 0,
+    plan_lines: []
+  };
+
+  if (!isSupabaseServerConfigured()) return empty;
 
   const supabase = createSupabaseAdminClient();
-  if (!supabase) {
-    return { active_memberships: 0, active_tradie_subscriptions: 0, lead_claims: 0, credit_spend: 0, paid_credits: 0, bonus_credits: 0 };
-  }
+  if (!supabase) return empty;
 
   const [memberships, subscriptions, claims, wallets] = await Promise.all([
-    supabase.from("memberships").select("id", { count: "exact", head: true }).eq("status", "active"),
-    supabase.from("tradie_subscriptions").select("id", { count: "exact", head: true }).eq("status", "active"),
+    supabase.from("memberships").select("plan_code").eq("status", "active"),
+    supabase.from("tradie_subscriptions").select("plan").eq("status", "active"),
     supabase.from("lead_claims").select("credits_spent"),
     supabase.from("tradie_credit_wallets").select("balance, bonus_balance")
   ]);
 
+  // Recurring revenue, priced from the canonical billing plan catalogue and
+  // grouped into one line per active plan so the desk sees the MRR mix.
+  const lineMap = new Map<string, AdminRevenuePlanLine>();
+  const addToLine = (code: string | null | undefined, type: AdminRevenuePlanLine["type"]) => {
+    if (!code) return;
+    const plan = getBillingPlan(code);
+    if (!plan || plan.type !== type) return;
+    const existing = lineMap.get(code);
+    if (existing) {
+      existing.count += 1;
+      existing.mrr_cents += plan.priceCents;
+    } else {
+      lineMap.set(code, {
+        code,
+        name: plan.name,
+        type,
+        count: 1,
+        unit_price_cents: plan.priceCents,
+        mrr_cents: plan.priceCents
+      });
+    }
+  };
+
+  (memberships.data ?? []).forEach((row) => addToLine(row.plan_code, "customer_membership"));
+  (subscriptions.data ?? []).forEach((row) => addToLine(row.plan, "tradie_subscription"));
+
+  const planLines = Array.from(lineMap.values()).sort((a, b) => b.mrr_cents - a.mrr_cents);
+  const membershipMrr = planLines.filter((line) => line.type === "customer_membership").reduce((sum, line) => sum + line.mrr_cents, 0);
+  const subscriptionMrr = planLines.filter((line) => line.type === "tradie_subscription").reduce((sum, line) => sum + line.mrr_cents, 0);
+  const totalMrr = membershipMrr + subscriptionMrr;
+
   return {
-    active_memberships: memberships.count ?? 0,
-    active_tradie_subscriptions: subscriptions.count ?? 0,
+    active_memberships: memberships.data?.length ?? 0,
+    active_tradie_subscriptions: subscriptions.data?.length ?? 0,
     lead_claims: claims.data?.length ?? 0,
     credit_spend: (claims.data ?? []).reduce((total, claim) => total + Number(claim.credits_spent ?? 0), 0),
     paid_credits: (wallets.data ?? []).reduce((total, wallet) => total + Number(wallet.balance ?? 0), 0),
-    bonus_credits: (wallets.data ?? []).reduce((total, wallet) => total + Number(wallet.bonus_balance ?? 0), 0)
+    bonus_credits: (wallets.data ?? []).reduce((total, wallet) => total + Number(wallet.bonus_balance ?? 0), 0),
+    membership_mrr_cents: membershipMrr,
+    subscription_mrr_cents: subscriptionMrr,
+    total_mrr_cents: totalMrr,
+    arr_cents: totalMrr * 12,
+    plan_lines: planLines
   };
 }
 
