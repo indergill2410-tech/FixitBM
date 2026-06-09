@@ -68,7 +68,7 @@ export default async function FixerPayoutsPage() {
                 Connect your bank account via Stripe to receive earnings from completed jobs.
               </p>
               <form className="mt-4" method="POST" action="/api/stripe/connect/onboard">
-                <Button type="submit">Set up payouts</Button>
+                <Button>Set up payouts</Button>
               </form>
             </Card>
           ) : (
@@ -93,9 +93,7 @@ export default async function FixerPayoutsPage() {
               </div>
               {!account.payouts_enabled && (
                 <form className="mt-4" method="POST" action="/api/stripe/connect/onboard">
-                  <Button type="submit" variant="ghost">
-                    Resume onboarding
-                  </Button>
+                  <Button variant="ghost">Resume onboarding</Button>
                 </form>
               )}
             </Card>

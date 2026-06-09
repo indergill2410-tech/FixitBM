@@ -150,13 +150,13 @@ export async function updateJobStatusAction(
 
   const { data: job } = await supabase
     .from("jobs")
-    .select("id, public_reference, title, customer_id, guest_email, assigned_tradie_id")
+    .select("id, public_reference, title, customer_id, guest_email, guest_phone, assigned_tradie_id")
     .eq("id", parsed.data.jobId)
     .maybeSingle();
 
   if (job) {
     const [{ data: customer }, { data: assignedTradie }] = await Promise.all([
-      job.customer_id ? supabase.from("users").select("email").eq("id", job.customer_id).maybeSingle() : Promise.resolve({ data: null }),
+      job.customer_id ? supabase.from("users").select("email, phone").eq("id", job.customer_id).maybeSingle() : Promise.resolve({ data: null }),
       job.assigned_tradie_id
         ? supabase
             .from("tradie_profiles")
@@ -169,14 +169,21 @@ export async function updateJobStatusAction(
       ? await supabase.from("users").select("email").eq("id", assignedTradie.user_id).maybeSingle()
       : { data: null };
 
-    await notifyJobStatusChanged({
-      jobId: job.id,
-      reference: job.public_reference,
-      title: job.title,
-      status: parsed.data.status,
-      customerEmail: customer?.email ?? job.guest_email ?? null,
-      fixerEmail: fixerUser?.email ?? null
-    });
+    await Promise.all([
+      notifyJobStatusChanged({
+        jobId: job.id,
+        reference: job.public_reference,
+        title: job.title,
+        status: parsed.data.status,
+        customerEmail: customer?.email ?? job.guest_email ?? null,
+        fixerEmail: fixerUser?.email ?? null
+      }),
+      notifyCustomerStatusSms({
+        customerPhone: customer?.phone ?? (job as { guest_phone?: string | null }).guest_phone ?? null,
+        status: parsed.data.status,
+        reference: job.public_reference
+      })
+    ]);
   }
 
   revalidatePath("/admin");

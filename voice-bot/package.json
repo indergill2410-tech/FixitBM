@@ -1,0 +1,20 @@
+{
+  "name": "fixit247-voice-bot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Twilio ConversationRelay AI receptionist for Fixit247 — greets callers, triages emergency vs planned repair, captures details.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.69.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "express": "^4.21.2",
+    "ws": "^8.18.0"
+  }
+}
