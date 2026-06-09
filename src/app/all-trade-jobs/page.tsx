@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "All Trade Jobs — Plumbing, Electrical, Roofing & More",
+  description:
+    "Post any trade job free: plumbing, electrical, roofing, painting, carpentry, landscaping, concreting, and larger property projects.",
+  alternates: {
+    canonical: "/all-trade-jobs"
+  }
+};
+
 import { Badge, Button, IconTile, MobileBottomActionBar, PublicFooter, PublicHeader } from "@/components/ui";
 import { tradeCategories } from "@/lib/data";
 

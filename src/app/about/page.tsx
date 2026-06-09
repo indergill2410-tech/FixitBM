@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Fixit247 — Emergency-First Help for Australian Properties",
+  description:
+    "Why we built Fixit247: faster urgent repairs, fairer leads for tradies, and clearer property records for homes and rentals.",
+  alternates: {
+    canonical: "/about"
+  }
+};
+
 import { Badge, Card, PublicFooter, PublicHeader } from "@/components/ui";
 
 export default function AboutPage() {

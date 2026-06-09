@@ -66,6 +66,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid Stripe event payload." }, { status: 400 });
   }
 
+  if (event.id && isSupabaseServerConfigured()) {
+    const dedupeClient = createSupabaseAdminClient();
+    if (dedupeClient) {
+      const { error: dedupeError } = await dedupeClient
+        .from("stripe_webhook_events")
+        .insert({ id: event.id, type: event.type ?? "unknown" });
+
+      if (dedupeError) {
+        if (dedupeError.code === "23505") {
+          return NextResponse.json({ received: true, duplicate: true, eventId: event.id });
+        }
+        return NextResponse.json({ error: "Failed to record webhook event for idempotency." }, { status: 500 });
+      }
+    }
+  }
+
   let reconciled = false;
   if (event.type === "checkout.session.completed") {
     const result = await reconcileCheckoutSession(event.data?.object as StripeCheckoutSession | null, event.id ?? null);

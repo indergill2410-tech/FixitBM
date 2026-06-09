@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Become a Fixer — Get Local Trade Jobs Without Commission",
+  description:
+    "Join Fixit247 as a verified tradie. Receive emergency, repair, and project leads in your area without giving away commission on completed work.",
+  alternates: {
+    canonical: "/become-a-fixer"
+  }
+};
+
 import {
   BadgeCheck,
   BriefcaseBusiness,

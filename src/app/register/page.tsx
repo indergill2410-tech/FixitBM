@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Create Your Free Account",
+  description:
+    "Create a free Fixit247 account to track repair requests, manage properties, and message verified Fixers.",
+  alternates: {
+    canonical: "/register"
+  }
+};
+
 import { redirect } from "next/navigation";
 import { BriefcaseBusiness, Building2, Home } from "lucide-react";
 import { Badge, Button, Card, PublicHeader } from "@/components/ui";

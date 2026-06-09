@@ -30,7 +30,7 @@ export async function requestPropertySafeWalkthroughAction(
   formData: FormData
 ): Promise<PropertySafeOnboardingState> {
   const requesterEmail = String(formData.get("email") ?? "").toLowerCase().trim();
-  const limit = rateLimit({
+  const limit = await rateLimit({
     key: `propertysafe-onboarding:${requesterEmail || "unknown"}`,
     limit: 3,
     windowMs: 60 * 60 * 1000

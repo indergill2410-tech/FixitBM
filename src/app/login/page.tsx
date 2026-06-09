@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Log In",
+  description:
+    "Log in to your Fixit247 account to track requests, messages, memberships, and PropertySafe records.",
+  alternates: {
+    canonical: "/login"
+  }
+};
+
 import { redirect } from "next/navigation";
 import { Badge, Button, Card, PublicHeader } from "@/components/ui";
 import { LoginForm } from "@/components/auth-forms";

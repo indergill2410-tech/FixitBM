@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "24/7 Home Emergency Repairs — Burst Pipes, Lockouts, Electrical Faults",
+  description:
+    "Urgent home repair help across Australia. Post a burst pipe, lockout, roof leak, or electrical fault free and get a verified Fixer moving fast.",
+  alternates: {
+    canonical: "/home-emergencies"
+  }
+};
+
 import { Badge, Button, Card, IconTile, MobileBottomActionBar, PublicFooter, PublicHeader } from "@/components/ui";
 import { homeCategories } from "@/lib/data";
 

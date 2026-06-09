@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "How Fixit247 Works — Post Free, Match Fast, Track Everything",
+  description:
+    "Tell us what happened, we prepare the right request, and verified Fixers respond. Track messages, photos, and progress in one place.",
+  alternates: {
+    canonical: "/how-it-works"
+  }
+};
+
 import { Badge, Card, PublicFooter, PublicHeader } from "@/components/ui";
 
 export default function HowItWorksPage() {

@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Roadside Help — Flat Tyre, Battery, Fuel & Towing",
+  description:
+    "Stuck on the road? Post a free roadside request for flat tyres, dead batteries, fuel, lockouts, or towing coordination anywhere in Australia.",
+  alternates: {
+    canonical: "/roadside-help"
+  }
+};
+
 import { Badge, Button, IconTile, MobileBottomActionBar, PublicFooter, PublicHeader } from "@/components/ui";
 import { roadsideCategories } from "@/lib/data";
 

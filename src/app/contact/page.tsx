@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contact Fixit247 — Support for Customers and Fixers",
+  description:
+    "Get in touch with the Fixit247 team for help with requests, memberships, PropertySafe, or becoming a verified Fixer.",
+  alternates: {
+    canonical: "/contact"
+  }
+};
+
 import { Badge, Button, Card, PublicFooter, PublicHeader } from "@/components/ui";
 
 export default function ContactPage() {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getCurrentAppUser } from "@/lib/auth";
 import { sendAppEmailVerification } from "@/lib/email-verification";
+import { rateLimit } from "@/lib/rate-limit";
 
 export async function POST() {
   const user = await getCurrentAppUser();
@@ -11,6 +12,14 @@ export async function POST() {
 
   if (user.email_verified_at) {
     return NextResponse.json({ ok: true, message: "Email is already verified." });
+  }
+
+  const limit = await rateLimit({ key: `verify-email:${user.id}`, limit: 3, windowMs: 15 * 60 * 1000 });
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: "Verification email already sent. Please check your inbox and try again in 15 minutes." },
+      { status: 429 }
+    );
   }
 
   const result = await sendAppEmailVerification({
