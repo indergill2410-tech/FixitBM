@@ -34,7 +34,7 @@ export async function updateSession(request: NextRequest) {
 
   // Defense-in-depth: pages also call requireRole(), but never serve
   // protected areas to anonymous visitors even if a page forgets.
-  if (isProtected && !data.user) {
+  if (isProtected && !data?.user) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     loginUrl.search = "";
