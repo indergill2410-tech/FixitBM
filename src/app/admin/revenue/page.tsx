@@ -12,10 +12,11 @@ export default async function AdminRevenuePage() {
       <section className="container py-8">
         <DashboardHeader title="Revenue" role="Admin" />
 
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
           <StatCard label="Total MRR" value={formatMoney(revenue.total_mrr_cents)} detail="Active recurring revenue / month" />
           <StatCard label="ARR run-rate" value={formatMoney(revenue.arr_cents)} detail="MRR × 12" />
           <StatCard label="Fixit Plus" value={String(revenue.active_memberships)} detail={`${formatMoney(revenue.membership_mrr_cents)} membership MRR`} />
+          <StatCard label="PropertySafe" value={String(revenue.active_agency_subscriptions)} detail={`${formatMoney(revenue.agency_mrr_cents)} agency MRR`} />
           <StatCard label="Fixer plans" value={String(revenue.active_tradie_subscriptions)} detail={`${formatMoney(revenue.subscription_mrr_cents)} subscription MRR`} />
         </div>
 
@@ -33,7 +34,7 @@ export default async function AdminRevenuePage() {
                       <p className="truncate font-black">{line.name}</p>
                       <p className="mt-0.5 text-xs text-[var(--text3)]">
                         {line.count} × {formatMoney(line.unit_price_cents)}/mo ·{" "}
-                        {line.type === "customer_membership" ? "Customer membership" : "Fixer subscription"}
+                        {line.type === "customer_membership" ? "Customer membership" : line.type === "agency_subscription" ? "PropertySafe agency" : "Fixer subscription"}
                       </p>
                     </div>
                     <span className="shrink-0 text-lg font-black text-emerald-300">{formatMoney(line.mrr_cents)}</span>

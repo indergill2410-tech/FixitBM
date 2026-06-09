@@ -195,7 +195,7 @@ export type AdminVerificationRow = {
 export type AdminRevenuePlanLine = {
   code: string;
   name: string;
-  type: "customer_membership" | "tradie_subscription";
+  type: "customer_membership" | "tradie_subscription" | "agency_subscription";
   count: number;
   unit_price_cents: number;
   mrr_cents: number;
@@ -204,12 +204,14 @@ export type AdminRevenuePlanLine = {
 export type AdminRevenueSummary = {
   active_memberships: number;
   active_tradie_subscriptions: number;
+  active_agency_subscriptions: number;
   lead_claims: number;
   credit_spend: number;
   paid_credits: number;
   bonus_credits: number;
   membership_mrr_cents: number;
   subscription_mrr_cents: number;
+  agency_mrr_cents: number;
   total_mrr_cents: number;
   arr_cents: number;
   plan_lines: AdminRevenuePlanLine[];
@@ -1590,12 +1592,14 @@ export async function getAdminRevenueSummary(): Promise<AdminRevenueSummary> {
   const empty: AdminRevenueSummary = {
     active_memberships: 0,
     active_tradie_subscriptions: 0,
+    active_agency_subscriptions: 0,
     lead_claims: 0,
     credit_spend: 0,
     paid_credits: 0,
     bonus_credits: 0,
     membership_mrr_cents: 0,
     subscription_mrr_cents: 0,
+    agency_mrr_cents: 0,
     total_mrr_cents: 0,
     arr_cents: 0,
     plan_lines: []
@@ -1606,15 +1610,14 @@ export async function getAdminRevenueSummary(): Promise<AdminRevenueSummary> {
   const supabase = createSupabaseAdminClient();
   if (!supabase) return empty;
 
-  const [memberships, subscriptions, claims, wallets] = await Promise.all([
+  const [memberships, subscriptions, agencySubscriptions, claims, wallets] = await Promise.all([
     supabase.from("memberships").select("plan_code").eq("status", "active"),
     supabase.from("tradie_subscriptions").select("plan").eq("status", "active"),
+    supabase.from("agency_subscriptions").select("plan_code").eq("status", "active"),
     supabase.from("lead_claims").select("credits_spent"),
     supabase.from("tradie_credit_wallets").select("balance, bonus_balance")
   ]);
 
-  // Recurring revenue, priced from the canonical billing plan catalogue and
-  // grouped into one line per active plan so the desk sees the MRR mix.
   const lineMap = new Map<string, AdminRevenuePlanLine>();
   const addToLine = (code: string | null | undefined, type: AdminRevenuePlanLine["type"]) => {
     if (!code) return;
@@ -1638,21 +1641,25 @@ export async function getAdminRevenueSummary(): Promise<AdminRevenueSummary> {
 
   (memberships.data ?? []).forEach((row) => addToLine(row.plan_code, "customer_membership"));
   (subscriptions.data ?? []).forEach((row) => addToLine(row.plan, "tradie_subscription"));
+  (agencySubscriptions.data ?? []).forEach((row) => addToLine(row.plan_code, "agency_subscription"));
 
   const planLines = Array.from(lineMap.values()).sort((a, b) => b.mrr_cents - a.mrr_cents);
   const membershipMrr = planLines.filter((line) => line.type === "customer_membership").reduce((sum, line) => sum + line.mrr_cents, 0);
   const subscriptionMrr = planLines.filter((line) => line.type === "tradie_subscription").reduce((sum, line) => sum + line.mrr_cents, 0);
-  const totalMrr = membershipMrr + subscriptionMrr;
+  const agencyMrr = planLines.filter((line) => line.type === "agency_subscription").reduce((sum, line) => sum + line.mrr_cents, 0);
+  const totalMrr = membershipMrr + subscriptionMrr + agencyMrr;
 
   return {
     active_memberships: memberships.data?.length ?? 0,
     active_tradie_subscriptions: subscriptions.data?.length ?? 0,
+    active_agency_subscriptions: agencySubscriptions.data?.length ?? 0,
     lead_claims: claims.data?.length ?? 0,
     credit_spend: (claims.data ?? []).reduce((total, claim) => total + Number(claim.credits_spent ?? 0), 0),
     paid_credits: (wallets.data ?? []).reduce((total, wallet) => total + Number(wallet.balance ?? 0), 0),
     bonus_credits: (wallets.data ?? []).reduce((total, wallet) => total + Number(wallet.bonus_balance ?? 0), 0),
     membership_mrr_cents: membershipMrr,
     subscription_mrr_cents: subscriptionMrr,
+    agency_mrr_cents: agencyMrr,
     total_mrr_cents: totalMrr,
     arr_cents: totalMrr * 12,
     plan_lines: planLines
