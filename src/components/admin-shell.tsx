@@ -10,6 +10,7 @@ import {
   Gauge,
   Headphones,
   Home,
+  Phone,
   Scale,
   Search,
   Settings,
@@ -31,6 +32,7 @@ const adminNav: AdminNavGroup[] = [
     items: [
       { label: "Operations", href: "/admin", icon: Gauge, detail: "Live queue" },
       { label: "Requests", href: "/admin/jobs", icon: ClipboardList, detail: "Dispatch queue" },
+      { label: "Phone calls", href: "/admin/calls", icon: Phone, detail: "Voice line" },
       { label: "Safety Checks", href: "/admin/safety-checks", icon: ShieldCheck, detail: "Member readiness" }
     ]
   },
