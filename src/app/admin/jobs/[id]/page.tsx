@@ -1,11 +1,12 @@
 import Image from "next/image";
 import { Card, DashboardHeader } from "@/components/ui";
-import { formatJobLocation, getAdminJobDetail, getAvailableTradiesForAdmin, statusLabel } from "@/lib/jobs";
+import { formatJobLocation, getAdminJobDetail, getSuggestedFixersForJob, statusLabel } from "@/lib/jobs";
 import { AssignTradieForm, JobStatusForm } from "@/components/admin-action-forms";
 
 export default async function AdminJobDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [job, tradies] = await Promise.all([getAdminJobDetail(id), getAvailableTradiesForAdmin()]);
+  const job = await getAdminJobDetail(id);
+  const suggestedFixers = job ? await getSuggestedFixersForJob(job) : [];
 
   return (
     <main className="min-h-screen bg-[#120f0c] text-white">
@@ -34,9 +35,54 @@ export default async function AdminJobDetailPage({ params }: { params: Promise<{
 
             <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
               <Card variant="dark">
-                <h2 className="text-lg font-black">Operations</h2>
+                <div className="flex items-center justify-between gap-3">
+                  <h2 className="text-lg font-black">Operations</h2>
+                  {job.urgency === "emergency" ? (
+                    <span className="rounded-full bg-red-500/20 px-3 py-1 text-xs font-black uppercase tracking-wide text-red-300">
+                      Emergency dispatch
+                    </span>
+                  ) : null}
+                </div>
+
+                <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4">
+                  <p className="text-xs font-black uppercase tracking-wide text-white/45">
+                    Suggested Fixers for this request
+                  </p>
+                  <div className="mt-3 grid gap-2">
+                    {suggestedFixers.slice(0, 5).map((fixer) => (
+                      <div
+                        key={fixer.id}
+                        className="flex items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2"
+                      >
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-bold text-white">
+                            {fixer.business_name || fixer.trade_category}
+                          </p>
+                          <p className="mt-0.5 truncate text-xs text-white/55">
+                            {fixer.match_reasons.length ? fixer.match_reasons.join(" · ") : "No strong match signals"}
+                          </p>
+                        </div>
+                        <span
+                          className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-black ${
+                            fixer.match_score >= 60
+                              ? "bg-green-500/20 text-green-300"
+                              : fixer.match_score >= 30
+                                ? "bg-amber-500/20 text-amber-200"
+                                : "bg-white/10 text-white/55"
+                          }`}
+                        >
+                          {fixer.match_score}
+                        </span>
+                      </div>
+                    ))}
+                    {suggestedFixers.length ? null : (
+                      <p className="text-sm text-white/60">No Fixer profiles available to suggest yet.</p>
+                    )}
+                  </div>
+                </div>
+
                 <div className="mt-4 grid gap-3 md:grid-cols-2">
-                  <AssignTradieForm jobId={job.id} tradies={tradies} />
+                  <AssignTradieForm jobId={job.id} tradies={suggestedFixers} />
                   <JobStatusForm jobId={job.id} />
                 </div>
               </Card>

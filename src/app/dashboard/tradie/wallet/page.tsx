@@ -1,8 +1,12 @@
+import { redirect } from "next/navigation";
 import { Badge, Card, DashboardHeader, StatCard } from "@/components/ui";
 import { requireRole } from "@/lib/auth";
+import { fixerMarketplaceEnabled } from "@/lib/featureFlags";
 import { getTradieWallet } from "@/lib/jobs";
 
 export default async function TradieWalletPage() {
+  // Credit wallet is a marketplace surface; hidden until launch.
+  if (!fixerMarketplaceEnabled) redirect("/dashboard/tradie");
   const user = await requireRole(["tradie", "admin", "super_admin"]);
   const wallet = await getTradieWallet(user);
   const totalAvailable = wallet?.total_available ?? 0;

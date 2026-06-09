@@ -15,7 +15,7 @@ import {
   type AdminActionState
 } from "@/app/admin/actions";
 import { Button } from "@/components/ui";
-import type { AdminAssignableTradie } from "@/lib/jobs";
+import type { AdminAssignableTradie, AdminSuggestedFixer } from "@/lib/jobs";
 
 const initialState: AdminActionState = {};
 
@@ -64,7 +64,13 @@ export function JobStatusForm({ jobId }: { jobId: string }) {
   );
 }
 
-export function AssignTradieForm({ jobId, tradies = [] }: { jobId: string; tradies?: AdminAssignableTradie[] }) {
+export function AssignTradieForm({
+  jobId,
+  tradies = []
+}: {
+  jobId: string;
+  tradies?: (AdminAssignableTradie | AdminSuggestedFixer)[];
+}) {
   const [state, action, pending] = useActionState(assignTradieAction, initialState);
 
   return (
@@ -74,12 +80,16 @@ export function AssignTradieForm({ jobId, tradies = [] }: { jobId: string; tradi
       {tradies.length ? (
         <select name="tradieId" className="min-h-11 rounded-lg border border-white/10 bg-[#201915] px-3 text-white" required>
           <option value="">Choose Fixer</option>
-          {tradies.map((tradie) => (
-            <option key={tradie.id} value={tradie.id}>
-              {tradie.business_name || tradie.trade_category} - {tradie.trade_category}
-              {tradie.service_area ? ` - ${tradie.service_area}` : ""}
-            </option>
-          ))}
+          {tradies.map((tradie) => {
+            const score = "match_score" in tradie ? tradie.match_score : null;
+            return (
+              <option key={tradie.id} value={tradie.id}>
+                {score !== null ? `[${score}] ` : ""}
+                {tradie.business_name || tradie.trade_category} - {tradie.trade_category}
+                {tradie.service_area ? ` - ${tradie.service_area}` : ""}
+              </option>
+            );
+          })}
         </select>
       ) : (
         <input

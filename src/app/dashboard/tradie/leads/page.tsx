@@ -1,6 +1,8 @@
+import { redirect } from "next/navigation";
 import { Badge, Card, DashboardHeader, StatCard } from "@/components/ui";
 import { LeadCard } from "@/components/job-cards";
 import { requireRole } from "@/lib/auth";
+import { fixerMarketplaceEnabled } from "@/lib/featureFlags";
 import { getTradieLeads, getTradieWallet } from "@/lib/jobs";
 
 const claimMessages: Record<string, { tone: "green" | "red" | "amber"; message: string }> = {
@@ -15,6 +17,8 @@ const claimMessages: Record<string, { tone: "green" | "red" | "amber"; message: 
 };
 
 export default async function TradieLeadsPage({ searchParams }: { searchParams: Promise<{ claim?: string }> }) {
+  // The self-serve lead feed is part of the marketplace, which is off until launch.
+  if (!fixerMarketplaceEnabled) redirect("/dashboard/tradie/jobs");
   const [{ claim }, user] = await Promise.all([searchParams, requireRole(["tradie", "admin", "super_admin"])]);
   const [leads, wallet] = await Promise.all([getTradieLeads(user), getTradieWallet(user)]);
   const claimMessage = claim ? claimMessages[claim] : null;

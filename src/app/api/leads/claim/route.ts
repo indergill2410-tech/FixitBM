@@ -2,6 +2,7 @@ import { revalidatePath } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
 import { getCurrentAppUser } from "@/lib/auth";
 import { notifyLeadClaimed } from "@/lib/email";
+import { fixerMarketplaceEnabled } from "@/lib/featureFlags";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
 
@@ -15,6 +16,14 @@ export async function POST(request: NextRequest) {
   const jobId = String(formData.get("jobId") ?? "");
   const user = await getCurrentAppUser();
   const redirectUrl = new URL("/dashboard/tradie/leads", request.url);
+
+  // Self-serve lead claiming is disabled until the marketplace launches; work is
+  // dispatched by admins. Guard the endpoint so credits can never be spent early.
+  if (!fixerMarketplaceEnabled) {
+    redirectUrl.pathname = "/dashboard/tradie";
+    redirectUrl.searchParams.set("claim", "disabled");
+    return NextResponse.redirect(redirectUrl);
+  }
 
   if (!jobId || !user || user.role !== "tradie") {
     redirectUrl.searchParams.set("claim", "denied");

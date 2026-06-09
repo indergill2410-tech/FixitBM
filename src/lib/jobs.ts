@@ -275,6 +275,13 @@ export type AdminAssignableTradie = {
   verification_status: string | null;
 };
 
+export type AdminSuggestedFixer = AdminAssignableTradie & {
+  emergency_available: boolean;
+  rating: number | null;
+  match_score: number;
+  match_reasons: string[];
+};
+
 export type AdminJobDetail = JobDetail & {
   assigned_tradie_name: string | null;
   audit_logs: AdminAuditLog[];
@@ -1142,6 +1149,120 @@ export async function getAvailableTradiesForAdmin(): Promise<AdminAssignableTrad
     .limit(80);
 
   return (data ?? []) as AdminAssignableTradie[];
+}
+
+// Ranks Fixers for a specific request so admins can dispatch the right person:
+// trade match, service-area coverage, availability, emergency-readiness, and
+// verification all contribute a score with human-readable reasons. Emergency
+// requests bias hard toward emergency-ready, nearby, verified Fixers.
+export async function getSuggestedFixersForJob(
+  job: Pick<JobSummary, "category" | "title" | "urgency" | "suburb" | "postcode" | "state">
+): Promise<AdminSuggestedFixer[]> {
+  noStore();
+
+  if (!isSupabaseServerConfigured()) return [];
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return [];
+
+  const { data } = await supabase
+    .from("tradie_profiles")
+    .select(
+      "id, business_name, trade_category, service_area, availability_status, verification_status, emergency_available, rating"
+    )
+    .order("business_name", { ascending: true })
+    .limit(120);
+
+  const fixers = (data ?? []) as Array<
+    AdminAssignableTradie & { emergency_available: boolean | null; rating: number | null }
+  >;
+
+  const isEmergency = job.urgency === "emergency";
+  const tradeTokens = tokenize(`${job.category} ${job.title}`);
+  const suburb = (job.suburb ?? "").trim().toLowerCase();
+  const postcode = (job.postcode ?? "").trim().toLowerCase();
+
+  const scored: AdminSuggestedFixer[] = fixers.map((fixer) => {
+    const reasons: string[] = [];
+    let score = 0;
+
+    // Trade match — overlap between request keywords and the Fixer's trade.
+    const tradeText = (fixer.trade_category ?? "").toLowerCase();
+    const tradeMatched = tokenize(tradeText).some((token) => tradeTokens.includes(token));
+    if (tradeMatched && tradeText && tradeText !== "profile pending") {
+      score += 45;
+      reasons.push(`${titleCase(fixer.trade_category)} trade match`);
+    }
+
+    // Service area — does the Fixer cover this suburb / postcode?
+    const area = (fixer.service_area ?? "").toLowerCase();
+    if (area && suburb && area.includes(suburb)) {
+      score += 30;
+      reasons.push(`Services ${titleCase(job.suburb ?? "")}`);
+    } else if (area && postcode && area.includes(postcode)) {
+      score += 28;
+      reasons.push(`Covers ${postcode}`);
+    } else if (area && job.state && area.includes(job.state.toLowerCase())) {
+      score += 10;
+      reasons.push("Nearby area");
+    }
+
+    // Availability.
+    const available = (fixer.availability_status ?? "").toLowerCase();
+    if (["available", "online", "ready"].some((token) => available.includes(token))) {
+      score += 12;
+      reasons.push("Available now");
+    }
+
+    // Emergency readiness — decisive for emergency requests.
+    if (isEmergency) {
+      if (fixer.emergency_available) {
+        score += 25;
+        reasons.push("Emergency available");
+      } else {
+        score -= 20;
+      }
+    } else if (fixer.emergency_available) {
+      score += 4;
+    }
+
+    // Verification & reputation.
+    if ((fixer.verification_status ?? "").toLowerCase() === "verified") {
+      score += 12;
+      reasons.push("Verified profile");
+    }
+    if (typeof fixer.rating === "number" && fixer.rating >= 4) {
+      score += 6;
+      reasons.push(`${fixer.rating.toFixed(1)}★ rating`);
+    }
+
+    return {
+      id: fixer.id,
+      business_name: fixer.business_name,
+      trade_category: fixer.trade_category,
+      service_area: fixer.service_area,
+      availability_status: fixer.availability_status,
+      verification_status: fixer.verification_status,
+      emergency_available: Boolean(fixer.emergency_available),
+      rating: fixer.rating,
+      match_score: Math.max(0, Math.min(100, score)),
+      match_reasons: reasons
+    } satisfies AdminSuggestedFixer;
+  });
+
+  return scored.sort((a, b) => b.match_score - a.match_score);
+}
+
+function tokenize(value: string): string[] {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .split(/\s+/)
+    .filter((token) => token.length > 2);
+}
+
+function titleCase(value: string): string {
+  return value.replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
 export async function getAdminCustomers() {
