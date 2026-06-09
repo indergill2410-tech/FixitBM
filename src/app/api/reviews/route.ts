@@ -82,6 +82,19 @@ export async function POST(request: Request) {
 
   await supabase.from("jobs").update({ status: "reviewed" }).eq("id", job.id);
 
+  // Recompute and persist the fixer's aggregate rating
+  const { data: ratingRows } = await supabase
+    .from("reviews")
+    .select("rating")
+    .eq("reviewee_id", tradie.user_id);
+  if (ratingRows && ratingRows.length > 0) {
+    const avg = ratingRows.reduce((s, r) => s + r.rating, 0) / ratingRows.length;
+    await supabase
+      .from("tradie_profiles")
+      .update({ rating: Math.round(avg * 10) / 10 })
+      .eq("user_id", tradie.user_id);
+  }
+
   revalidatePath(`/dashboard/customer/jobs/${job.id}`);
   revalidatePath("/dashboard/customer/reviews");
   revalidatePath("/dashboard/tradie/reviews");
