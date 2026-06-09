@@ -76,9 +76,13 @@ async function upstashRateLimit({
 
     if (!response.ok) return null;
 
-    const results = (await response.json()) as { result: number }[];
-    const count = Number(results[0]?.result ?? 0);
-    const ttl = Number(results[2]?.result ?? windowMs);
+    const results = await response.json();
+    if (!Array.isArray(results) || results.length < 3) return null;
+
+    const count = Number(results[0]?.result);
+    const ttl = Number(results[2]?.result);
+    if (Number.isNaN(count) || Number.isNaN(ttl)) return null;
+
     const resetAt = Date.now() + (ttl > 0 ? ttl : windowMs);
 
     if (count > limit) {
