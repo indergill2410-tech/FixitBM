@@ -22,6 +22,7 @@ import {
   AgencyProfileForm,
   AgencyRulesForm
 } from "@/components/agency-dashboard-forms";
+import { EmailVerificationCard } from "@/components/email-verification-card";
 import { Badge, Button, Card, DashboardHeader } from "@/components/ui";
 import { requireRole } from "@/lib/auth";
 import {
@@ -44,6 +45,7 @@ export default async function AgencyDashboardPage() {
     <main className="premium-shell min-h-screen">
       <section className="container py-8">
         <DashboardHeader title={summary.agency ? displayName : "PropertySafe agency setup"} role="Agency portfolio" />
+        {user.email && !user.email_verified_at ? <EmailVerificationCard email={user.email} /> : null}
 
         <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
           <Card variant="dark" className="overflow-hidden p-6 md:p-8">

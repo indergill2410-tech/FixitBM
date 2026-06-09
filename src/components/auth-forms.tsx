@@ -69,7 +69,7 @@ function ResendConfirmationForm({ email }: { email: string }) {
       <div>
         <p className="text-sm font-black text-[var(--text)]">Need the confirmation link?</p>
         <p className="mt-1 text-xs font-semibold leading-5 text-[var(--text3)]">
-          Supabase sends this verification email separately from the Fixit welcome email.
+          Fixit247 sends this verification email separately from the welcome email.
         </p>
       </div>
       <Input name="email" label="Email" type="email" defaultValue={state.email || email} />

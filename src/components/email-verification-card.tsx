@@ -24,7 +24,7 @@ export function EmailVerificationCard({ email }: { email: string }) {
   }
 
   return (
-    <Card className="mt-5 border-amber-200 bg-amber-50">
+    <Card className="my-5 border-amber-200 bg-amber-50">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex gap-3">
           <MailCheck className="mt-1 shrink-0 text-[var(--amber2)]" size={20} />
