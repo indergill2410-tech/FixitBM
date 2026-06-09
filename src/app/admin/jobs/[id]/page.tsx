@@ -1,12 +1,22 @@
 import Image from "next/image";
 import { Card, DashboardHeader } from "@/components/ui";
 import { formatJobLocation, getAdminJobDetail, getSuggestedFixersForJob, statusLabel } from "@/lib/jobs";
-import { AssignTradieForm, JobStatusForm } from "@/components/admin-action-forms";
+import { AssignTradieForm, FixerPayoutForm, JobStatusForm } from "@/components/admin-action-forms";
+import { getConnectAccount } from "@/lib/connect";
+
+const payoutEligibleStatuses = new Set(["work_in_progress", "completed", "reviewed"]);
 
 export default async function AdminJobDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const job = await getAdminJobDetail(id);
   const suggestedFixers = job ? await getSuggestedFixersForJob(job) : [];
+
+  const showPayoutForm =
+    job?.assigned_tradie_id != null && payoutEligibleStatuses.has(job?.status ?? "");
+  const payoutAccount =
+    showPayoutForm && job?.assigned_tradie_id
+      ? await getConnectAccount(job.assigned_tradie_id)
+      : null;
 
   return (
     <main className="premium-shell min-h-screen text-[var(--text)]">
@@ -84,6 +94,13 @@ export default async function AdminJobDetailPage({ params }: { params: Promise<{
                   <AssignTradieForm jobId={job.id} tradies={suggestedFixers} />
                   <JobStatusForm jobId={job.id} />
                 </div>
+                {showPayoutForm && job.assigned_tradie_id ? (
+                  <FixerPayoutForm
+                    jobId={job.id}
+                    tradieId={job.assigned_tradie_id}
+                    payoutsEnabled={payoutAccount?.payouts_enabled ?? false}
+                  />
+                ) : null}
               </Card>
 
               <Card>
