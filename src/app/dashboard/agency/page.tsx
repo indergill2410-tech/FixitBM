@@ -30,8 +30,10 @@ import { CrmIntegrationForm } from "@/components/crm-integration-form";
 import { requireRole } from "@/lib/auth";
 import { getCrmIntegrationForOwner } from "@/lib/crm";
 import {
+  getAgencyComplianceOverview,
   getAgencyDashboard,
   getAgencySubscription,
+  type AgencyComplianceOverview,
   type AgencyDashboardSummary,
   type AgencyManagedProperty,
   type AgencyOwnerInvite
@@ -41,10 +43,11 @@ export const dynamic = "force-dynamic";
 
 export default async function AgencyDashboardPage() {
   const user = await requireRole(["agency", "admin", "super_admin"]);
-  const [summary, subscription, crmIntegration] = await Promise.all([
+  const [summary, subscription, crmIntegration, compliance] = await Promise.all([
     getAgencyDashboard(user),
     getAgencySubscription(user),
-    getCrmIntegrationForOwner(user.id)
+    getCrmIntegrationForOwner(user.id),
+    getAgencyComplianceOverview(user)
   ]);
   const canManage = summary.memberRole !== "viewer";
   const displayName = summary.agency?.name ?? "PropertySafe agency setup";
@@ -158,6 +161,8 @@ export default async function AgencyDashboardPage() {
             tone={summary.stats.urgent ? "red" : "green"}
           />
         </section>
+
+        {compliance.total ? <ComplianceOverview compliance={compliance} /> : null}
 
         <section className="mt-5 grid gap-5 xl:grid-cols-[.62fr_.38fr]">
           <Card>
@@ -342,6 +347,77 @@ export default async function AgencyDashboardPage() {
         </section>
       </section>
     </main>
+  );
+}
+
+function ComplianceOverview({ compliance }: { compliance: AgencyComplianceOverview }) {
+  const cards: { label: string; value: number; tone: "red" | "amber" | "green" | "gray"; detail: string }[] = [
+    { label: "Overdue", value: compliance.overdue, tone: "red", detail: "Action needed now" },
+    { label: "Due within 30 days", value: compliance.dueSoon, tone: "amber", detail: "Schedule a check" },
+    { label: "Compliant", value: compliance.compliant, tone: "green", detail: "Up to date" },
+    { label: "Not assessed", value: compliance.notAssessed, tone: "gray", detail: "No check on record" }
+  ];
+
+  return (
+    <section className="mt-5">
+      <Card>
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <Badge tone={compliance.overdue ? "red" : "green"}>Compliance</Badge>
+            <h2 className="mt-3 text-2xl font-black tracking-tight">Rental compliance across your portfolio</h2>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text2)]">
+              Smoke (annual), gas &amp; electrical (every 2 years) and minimum standards, tracked by statutory review
+              date. The properties that need action are listed first.
+            </p>
+          </div>
+          <Button href="/dashboard/customer/safety-checks/book" variant="ghost">
+            Book a compliance check
+            <ArrowRight size={16} />
+          </Button>
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {cards.map((card) => (
+            <div key={card.label} className="rounded-2xl border border-[var(--border)] bg-[var(--bg)] p-4">
+              <p className={`text-3xl font-black ${card.value && card.tone === "red" ? "text-[var(--red)]" : card.value && card.tone === "amber" ? "text-[var(--amber2)]" : card.tone === "green" ? "text-[var(--green)]" : "text-[var(--text3)]"}`}>
+                {card.value}
+              </p>
+              <p className="mt-1 text-xs font-black uppercase tracking-wide text-[var(--text3)]">{card.label}</p>
+              <p className="mt-1 text-xs text-[var(--text2)]">{card.detail}</p>
+            </div>
+          ))}
+        </div>
+
+        {compliance.rows.some((row) => row.bucket === "overdue" || row.bucket === "due_soon") ? (
+          <div className="mt-5 grid gap-2">
+            {compliance.rows
+              .filter((row) => row.bucket === "overdue" || row.bucket === "due_soon")
+              .slice(0, 6)
+              .map((row) => (
+                <div
+                  key={`${row.property_label}-${row.location}`}
+                  className="flex flex-col gap-1 rounded-xl border border-[var(--border)] bg-white p-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <p className="text-sm font-black">{row.property_label}</p>
+                    <p className="text-xs text-[var(--text2)]">{row.location}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {row.next_review_at ? (
+                      <span className="text-xs font-bold text-[var(--text3)]">
+                        Review {new Date(row.next_review_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
+                      </span>
+                    ) : null}
+                    <Badge tone={row.bucket === "overdue" ? "red" : "amber"}>
+                      {row.bucket === "overdue" ? "Overdue" : "Due soon"}
+                    </Badge>
+                  </div>
+                </div>
+              ))}
+          </div>
+        ) : null}
+      </Card>
+    </section>
   );
 }
 
