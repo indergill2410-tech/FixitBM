@@ -199,7 +199,11 @@ export default function PropertySafePage() {
         </Card>
       </section>
       <PublicFooter />
-      <MobileBottomActionBar />
+      <MobileBottomActionBar
+        href="/dashboard/customer/safety-checks/book"
+        label="Book a compliance check"
+        icon={ClipboardCheck}
+      />
     </main>
   );
 }

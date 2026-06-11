@@ -170,13 +170,14 @@ export function RecommendedFixesCard({ summary }: { summary: HomeProtectionSumma
 }
 
 export function HomeProfileReadinessCard({ summary }: { summary: HomeProtectionSummary }) {
-  const checklist = [
-    ["Property address saved", summary.properties.length > 0],
+  // Every item is derived from real account data — no permanently-false rows.
+  const checklist: [string, boolean][] = [
+    ["Property address saved", summary.properties.some((property) => Boolean(property.address))],
     ["Default home selected", summary.properties.some((property) => property.is_default)],
-    ["Main water shutoff location saved", false],
-    ["Switchboard location saved", false],
-    ["Emergency access notes saved", false],
-    ["Photos of key utility locations uploaded", false]
+    ["Fixit Plus protection active", summary.membership?.status === "active"],
+    ["Vehicle saved for roadside help", summary.vehicles.length > 0],
+    ["First Safety Check completed", summary.safetyChecks.some((check) => check.status === "completed")],
+    ["A request started before", summary.requestCount > 0]
   ];
 
   return (

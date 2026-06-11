@@ -150,4 +150,47 @@ textarea {
   .container {
     width: min(100% - 24px, 1180px);
   }
+
+  /* iOS Safari zooms the page when a focused control is under 16px. */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+
+/* Fixed bottom bars must clear the iPhone home indicator. */
+.safe-bottom {
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+}
+
+.pb-tabbar {
+  padding-bottom: calc(76px + env(safe-area-inset-bottom));
+}
+
+@keyframes drawer-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.drawer-panel {
+  animation: drawer-in 0.18s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .drawer-panel {
+    animation: none;
+  }
+  .app-button {
+    transition: none;
+  }
 }

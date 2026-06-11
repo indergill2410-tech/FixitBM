@@ -44,17 +44,17 @@ export default function HomePage() {
             Free to post a request. Move the repair now. Keep the record for later.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Button href="/post-job">
-              Get help now
+            <Button href="/post-job" className="min-h-13 px-7 text-base">
+              Get help now — free
               <ArrowRight size={17} />
-            </Button>
-            <Button href="/propertysafe" variant="ghost">
-              PropertySafe
             </Button>
             <Button href="/fixit-plus" variant="ghost">
               Join Fixit Plus
             </Button>
           </div>
+          <p className="mt-4 text-sm font-semibold text-[var(--text2)]">
+            Verified Fixers · 24/7 requests · No account needed to start
+          </p>
           <div className="mt-8">
             <TrustStrip />
           </div>
