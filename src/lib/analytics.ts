@@ -68,7 +68,7 @@ export async function getFunnelSummary(days = 30): Promise<FunnelSummary> {
 
     if (row.event === "wizard_step") {
       const step = Number(props.step);
-      if (step >= 1 && step <= 3) stepSessions[step].add(session);
+      if (step === 1 || step === 2 || step === 3) stepSessions[step].add(session);
     }
 
     if (row.event === "wizard_submit") {
