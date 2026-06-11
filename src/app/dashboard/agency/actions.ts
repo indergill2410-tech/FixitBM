@@ -44,6 +44,14 @@ const ownerInviteSchema = z.object({
   accessLevel: z.enum(["view_record", "request_work", "manage_record"])
 });
 
+const crmSchema = z.object({
+  provider: z.enum(["property_me", "property_tree"]),
+  accountId: z.string().trim().max(120).optional(),
+  apiKey: z.string().trim().max(400).optional(),
+  baseUrl: z.string().trim().url().max(400).optional().or(z.literal("")),
+  status: z.enum(["active", "paused"])
+});
+
 const rulesSchema = z.object({
   ownerUpdatePolicy: z.enum(["urgent_only", "urgent_and_recommended", "all_requests"]),
   defaultContactMethod: z.enum(["email", "phone", "sms"]),
@@ -362,6 +370,64 @@ export async function saveAgencyRulesAction(_state: AgencyActionState, formData:
 
   revalidateAgencyPaths();
   return { ok: true, message: "Maintenance preferences saved. The agency setup is ready." };
+}
+
+export async function saveCrmIntegrationAction(_state: AgencyActionState, formData: FormData): Promise<AgencyActionState> {
+  const { user, supabase } = await getAgencyActionContext();
+  if (!supabase) return configError();
+
+  const parsed = crmSchema.safeParse({
+    provider: formData.get("provider"),
+    accountId: formData.get("accountId") || undefined,
+    apiKey: formData.get("apiKey") || undefined,
+    baseUrl: formData.get("baseUrl") || "",
+    status: formData.get("status")
+  });
+
+  if (!parsed.success) {
+    return { ok: false, message: "Choose a provider and a valid endpoint URL." };
+  }
+
+  const agency = await getWritableAgency(supabase, user);
+
+  const { data: existing } = await supabase
+    .from("crm_integrations")
+    .select("id, api_key")
+    .eq("owner_user_id", user.id)
+    .eq("provider", parsed.data.provider)
+    .maybeSingle();
+
+  // Keep the stored key when the field is left blank on update.
+  const apiKey = parsed.data.apiKey ? parsed.data.apiKey : existing?.api_key ?? null;
+
+  const patch = {
+    owner_user_id: user.id,
+    agency_id: agency?.id ?? null,
+    provider: parsed.data.provider,
+    account_id: parsed.data.accountId || null,
+    api_key: apiKey,
+    base_url: parsed.data.baseUrl || null,
+    status: parsed.data.status
+  };
+
+  const { data: integration, error } = existing
+    ? await supabase.from("crm_integrations").update(patch).eq("id", existing.id).select("id").single()
+    : await supabase.from("crm_integrations").insert(patch).select("id").single();
+
+  if (error || !integration) {
+    return { ok: false, message: error?.message ?? "CRM connection could not be saved." };
+  }
+
+  await supabase.from("audit_logs").insert({
+    actor_id: user.id,
+    action: "update_crm_integration",
+    entity_type: "crm_integration",
+    entity_id: integration.id,
+    metadata: { provider: parsed.data.provider, status: parsed.data.status }
+  });
+
+  revalidateAgencyPaths();
+  return { ok: true, message: "CRM connection saved." };
 }
 
 async function getWritableAgency(supabase: SupabaseAdmin, user: AppUser) {

@@ -11,9 +11,10 @@ import {
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabasePublicConfigured, isSupabaseServerConfigured } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { safetyCheckPhotoBucket } from "@/lib/uploads";
 
 export const safetyCheckDisclaimer =
-  "The Fixit247 Safety Check is a visual home safety and readiness check designed to help identify visible concerns, maintenance needs, and emergency preparation gaps. It is not a building inspection, electrical certificate, gas compliance certificate, pest inspection, insurance assessment, or mechanical inspection. Specialist inspections, compliance certificates, repairs, parts, labour, towing, trade work, renovations, and specialist services are quoted separately unless specifically included.";
+  "Fixit247 rental compliance and Safety Checks record the inspection results captured by the attending inspector against the relevant rental minimum standards. Regulated gas and electrical work must be carried out and certified by appropriately licensed tradespeople, and any specialist rectification, repairs, parts, labour, or trade work is quoted separately unless specifically included. Pricing and statutory requirements vary by state.";
 
 export const activationCopy =
   "To keep Fixit Plus fair for every member, benefits activate after 72 hours. Existing emergencies can still be started free and handled as pay-as-you-go requests.";
@@ -54,6 +55,16 @@ export type SafetyCheckState = "free_user" | "pending_activation" | "available_t
 export type SafetyCheckStatus = "due" | "booked" | "assigned" | "completed" | "cancelled" | "overdue";
 export type SafetyCheckType = "home" | "home_and_road" | "digital";
 
+export type ComplianceResult = "pass" | "fail" | "action_required" | "not_applicable";
+
+export type CategoryResult = {
+  label: string;
+  result: ComplianceResult;
+  next_due_at: string | null;
+  items_total: number;
+  items_failed: number;
+};
+
 export type SafetyCheckRecord = {
   id: string;
   customer_id: string;
@@ -61,7 +72,8 @@ export type SafetyCheckRecord = {
   property_id: string | null;
   assigned_fixer_id: string | null;
   status: SafetyCheckStatus;
-  check_type: SafetyCheckType;
+  check_type: SafetyCheckType | string;
+  requested_categories: string[] | null;
   preferred_window: string | null;
   customer_notes: string | null;
   scheduled_at: string | null;
@@ -70,6 +82,12 @@ export type SafetyCheckRecord = {
   score_before: number | null;
   score_after: number | null;
   summary: string | null;
+  compliance_result: ComplianceResult | null;
+  category_results: Record<string, CategoryResult> | null;
+  inspector_name: string | null;
+  inspector_licence_no: string | null;
+  certificate_number: string | null;
+  certificate_issued_at: string | null;
   report_published_at: string | null;
   created_at: string;
   updated_at: string;
@@ -79,10 +97,20 @@ export type SafetyCheckItem = {
   id: string;
   safety_check_id: string;
   category: string;
+  category_key: string | null;
   label: string;
-  status: "ok" | "attention" | "recommended" | "not_checked";
+  status: "ok" | "attention" | "recommended" | "not_checked" | "pass" | "fail" | "action_required" | "na";
   notes: string | null;
+  is_critical: boolean;
   created_at: string;
+};
+
+export type SafetyCheckPhoto = {
+  id: string;
+  category_key: string | null;
+  caption: string | null;
+  file_name: string | null;
+  signed_url: string | null;
 };
 
 export type SafetyCheckRecommendation = {
@@ -114,6 +142,7 @@ export type CustomerSafetyCheckDetail = SafetyCheckRecord & {
   property: SavedProperty | null;
   items: SafetyCheckItem[];
   recommendations: SafetyCheckRecommendation[];
+  photos: SafetyCheckPhoto[];
 };
 
 export type AdminSafetyCheckRow = SafetyCheckRecord & {
@@ -348,10 +377,10 @@ export async function getCustomerSafetyCheckDetail(user: AppUser, id: string): P
 
   if (error || !check) return null;
 
-  const [{ data: items }, { data: recommendations }, properties] = await Promise.all([
+  const [{ data: items }, { data: recommendations }, { data: photoRows }, properties] = await Promise.all([
     supabase
       .from("safety_check_items")
-      .select("id, safety_check_id, category, label, status, notes, created_at")
+      .select("id, safety_check_id, category, category_key, label, status, notes, is_critical, created_at")
       .eq("safety_check_id", id)
       .order("created_at", { ascending: true }),
     supabase
@@ -359,15 +388,51 @@ export async function getCustomerSafetyCheckDetail(user: AppUser, id: string): P
       .select(recommendationSelect)
       .eq("safety_check_id", id)
       .order("created_at", { ascending: false }),
+    supabase
+      .from("safety_check_photos")
+      .select("id, file_url, file_name, category_key, caption, created_at")
+      .eq("safety_check_id", id)
+      .order("created_at", { ascending: true }),
     getCustomerSavedProperties(user)
   ]);
+
+  const photos = await signSafetyCheckPhotos(photoRows ?? []);
 
   return {
     ...(check as SafetyCheckRecord),
     property: properties.find((property) => property.id === check.property_id) ?? null,
     items: (items ?? []) as SafetyCheckItem[],
-    recommendations: (recommendations ?? []) as SafetyCheckRecommendation[]
+    recommendations: (recommendations ?? []) as SafetyCheckRecommendation[],
+    photos
   };
+}
+
+async function signSafetyCheckPhotos(
+  rows: { id: string; file_url: string; file_name: string | null; category_key: string | null; caption: string | null }[]
+): Promise<SafetyCheckPhoto[]> {
+  if (!rows.length || !isSupabaseServerConfigured()) {
+    return rows.map((row) => ({
+      id: row.id,
+      category_key: row.category_key,
+      caption: row.caption,
+      file_name: row.file_name,
+      signed_url: null
+    }));
+  }
+
+  const admin = createSupabaseAdminClient();
+  return Promise.all(
+    rows.map(async (row) => {
+      const signed = admin ? await admin.storage.from(safetyCheckPhotoBucket).createSignedUrl(row.file_url, 60 * 60) : null;
+      return {
+        id: row.id,
+        category_key: row.category_key,
+        caption: row.caption,
+        file_name: row.file_name,
+        signed_url: signed?.data?.signedUrl ?? null
+      };
+    })
+  );
 }
 
 export async function getAdminSafetyCheckQueue(): Promise<AdminSafetyCheckRow[]> {
@@ -478,7 +543,7 @@ function formatSafetyCheckProperty(property?: Partial<SavedProperty> | null) {
 }
 
 const safetyCheckSelect =
-  "id, customer_id, membership_id, property_id, assigned_fixer_id, status, check_type, preferred_window, customer_notes, scheduled_at, completed_at, next_due_at, score_before, score_after, summary, report_published_at, created_at, updated_at";
+  "id, customer_id, membership_id, property_id, assigned_fixer_id, status, check_type, requested_categories, preferred_window, customer_notes, scheduled_at, completed_at, next_due_at, score_before, score_after, summary, compliance_result, category_results, inspector_name, inspector_licence_no, certificate_number, certificate_issued_at, report_published_at, created_at, updated_at";
 
 const recommendationSelect =
   "id, safety_check_id, customer_id, property_id, title, category, priority, description, estimated_trade_type, status, linked_job_id, created_at, updated_at";

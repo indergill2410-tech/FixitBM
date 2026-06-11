@@ -65,7 +65,11 @@ export default async function AdminSafetyChecksPage() {
                           <Badge tone="blue">Report builder</Badge>
                           <p className="mt-2 text-sm text-[var(--text2)]">Publish checklist results, readiness score, and follow-up recommendations.</p>
                         </div>
-                        <SafetyCheckReportForm safetyCheckId={check.id} />
+                        <SafetyCheckReportForm
+                          safetyCheckId={check.id}
+                          checkType={check.check_type}
+                          requestedCategories={check.requested_categories ?? []}
+                        />
                       </div>
                     ) : null}
                   </div>

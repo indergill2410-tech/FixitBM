@@ -98,7 +98,7 @@ export type AdminPropertySafeProfileRow = {
 type PropertySafeReportItem = {
   category: string;
   label: string;
-  status: "ok" | "attention" | "recommended" | "not_checked";
+  status: "ok" | "attention" | "recommended" | "not_checked" | "pass" | "fail" | "action_required" | "na";
   notes: string | null;
 };
 
@@ -118,6 +118,9 @@ type PropertySafeReportSyncInput = {
   scoreBefore: number;
   scoreAfter: number;
   summary: string;
+  assessmentType?: string;
+  complianceResult?: string | null;
+  certificateNumber?: string | null;
   items: PropertySafeReportItem[];
   recommendations: PropertySafeReportRecommendation[];
   publishedAt: string;
@@ -266,11 +269,13 @@ export async function syncPropertySafeFromSafetyCheckReport(input: PropertySafeR
   const assessmentPatch = {
     propertysafe_profile_id: profile.id,
     source_safety_check_id: input.safetyCheckId,
-    assessment_type: "six_month",
+    assessment_type: input.assessmentType ?? "six_month",
     status: "published",
     score_before: input.scoreBefore,
     score_after: input.scoreAfter,
     summary: input.summary,
+    compliance_result: input.complianceResult ?? null,
+    certificate_number: input.certificateNumber ?? null,
     published_at: input.publishedAt,
     next_review_at: input.nextReviewAt
   };
@@ -297,13 +302,15 @@ export async function syncPropertySafeFromSafetyCheckReport(input: PropertySafeR
     supabase.from("propertysafe_recommendations").delete().eq("assessment_id", assessment.id)
   ]);
 
+  const findingStatuses = new Set(["attention", "recommended", "fail", "action_required"]);
+  const highSeverityStatuses = new Set(["attention", "fail"]);
   const findings = input.items
-    .filter((item) => item.status === "attention" || item.status === "recommended")
+    .filter((item) => findingStatuses.has(item.status))
     .map((item) => ({
       assessment_id: assessment.id,
       category: item.category,
       title: item.label,
-      severity: item.status === "attention" ? "high" : "medium",
+      severity: highSeverityStatuses.has(item.status) ? "high" : "medium",
       notes: item.notes,
       status: "open"
     }));

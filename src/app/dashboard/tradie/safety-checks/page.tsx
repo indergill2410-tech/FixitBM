@@ -56,7 +56,11 @@ export default async function TradieSafetyChecksPage() {
                       Back to work hub
                     </Button>
                   </div>
-                  <SafetyCheckReportForm safetyCheckId={check.id} />
+                  <SafetyCheckReportForm
+                    safetyCheckId={check.id}
+                    checkType={check.check_type}
+                    requestedCategories={check.requested_categories ?? []}
+                  />
                 </div>
               </Card>
             ))
