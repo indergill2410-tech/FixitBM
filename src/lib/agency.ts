@@ -195,6 +195,122 @@ export async function getAgencyAccessForUser(user: AppUser): Promise<AgencyAcces
   };
 }
 
+export type AgencyComplianceRow = {
+  property_label: string;
+  location: string;
+  result: "pass" | "fail" | "action_required" | "not_applicable" | null;
+  next_review_at: string | null;
+  last_assessed_at: string | null;
+  bucket: "overdue" | "due_soon" | "compliant" | "not_assessed";
+};
+
+export type AgencyComplianceOverview = {
+  overdue: number;
+  dueSoon: number;
+  compliant: number;
+  notAssessed: number;
+  total: number;
+  rows: AgencyComplianceRow[];
+};
+
+// Portfolio compliance view — the agency's core "what needs attention now"
+// question. Reads each managed property's linked PropertySafe profile and its
+// latest published assessment to bucket by statutory review date.
+export async function getAgencyComplianceOverview(user: AppUser): Promise<AgencyComplianceOverview> {
+  noStore();
+
+  const empty: AgencyComplianceOverview = { overdue: 0, dueSoon: 0, compliant: 0, notAssessed: 0, total: 0, rows: [] };
+  if (!isSupabaseServerConfigured()) return empty;
+
+  const supabase = createSupabaseAdminClient();
+  if (!supabase) return empty;
+
+  const { agency } = await getAgencyAccessForUser(user);
+  if (!agency) return empty;
+
+  const { data: properties } = await supabase
+    .from("agency_managed_properties")
+    .select("label, address, suburb, postcode, state, propertysafe_profile_id")
+    .eq("agency_id", agency.id);
+
+  const rowsBase = (properties ?? []) as {
+    label: string;
+    address: string;
+    suburb: string | null;
+    postcode: string | null;
+    state: string | null;
+    propertysafe_profile_id: string | null;
+  }[];
+  if (!rowsBase.length) return empty;
+
+  const profileIds = rowsBase.map((row) => row.propertysafe_profile_id).filter((id): id is string => Boolean(id));
+
+  const [{ data: profiles }, { data: assessments }] = await Promise.all([
+    profileIds.length
+      ? supabase.from("propertysafe_profiles").select("id, next_review_at, last_assessed_at").in("id", profileIds)
+      : Promise.resolve({ data: [] }),
+    profileIds.length
+      ? supabase
+          .from("propertysafe_assessments")
+          .select("propertysafe_profile_id, compliance_result, published_at")
+          .in("propertysafe_profile_id", profileIds)
+          .eq("status", "published")
+          .order("published_at", { ascending: false, nullsFirst: false })
+      : Promise.resolve({ data: [] })
+  ]);
+
+  const profileById = new Map((profiles ?? []).map((profile) => [profile.id as string, profile]));
+  const latestResultByProfile = new Map<string, string | null>();
+  (assessments ?? []).forEach((assessment) => {
+    if (!latestResultByProfile.has(assessment.propertysafe_profile_id)) {
+      latestResultByProfile.set(assessment.propertysafe_profile_id, assessment.compliance_result ?? null);
+    }
+  });
+
+  const now = Date.now();
+  const soonWindow = now + 30 * 24 * 60 * 60 * 1000;
+  const overview: AgencyComplianceOverview = { ...empty, total: rowsBase.length, rows: [] };
+
+  for (const base of rowsBase) {
+    const profile = base.propertysafe_profile_id ? profileById.get(base.propertysafe_profile_id) : null;
+    const result = (base.propertysafe_profile_id ? latestResultByProfile.get(base.propertysafe_profile_id) : null) as
+      | AgencyComplianceRow["result"]
+      | undefined;
+    const nextReview = profile?.next_review_at ?? null;
+    const reviewTime = nextReview ? new Date(nextReview).getTime() : null;
+
+    let bucket: AgencyComplianceRow["bucket"];
+    if (!profile || (!profile.last_assessed_at && !result)) {
+      bucket = "not_assessed";
+      overview.notAssessed += 1;
+    } else if (result === "fail" || result === "action_required" || (reviewTime !== null && reviewTime < now)) {
+      bucket = "overdue";
+      overview.overdue += 1;
+    } else if (reviewTime !== null && reviewTime <= soonWindow) {
+      bucket = "due_soon";
+      overview.dueSoon += 1;
+    } else {
+      bucket = "compliant";
+      overview.compliant += 1;
+    }
+
+    overview.rows.push({
+      property_label: base.label,
+      location: [base.suburb, base.postcode, base.state].filter(Boolean).join(" ") || base.address,
+      result: result ?? null,
+      next_review_at: nextReview,
+      last_assessed_at: profile?.last_assessed_at ?? null,
+      bucket
+    });
+  }
+
+  // Surface the properties that need action first.
+  const order: Record<AgencyComplianceRow["bucket"], number> = { overdue: 0, due_soon: 1, not_assessed: 2, compliant: 3 };
+  overview.rows.sort((a, b) => order[a.bucket] - order[b.bucket]);
+
+  return overview;
+}
+
 export async function getAgencyDashboard(user: AppUser): Promise<AgencyDashboardSummary> {
   noStore();
 
