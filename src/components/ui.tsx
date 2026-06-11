@@ -1,8 +1,9 @@
 import { clsx } from "clsx";
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { ArrowRight, Bell, LayoutDashboard, Menu, ShieldCheck, UserCircle, Zap } from "lucide-react";
+import { ArrowRight, LayoutDashboard, ShieldCheck, UserCircle, Zap } from "lucide-react";
 import { FixitMark } from "@/components/brand";
+import { MobileNavDrawer } from "@/components/mobile-nav";
 import { SignOutForm } from "@/components/sign-out-form";
 
 type ButtonProps = {
@@ -95,32 +96,7 @@ export function PublicHeader() {
           <Button href="/post-job" className="min-h-10 px-3 text-xs sm:px-4 sm:text-sm">
             Help now
           </Button>
-        <details className="group">
-          <summary className="flex h-10 w-10 list-none items-center justify-center rounded-lg border border-[var(--border)] bg-white">
-            <Menu size={18} />
-          </summary>
-          <div className="absolute left-3 right-3 top-[72px] grid gap-2 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-lg)]">
-            {navItems.map(([label, href]) => (
-              <Link key={href} href={href} className="rounded-xl bg-[var(--bg)] px-4 py-3 text-sm font-bold text-[var(--text2)]">
-                {label}
-              </Link>
-            ))}
-            {mobileInfoLinks.map(([label, href]) => (
-              <Link key={href} href={href} className="rounded-xl bg-white px-4 py-3 text-sm font-semibold text-[var(--text2)]">
-                {label}
-              </Link>
-            ))}
-            <Link href="/become-a-fixer" className="rounded-xl bg-[var(--bg)] px-4 py-3 text-sm font-bold text-[var(--text2)]">
-              Become a Fixer
-            </Link>
-            <Link href="/dashboard" className="rounded-xl bg-[var(--bg)] px-4 py-3 text-sm font-bold text-[var(--text2)]">
-              Account
-            </Link>
-            <Button href="/post-job" className="w-full">
-              Get help now
-            </Button>
-          </div>
-        </details>
+          <MobileNavDrawer navItems={navItems} infoLinks={mobileInfoLinks} />
         </div>
       </div>
     </header>
@@ -210,12 +186,20 @@ export function PublicFooter() {
   );
 }
 
-export function MobileBottomActionBar() {
+export function MobileBottomActionBar({
+  href = "/post-job",
+  label = "Get emergency help now",
+  icon: Icon = Zap
+}: {
+  href?: string;
+  label?: string;
+  icon?: LucideIcon;
+}) {
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-[var(--border)] bg-white/95 p-3 shadow-[0_-12px_30px_rgba(30,26,23,.08)] backdrop-blur md:hidden">
-      <Button href="/post-job" className="w-full">
-        <Zap size={17} />
-        Get emergency help now
+    <div className="safe-bottom fixed inset-x-0 bottom-0 z-50 border-t border-[var(--border)] bg-white/95 px-3 pt-3 shadow-[0_-12px_30px_rgba(30,26,23,.08)] backdrop-blur md:hidden">
+      <Button href={href} className="w-full">
+        <Icon size={17} />
+        {label}
       </Button>
     </div>
   );
@@ -315,10 +299,6 @@ export function DashboardHeader({ title, role }: { title: string; role: string }
         <h1 className="mt-3 text-3xl font-black tracking-tight">{title}</h1>
       </div>
       <div className="ml-auto flex items-center gap-2">
-        <button className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-white shadow-[var(--shadow)]">
-          <Bell size={17} />
-          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[var(--red)]" />
-        </button>
         <details className="group relative">
           <summary className="flex h-10 list-none items-center gap-2 rounded-xl border border-[var(--border)] bg-white px-3 text-sm font-black shadow-[var(--shadow)] transition hover:border-amber-200">
             <UserCircle size={17} />

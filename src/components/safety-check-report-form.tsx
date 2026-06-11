@@ -118,20 +118,30 @@ export function SafetyCheckReportForm({
         />
       </label>
 
-      {categories.map((category) => {
+      {categories.map((category, categoryIndex) => {
         const statuses = statusesForCategory(category);
         const defaultStatus = defaultStatusFor(category);
         return (
-          <fieldset key={category.key} className="grid gap-3 rounded-xl border border-[var(--border)] bg-white p-4">
-            <div>
-              <p className="text-sm font-black text-[var(--text)]">{category.label}</p>
-              <p className="mt-1 text-xs leading-5 text-[var(--text3)]">
-                {category.frequencyLabel} · {category.regulatoryNote}
-              </p>
-              {category.requiresLicence ? (
-                <p className="mt-1 text-xs font-bold text-[var(--amber2)]">Requires a {category.licenceTrade}.</p>
-              ) : null}
-            </div>
+          <details
+            key={category.key}
+            open={categoryIndex === 0 || categories.length === 1}
+            className="group rounded-xl border border-[var(--border)] bg-white"
+          >
+            <summary className="focus-ring flex cursor-pointer list-none items-center justify-between gap-3 p-4">
+              <div>
+                <p className="text-sm font-black text-[var(--text)]">{category.label}</p>
+                <p className="mt-1 text-xs leading-5 text-[var(--text3)]">
+                  {category.frequencyLabel} · {category.items.length} items
+                </p>
+                {category.requiresLicence ? (
+                  <p className="mt-1 text-xs font-bold text-[var(--amber2)]">Requires a {category.licenceTrade}.</p>
+                ) : null}
+              </div>
+              <span className="shrink-0 text-xs font-black text-[var(--text3)] group-open:hidden">Open</span>
+              <span className="hidden shrink-0 text-xs font-black text-[var(--text3)] group-open:inline">Close</span>
+            </summary>
+            <div className="grid gap-3 px-4 pb-4">
+            <p className="text-xs leading-5 text-[var(--text3)]">{category.regulatoryNote}</p>
             {category.items.map((item) => (
               <div key={item.key} className="grid gap-2 rounded-lg border border-[var(--border)] bg-[var(--bg2)] p-3">
                 <input type="hidden" name="itemCategory" value={category.key} />
@@ -153,7 +163,8 @@ export function SafetyCheckReportForm({
                 </div>
               </div>
             ))}
-          </fieldset>
+            </div>
+          </details>
         );
       })}
 
@@ -182,7 +193,11 @@ export function SafetyCheckReportForm({
           ? "Publishing issues a compliance certificate and updates the PropertySafe record. Critical failures set the result to non-compliant."
           : "Publishing updates the member's readiness report and PropertySafe record."}
       </p>
-      <Button disabled={pending}>{pending ? "Publishing…" : isCompliance ? "Publish compliance report & certificate" : "Publish Safety Check report"}</Button>
+      <div className="safe-bottom sticky bottom-0 -mx-4 -mb-4 border-t border-[var(--border)] bg-[var(--bg2)] px-4 pt-3">
+        <Button disabled={pending} className="w-full">
+          {pending ? "Publishing…" : isCompliance ? "Publish compliance report & certificate" : "Publish Safety Check report"}
+        </Button>
+      </div>
     </form>
   );
 }
