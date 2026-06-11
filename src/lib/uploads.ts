@@ -1,11 +1,14 @@
 export const jobPhotoBucket = "job-photos";
 export const verificationBucket = "verification-documents";
+export const safetyCheckPhotoBucket = "safety-check-photos";
 
 export const jobPhotoTypes = ["image/jpeg", "image/png", "image/webp"];
 export const verificationTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
+export const safetyCheckPhotoTypes = ["image/jpeg", "image/png", "image/webp"];
 
 export const maxJobPhotoBytes = 10 * 1024 * 1024;
 export const maxVerificationBytes = 15 * 1024 * 1024;
+export const maxSafetyCheckPhotoBytes = 10 * 1024 * 1024;
 
 export function safeFileName(name: string) {
   return name

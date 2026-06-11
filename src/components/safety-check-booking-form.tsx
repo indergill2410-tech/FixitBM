@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { bookSafetyCheckAction, type SafetyCheckBookingState } from "@/app/dashboard/customer/safety-checks/actions";
 import { Button } from "@/components/ui";
+import { bookableComplianceCategories } from "@/lib/inspection-templates";
 import type { SavedProperty } from "@/lib/jobs";
 
 const initialState: SafetyCheckBookingState = {};
@@ -29,6 +30,25 @@ export function SafetyCheckBookingForm({ properties }: { properties: SavedProper
           ))}
         </select>
       </label>
+
+      <fieldset className="grid gap-2 text-sm font-bold">
+        Compliance checks to include
+        <p className="text-xs font-normal text-[var(--text2)]">
+          Leave all unticked for a standard home readiness check, or select the rental compliance checks you need.
+        </p>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {bookableComplianceCategories.map((category) => (
+            <label key={category.key} className="flex items-start gap-2 rounded-xl border border-[var(--border)] bg-white p-3 font-normal">
+              <input type="checkbox" name="categories" value={category.key} className="mt-1" />
+              <span>
+                <span className="font-bold">{category.shortLabel}</span>
+                <span className="block text-xs text-[var(--text3)]">{category.frequencyLabel}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
       <label className="grid gap-2 text-sm font-bold">
         Preferred window
         <input

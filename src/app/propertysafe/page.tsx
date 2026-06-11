@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { ArrowRight, Building2, ClipboardCheck, Home, ShieldCheck, Users, Wrench } from "lucide-react";
+import { ArrowRight, Building2, ClipboardCheck, FileCheck2, Home, ShieldCheck, Users, Wrench } from "lucide-react";
 import { Badge, Button, Card, MobileBottomActionBar, PublicFooter, PublicHeader } from "@/components/ui";
+import { bookableComplianceCategories } from "@/lib/inspection-templates";
 import { appUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "PropertySafe | Property records for owners, landlords, and agencies",
   description:
-    "PropertySafe helps homeowners, landlords, property managers, and real estate agencies keep clearer maintenance records, Safety Check history, repair notes, and next fixes for every property.",
+    "PropertySafe helps landlords, property managers, and real estate agencies run rental compliance checks (smoke alarm, gas, electrical, minimum standards, pool & spa), issue certificates, and keep Safety Check history, repair notes, and next fixes for every property.",
   alternates: { canonical: "/propertysafe" },
   openGraph: {
     title: "PropertySafe for owners, landlords, and property teams",
@@ -150,6 +151,38 @@ export default function PropertySafePage() {
             Start with a walkthrough so property sharing, agency contacts, and maintenance preferences are handled properly.
           </p>
         </Card>
+      </section>
+
+      <section className="container py-12">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <Badge tone="green">Rental compliance</Badge>
+            <h2 className="mt-4 text-3xl font-black tracking-tight">Rental safety checks, certified and on record.</h2>
+            <p className="mt-3 max-w-2xl leading-7 text-[var(--text2)]">
+              Book the checks your rentals need against Australian rental minimum standards. Each completed check produces a
+              digital report, a downloadable compliance certificate, and recommended rectification that can become quote-ready
+              Fixer requests in one tap.
+            </p>
+          </div>
+          <Button href="/dashboard/customer/safety-checks/book">
+            Book a compliance check
+            <ArrowRight size={16} />
+          </Button>
+        </div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+          {bookableComplianceCategories.map((category) => (
+            <Card key={category.key}>
+              <FileCheck2 className="text-[var(--green)]" />
+              <h3 className="mt-4 text-lg font-black">{category.shortLabel}</h3>
+              <p className="mt-2 text-xs font-bold uppercase tracking-wide text-[var(--amber2)]">{category.frequencyLabel}</p>
+              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">{category.regulatoryNote}</p>
+            </Card>
+          ))}
+        </div>
+        <p className="mt-4 text-xs leading-5 text-[var(--text3)]">
+          Regulated gas and electrical work must be carried out and certified by appropriately licensed tradespeople.
+          Specialist rectification is quoted separately. Statutory requirements and frequencies vary by state.
+        </p>
       </section>
 
       <section className="container py-12">

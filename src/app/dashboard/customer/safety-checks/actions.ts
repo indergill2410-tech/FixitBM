@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireRole } from "@/lib/auth";
 import { notifySafetyCheckBooked } from "@/lib/email";
+import { complianceCategoryKeys, nextDueForCategories } from "@/lib/inspection-templates";
 import { getCustomerMembershipSummary } from "@/lib/safety-checks";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseServerConfigured } from "@/lib/supabase/config";
@@ -18,7 +19,8 @@ export type SafetyCheckBookingState = {
 const bookingSchema = z.object({
   propertyId: z.string().uuid(),
   preferredWindow: z.string().min(3).max(160),
-  concerns: z.string().max(1000).optional()
+  concerns: z.string().max(1000).optional(),
+  categories: z.array(z.string()).optional()
 });
 
 const recommendationSchema = z.object({
@@ -38,12 +40,15 @@ export async function bookSafetyCheckAction(
   const parsed = bookingSchema.safeParse({
     propertyId: formData.get("propertyId"),
     preferredWindow: formData.get("preferredWindow"),
-    concerns: formData.get("concerns") || undefined
+    concerns: formData.get("concerns") || undefined,
+    categories: formData.getAll("categories").map(String)
   });
 
   if (!parsed.success) {
     return { ok: false, message: "Choose a property and preferred booking window." };
   }
+
+  const selectedCategories = (parsed.data.categories ?? []).filter((key) => complianceCategoryKeys.includes(key));
 
   const membership = await getCustomerMembershipSummary(user);
   if (membership?.status !== "active") {
@@ -91,6 +96,15 @@ export async function bookSafetyCheckAction(
     .limit(1)
     .maybeSingle();
 
+  const checkType = selectedCategories.length
+    ? "rental_compliance"
+    : activeMembership?.plan === "complete"
+      ? "home_and_road"
+      : "home";
+  const nextDueAt = selectedCategories.length
+    ? nextDueForCategories(selectedCategories).toISOString()
+    : new Date(Date.now() + 1000 * 60 * 60 * 24 * 183).toISOString();
+
   const { data: safetyCheck, error } = await supabase
     .from("safety_checks")
     .insert({
@@ -98,10 +112,11 @@ export async function bookSafetyCheckAction(
       membership_id: activeMembership?.id ?? null,
       property_id: property.id,
       status: "booked",
-      check_type: activeMembership?.plan === "complete" ? "home_and_road" : "home",
+      check_type: checkType,
+      requested_categories: selectedCategories,
       preferred_window: parsed.data.preferredWindow,
       customer_notes: parsed.data.concerns || null,
-      next_due_at: new Date(Date.now() + 1000 * 60 * 60 * 24 * 183).toISOString()
+      next_due_at: nextDueAt
     })
     .select("id")
     .single();

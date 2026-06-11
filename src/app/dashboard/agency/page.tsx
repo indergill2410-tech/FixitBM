@@ -4,6 +4,7 @@ import {
   Building2,
   CheckCircle2,
   ClipboardCheck,
+  FileCheck2,
   Gauge,
   Home,
   KeyRound,
@@ -25,7 +26,9 @@ import {
 import { EmailVerificationCard } from "@/components/email-verification-card";
 import { Badge, Button, Card, DashboardHeader } from "@/components/ui";
 import { AgencyBillingCard } from "@/components/agency-billing-card";
+import { CrmIntegrationForm } from "@/components/crm-integration-form";
 import { requireRole } from "@/lib/auth";
+import { getCrmIntegrationForOwner } from "@/lib/crm";
 import {
   getAgencyDashboard,
   getAgencySubscription,
@@ -38,7 +41,11 @@ export const dynamic = "force-dynamic";
 
 export default async function AgencyDashboardPage() {
   const user = await requireRole(["agency", "admin", "super_admin"]);
-  const [summary, subscription] = await Promise.all([getAgencyDashboard(user), getAgencySubscription(user)]);
+  const [summary, subscription, crmIntegration] = await Promise.all([
+    getAgencyDashboard(user),
+    getAgencySubscription(user),
+    getCrmIntegrationForOwner(user.id)
+  ]);
   const canManage = summary.memberRole !== "viewer";
   const displayName = summary.agency?.name ?? "PropertySafe agency setup";
   const commandQueue = buildCommandQueue(summary);
@@ -292,6 +299,33 @@ export default async function AgencyDashboardPage() {
             <div className="mt-5">
               <AgencyRulesForm rules={summary.rules} disabled={!summary.agency || !canManage} />
             </div>
+          </Card>
+        </section>
+
+        <section className="mt-5 grid gap-5 xl:grid-cols-[.48fr_.52fr]">
+          <Card variant="dark">
+            <FileCheck2 className="text-[var(--amber)]" />
+            <Badge className="mt-4">CRM sync</Badge>
+            <h2 className="mt-4 text-3xl font-black tracking-tight">Push compliance reports to your CRM.</h2>
+            <p className="mt-4 leading-7 text-white/72">
+              Connect PropertyMe or Property Tree so every published rental compliance report — smoke, gas, electrical,
+              minimum standards, and pool/spa — flows straight into the property record your team already uses.
+            </p>
+            {crmIntegration ? (
+              <p className="mt-4 text-sm font-bold text-[var(--amber)]">
+                Connected to {crmIntegration.provider === "property_me" ? "PropertyMe" : "Property Tree"} ·{" "}
+                {crmIntegration.status === "active" ? "active" : "paused"}
+                {crmIntegration.last_synced_at ? ` · last sync ${new Date(crmIntegration.last_synced_at).toLocaleDateString()}` : ""}
+              </p>
+            ) : null}
+          </Card>
+          <Card id="crm">
+            <ShieldCheck className="text-[var(--amber2)]" />
+            <h2 className="mt-4 text-2xl font-black tracking-tight">CRM connection</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
+              Store your API key once. Published compliance reports are pushed automatically while the connection is active.
+            </p>
+            <CrmIntegrationForm integration={crmIntegration} disabled={!canManage} />
           </Card>
         </section>
 
