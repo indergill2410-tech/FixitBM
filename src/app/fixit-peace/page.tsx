@@ -261,9 +261,9 @@ export default function FixitPeacePage() {
           Safety Checks are visual readiness inspections. Regulated gas and electrical compliance work must be performed
           and certified by appropriately licensed tradespeople and is quoted separately. For rental compliance
           inspections, see{" "}
-          <a href="/propertysafe" className="font-bold text-[var(--amber2)] hover:underline">
+          <Link href="/propertysafe" className="font-bold text-[var(--amber2)] hover:underline">
             PropertySafe
-          </a>
+          </Link>
           .
         </p>
       </section>
