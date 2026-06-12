@@ -14,23 +14,26 @@ function requestHref(lane: string, category: string) {
 }
 
 export default function HomePage() {
+  // Resolved against the source lists so a renamed or removed label in
+  // lib/data.ts drops the tile instead of crashing the homepage.
   const urgentRequestCategories = [
-    { ...homeCategories.find((item) => item.label === "Burst pipe")!, lane: "emergency_home" },
-    { ...homeCategories.find((item) => item.label === "Electrical fault")!, lane: "emergency_home" },
-    { ...homeCategories.find((item) => item.label === "Lockout")!, lane: "emergency_home" },
-    { ...roadsideCategories.find((item) => item.label === "Flat tyre")!, lane: "emergency_road" },
-    { ...roadsideCategories.find((item) => item.label === "Battery")!, lane: "emergency_road" },
-    { ...roadsideCategories.find((item) => item.label === "Fuel emergency")!, lane: "emergency_road" }
-  ];
+    { label: "Burst pipe", lane: "emergency_home" },
+    { label: "Electrical fault", lane: "emergency_home" },
+    { label: "Lockout", lane: "emergency_home" },
+    { label: "Flat tyre", lane: "emergency_road" },
+    { label: "Battery", lane: "emergency_road" },
+    { label: "Fuel emergency", lane: "emergency_road" }
+  ]
+    .map(({ label, lane }) => {
+      const list = lane === "emergency_home" ? homeCategories : roadsideCategories;
+      const match = list.find((item) => item.label === label);
+      return match ? { ...match, lane } : null;
+    })
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
 
-  const plannedRequestCategories = [
-    tradeCategories.find((item) => item.label === "Plumbing")!,
-    tradeCategories.find((item) => item.label === "Roofing")!,
-    tradeCategories.find((item) => item.label === "Painting")!,
-    tradeCategories.find((item) => item.label === "Carpentry")!,
-    tradeCategories.find((item) => item.label === "Landscaping")!,
-    tradeCategories.find((item) => item.label === "Concreting")!
-  ];
+  const plannedRequestCategories = ["Plumbing", "Roofing", "Painting", "Carpentry", "Landscaping", "Concreting"]
+    .map((label) => tradeCategories.find((item) => item.label === label))
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
 
   return (
     <main className="premium-shell pb-24">
