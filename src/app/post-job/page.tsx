@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ArrowLeft, ArrowRight, CheckCircle2, Home, Loader2, MapPin, Phone, ShieldAlert, ShieldCheck, Upload } from "lucide-react";
 import { Badge, Button, Card, PublicHeader } from "@/components/ui";
@@ -60,6 +60,26 @@ const steps = ["What's wrong", "Details", "Location & timing", "Contact"];
 
 const laneValues = new Set<string>(["emergency_home", "emergency_road", "standard_trade_job", "larger_project"]);
 
+function categoriesForLane(value: RequestLane) {
+  if (value === "emergency_road") return roadsideCategories;
+  if (value === "standard_trade_job") return tradeCategories;
+  if (value === "larger_project") return projectCategories;
+  return homeCategories;
+}
+
+// Pure: applies a lane choice to a form. Used both for the live lane buttons
+// and to seed the initial form from a ?lane= deep link.
+function applyLane(current: FormState, value: RequestLane): FormState {
+  const nextLane = requestLanes.find((item) => item.value === value) ?? requestLanes[0];
+  return {
+    ...current,
+    serviceLane: value,
+    type: nextLane.requestType,
+    category: categoriesForLane(value)[0]?.label ?? current.category,
+    timing: value === "emergency_home" || value === "emergency_road" ? "Now" : value === "larger_project" ? "Need quote first" : "This week"
+  };
+}
+
 // useSearchParams requires a Suspense boundary during prerender.
 export default function PostJobPage() {
   return (
@@ -71,52 +91,29 @@ export default function PostJobPage() {
 
 function PostJobWizard() {
   const searchParams = useSearchParams();
+
+  // Hero triage lanes deep-link here with ?lane=; seed the form from it on
+  // first render so the visitor lands with their situation already selected
+  // (no effect, no flash of the default lane).
+  const laneParam = searchParams.get("lane");
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState<FormState>(initialState);
+  const [form, setForm] = useState<FormState>(() =>
+    laneParam && laneValues.has(laneParam) ? applyLane(initialState, laneParam as RequestLane) : initialState
+  );
   const [photos, setPhotos] = useState<File[]>([]);
   const [result, setResult] = useState<{ ok: boolean; reference?: string; message: string; dashboardUrl?: string | null } | null>(null);
   const [loading, setLoading] = useState(false);
   const [stepError, setStepError] = useState<string | null>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
 
-  // Hero triage lanes deep-link here with ?lane= so the visitor lands with
-  // their situation already selected.
-  const laneParam = searchParams.get("lane");
-  useEffect(() => {
-    if (laneParam && laneValues.has(laneParam)) {
-      chooseLane(laneParam as RequestLane);
-    }
-  }, [laneParam]);
+  function chooseLane(value: RequestLane) {
+    setForm((current) => applyLane(current, value));
+  }
 
   const lane = requestLanes.find((item) => item.value === form.serviceLane) ?? requestLanes[0];
   const isRoad = form.serviceLane === "emergency_road";
   const isQuoteLane = form.serviceLane === "standard_trade_job" || form.serviceLane === "larger_project";
-  const categories = useMemo(() => {
-    if (form.serviceLane === "emergency_road") return roadsideCategories;
-    if (form.serviceLane === "standard_trade_job") return tradeCategories;
-    if (form.serviceLane === "larger_project") return projectCategories;
-    return homeCategories;
-  }, [form.serviceLane]);
-
-  function chooseLane(value: RequestLane) {
-    const nextLane = requestLanes.find((item) => item.value === value) ?? requestLanes[0];
-    const nextCategories =
-      value === "emergency_road"
-        ? roadsideCategories
-        : value === "standard_trade_job"
-          ? tradeCategories
-          : value === "larger_project"
-            ? projectCategories
-            : homeCategories;
-
-    setForm((current) => ({
-      ...current,
-      serviceLane: value,
-      type: nextLane.requestType,
-      category: nextCategories[0]?.label ?? current.category,
-      timing: value === "emergency_home" || value === "emergency_road" ? "Now" : value === "larger_project" ? "Need quote first" : "This week"
-    }));
-  }
+  const categories = useMemo(() => categoriesForLane(form.serviceLane), [form.serviceLane]);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((current) => ({ ...current, [key]: value }));

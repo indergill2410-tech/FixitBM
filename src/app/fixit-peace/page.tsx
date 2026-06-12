@@ -48,7 +48,7 @@ const plans = [
   }
 ];
 
-export default function FixitPlusPage() {
+export default function FixitPeacePage() {
   return (
     <main className="premium-shell pb-24">
       <PublicHeader />
