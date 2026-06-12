@@ -151,61 +151,64 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="container grid gap-6 py-12 lg:grid-cols-[.9fr_1.1fr]">
-        <Card variant="membership">
-          <Badge>Fixit Peace</Badge>
-          <h2 className="mt-4 text-3xl font-black tracking-tight">Peace of mind before panic starts.</h2>
-          <p className="mt-4 leading-7 text-[var(--text2)]">
-            Home from $29/month or Complete home + roadside support from $49/month. Membership gives priority access,
-            emergency coordination, saved profiles, member support, and 6-monthly Safety & Readiness Checks.
-          </p>
-          <Button href="/fixit-peace" className="mt-6">
-            View memberships
-          </Button>
-        </Card>
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card>
-            <Home className="text-[var(--amber2)]" />
-            <h3 className="mt-4 text-xl font-black">Fixit Peace Home</h3>
-            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">$29/month for home emergency peace of mind.</p>
-          </Card>
-          <Card variant="emergency">
-            <ShieldCheck className="text-[var(--green)]" />
-            <h3 className="mt-4 text-xl font-black">Fixit Peace Complete</h3>
-            <p className="mt-2 text-sm leading-6 text-[var(--text2)]">$49/month for home + roadside peace of mind.</p>
-          </Card>
-        </div>
-      </section>
-
-      <section className="container grid gap-6 py-12 lg:grid-cols-[.82fr_1.18fr]">
-        <Card variant="membership">
-          <Badge>Included with Fixit Peace</Badge>
-          <h2 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">Your home checked every 6 months.</h2>
-          <p className="mt-4 leading-7 text-[var(--text2)]">
-            Fixit Peace does not just wait for emergencies. It helps you prepare for them. Members receive a visual Home
-            Safety & Readiness Check on signup, then every 6 months while active - helping you spot visible concerns, save
-            key home details, and feel ready before the next leak, lockout, fault, storm, or breakdown.
-          </p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Button href="/fixit-peace">Protect my home</Button>
-            <Button href="/fixit-peace#safety-check" variant="ghost">See what is checked</Button>
+      <section className="container py-12">
+        <Card variant="membership" className="overflow-hidden p-6 md:p-8">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
+            <div>
+              <Badge>Fixit Peace</Badge>
+              <h2 className="mt-4 max-w-xl text-3xl font-black tracking-tight md:text-4xl">
+                The cheapest emergency is the one that never happens.
+              </h2>
+              <p className="mt-4 max-w-xl leading-7 text-[var(--text2)]">
+                Members get their home visually checked every 6 months — so the worn hose, the tired smoke alarm, the
+                slow leak get caught while they&apos;re still small. And when something does break, there&apos;s no
+                frantic searching: your details are saved, your request gets priority, and help is one calm tap away.
+              </p>
+              <div className="mt-5 grid gap-2 sm:grid-cols-2">
+                {[
+                  "Safety & Readiness Check every 6 months",
+                  "Priority access when things break",
+                  "Saved home details — no 2am scrambling",
+                  "Recommended fixes before they grow"
+                ].map((item) => (
+                  <p key={item} className="flex items-start gap-2 text-sm font-semibold text-[var(--text2)]">
+                    <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-[var(--green)]" />
+                    {item}
+                  </p>
+                ))}
+              </div>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <TrackedCTA cta={{ label: "Protect my home — $29/mo", href: "/fixit-peace", event: "peace_section_protect" }} />
+                <TrackedCTA cta={{ label: "See what's checked", href: "/fixit-peace#safety-check", event: "peace_section_learn" }} variant="ghost" />
+              </div>
+            </div>
+            <div className="grid gap-4">
+              <Card>
+                <div className="flex items-start justify-between gap-3">
+                  <Home className="text-[var(--amber2)]" />
+                  <p className="text-xl font-black">$29<span className="text-sm font-bold text-[var(--text3)]">/mo</span></p>
+                </div>
+                <h3 className="mt-3 text-xl font-black">Fixit Peace Home</h3>
+                <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
+                  For the night the pipe bursts. Priority home help, 6-monthly checks, and your home profile ready
+                  before you need it.
+                </p>
+              </Card>
+              <Card variant="emergency" className="relative">
+                <Badge tone="green" className="absolute right-4 top-4">Most peace of mind</Badge>
+                <div className="flex items-start justify-between gap-3">
+                  <ShieldCheck className="text-[var(--green)]" />
+                  <p className="mt-8 text-xl font-black md:mt-0">$49<span className="text-sm font-bold text-[var(--text3)]">/mo</span></p>
+                </div>
+                <h3 className="mt-3 text-xl font-black">Fixit Peace Complete</h3>
+                <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
+                  Everything in Home, plus the road: flat tyres, dead batteries, lockouts far from home. Covered in
+                  both places life breaks down.
+                </p>
+              </Card>
+            </div>
           </div>
         </Card>
-        <div className="grid gap-3 md:grid-cols-2">
-          {[
-            "Spot visible concerns",
-            "Save key home details",
-            "Prepare before emergencies",
-            "Get recommended fixes",
-            "Book quotes from Fixers",
-            "Track your home protection score"
-          ].map((item) => (
-            <Card key={item}>
-              <CheckCircle2 className="text-[var(--green)]" />
-              <h3 className="mt-4 font-black">{item}</h3>
-            </Card>
-          ))}
-        </div>
       </section>
 
       <section className="container py-12">
@@ -257,22 +260,6 @@ export default function HomePage() {
             Browse every trade
           </Button>
         </div>
-      </section>
-
-      <section className="container grid gap-4 py-12 md:grid-cols-3">
-        {[
-          ["Tell us what happened", "A fast guided flow captures urgency, location, photos, and safe contact details."],
-          ["We prepare the right request", "Home, roadside, trade, and project requests are organised for suitable Fixers."],
-          ["Track, chat, and resolve", "Customers, Fixers, and support get a shared timeline from request to completion."]
-        ].map(([title, copy], index) => (
-          <Card key={title}>
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--amber-dim)] text-sm font-black text-[var(--amber2)]">
-              {index + 1}
-            </span>
-            <h3 className="mt-5 text-lg font-black">{title}</h3>
-            <p className="mt-3 text-sm leading-6 text-[var(--text2)]">{copy}</p>
-          </Card>
-        ))}
       </section>
 
       <section className="container grid gap-6 py-12 lg:grid-cols-[.9fr_1.1fr]">
