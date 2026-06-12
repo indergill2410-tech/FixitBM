@@ -15,6 +15,7 @@ import {
   Radar,
   ShieldCheck,
   SlidersHorizontal,
+  Star,
   Wallet,
   Zap
 } from "lucide-react";
@@ -49,6 +50,7 @@ export default async function TradieDashboardPage() {
     : [null, []];
 
   const activeJobs = jobs.filter((job) => !["completed", "reviewed", "closed", "cancelled"].includes(job.status));
+  const completedJobs = jobs.filter((job) => ["completed", "reviewed", "closed"].includes(job.status)).length;
   const nextSafetyCheck = safetyChecks[0];
   const availableCredits = wallet?.total_available ?? 0;
   const profileHealth = profile?.profile_health ?? 0;
@@ -56,6 +58,10 @@ export default async function TradieDashboardPage() {
   const emergencyMode = profile?.emergency_available ? "Emergency-ready" : "Standard requests";
   const displayName = profile?.business_name ?? user.first_name ?? "Fixer";
   const onboardingItems = getOnboardingItems(profile);
+  const isVerified = profile?.verification_status === "approved";
+  const canTakeCompliance = isVerified && Boolean(profile?.licence_number);
+  const rating = profile?.rating ?? null;
+  const totalReviews = profile?.total_reviews ?? 0;
 
   return (
     <main className="premium-shell min-h-screen">
@@ -107,16 +113,40 @@ export default async function TradieDashboardPage() {
             </div>
           </Card>
 
-          <Card variant="membership">
-            <Badge tone="green">Profile review</Badge>
-            <h2 className="mt-4 text-2xl font-black">Complete your Fixer readiness profile.</h2>
-            <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
-              Add your business details, service areas, verification documents, and work interests so the team can review your fit and dispatch suitable work to you.
-            </p>
-            <Button href="/dashboard/tradie/profile" className="mt-5 w-full">
-              Complete profile
-            </Button>
-          </Card>
+          {isVerified ? (
+            <Card variant="membership">
+              <Badge tone="green">Match-ready</Badge>
+              <h2 className="mt-4 text-2xl font-black">You&apos;re verified and ready for work.</h2>
+              <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
+                Your profile is reviewed and active. Keep your availability current so the right emergency, repair, and
+                agency work reaches you first.
+              </p>
+              {canTakeCompliance ? (
+                <p className="mt-3 rounded-xl bg-[var(--green-light)] p-3 text-sm font-bold text-[var(--green)]">
+                  Licence on file — you can be assigned rental compliance inspections.
+                </p>
+              ) : (
+                <p className="mt-3 rounded-xl bg-[var(--amber-light)] p-3 text-sm font-bold text-[var(--amber2)]">
+                  Add your licence to unlock paid gas, electrical &amp; smoke compliance inspection work.
+                </p>
+              )}
+              <Button href="/dashboard/tradie/profile" className="mt-5 w-full">
+                {canTakeCompliance ? "Manage profile" : "Add licence details"}
+              </Button>
+            </Card>
+          ) : (
+            <Card variant="membership">
+              <Badge tone="amber">Profile review</Badge>
+              <h2 className="mt-4 text-2xl font-black">Complete your Fixer readiness profile.</h2>
+              <p className="mt-3 text-sm leading-6 text-[var(--text2)]">
+                Add your business details, service areas, verification documents, and work interests so the team can
+                review your fit and dispatch suitable work to you.
+              </p>
+              <Button href="/dashboard/tradie/profile" className="mt-5 w-full">
+                Complete profile
+              </Button>
+            </Card>
+          )}
         </section>
 
         {showFixerRecruitmentUi ? (
@@ -151,7 +181,8 @@ export default async function TradieDashboardPage() {
           {fixerMarketplaceEnabled ? (
             <SignalCard icon={Radar} label="Open leads" value={String(leads.length)} detail="Ready to review" tone="green" />
           ) : null}
-          <SignalCard icon={BriefcaseBusiness} label="Active work" value={String(activeJobs.length)} detail={`${jobs.length} assigned total`} tone="blue" />
+          <SignalCard icon={BriefcaseBusiness} label="Active work" value={String(activeJobs.length)} detail={`${completedJobs} completed`} tone="blue" />
+          <SignalCard icon={Star} label="Rating" value={rating ? rating.toFixed(1) : "New"} detail={totalReviews ? `${totalReviews} reviews` : "Build your reputation"} tone={rating && rating >= 4 ? "green" : "amber"} />
           <SignalCard icon={ShieldCheck} label="Profile health" value={`${profileHealth}%`} detail={labelize(profile?.verification_status ?? "verification pending")} tone={profileHealth >= 70 ? "green" : "amber"} />
         </section>
 
