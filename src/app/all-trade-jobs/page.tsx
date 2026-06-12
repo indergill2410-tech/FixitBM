@@ -29,7 +29,12 @@ export default function AllTradeJobsPage() {
       </section>
       <section className="container grid grid-cols-2 gap-3 pb-16 md:grid-cols-4 lg:grid-cols-5">
         {tradeCategories.map((item) => (
-          <IconTile key={item.label} icon={item.icon} label={item.label} />
+          <IconTile
+            key={item.label}
+            icon={item.icon}
+            label={item.label}
+            href={`/post-job?lane=standard_trade_job&category=${encodeURIComponent(item.label)}`}
+          />
         ))}
       </section>
       <PublicFooter />
