@@ -34,7 +34,7 @@ export default async function RegisterPage() {
             <Card>
               <Home className="text-[var(--amber2)]" />
               <h2 className="mt-4 text-xl font-black">I need help</h2>
-              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Create a customer account for tracking requests, properties, vehicles, messages, and Fixit Plus.</p>
+              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Create a customer account for tracking requests, properties, vehicles, messages, and Fixit Peace.</p>
               <Button href="/register/customer" className="mt-5 w-full">Customer account</Button>
             </Card>
             <Card>

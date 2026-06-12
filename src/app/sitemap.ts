@@ -5,7 +5,7 @@ const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://fixit247.com.au";
 
 const routes = [
   "",
-  "/fixit-plus",
+  "/fixit-peace",
   "/propertysafe",
   "/propertysafe/onboarding",
   "/post-job",

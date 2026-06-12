@@ -486,10 +486,10 @@ function buildPropertySafeSummary({
       headline: "Build your PropertySafe view from a real Safety Check.",
       copy: membershipStatus === "active"
         ? "Book a Safety & Readiness Check for your home, or ask your property manager to share a managed property record with you."
-        : "Join Fixit Plus for your own home, or use PropertySafe through a real estate agency managing your investment property.",
+        : "Join Fixit Peace for your own home, or use PropertySafe through a real estate agency managing your investment property.",
       nextReviewLabel: "No report yet",
       ctaLabel: membershipStatus === "active" ? "Book Safety Check" : "Protect my property",
-      ctaHref: membershipStatus === "active" ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"
+      ctaHref: membershipStatus === "active" ? "/dashboard/customer/safety-checks/book" : "/fixit-peace"
     };
   }
 

@@ -140,14 +140,14 @@ export const POOL_SPA: InspectionCategoryTemplate = {
   ]
 };
 
-// Legacy home readiness check (Fixit Plus members) — kept so existing
+// Legacy home readiness check (Fixit Peace members) — kept so existing
 // "home" / "home_and_road" Safety Checks continue to work unchanged.
 export const GENERAL_READINESS: InspectionCategoryTemplate = {
   key: "general_readiness",
   label: "Home safety & readiness",
   shortLabel: "Readiness",
   frequencyMonths: 6,
-  frequencyLabel: "Every 6 months while a Fixit Plus member",
+  frequencyLabel: "Every 6 months while a Fixit Peace member",
   regulatoryNote: "A visual readiness check to spot maintenance concerns and emergency-preparation gaps.",
   requiresLicence: false,
   items: [

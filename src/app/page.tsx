@@ -1,6 +1,7 @@
 import { ArrowRight, Building2, CheckCircle2, Hammer, Home, MapPin, ShieldCheck, Zap } from "lucide-react";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { TrackedCTA } from "@/components/customer-dashboard";
+import { HeroLanes } from "@/components/hero-lanes";
 import { Badge, Button, Card, IconTile, MobileBottomActionBar, PublicFooter, PublicHeader, TrustStrip } from "@/components/ui";
 import { homeCategories, roadsideCategories, tradeCategories } from "@/lib/data";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
@@ -33,76 +34,91 @@ export default function HomePage() {
       />
       <section className="container grid min-h-[calc(100vh-64px)] items-center gap-10 py-10 lg:grid-cols-[1.05fr_.95fr]">
         <div>
-          <Badge>Free requests + PropertySafe</Badge>
+          <Badge>24/7 · Verified Fixers across Australia</Badge>
           <h1 className="mt-5 max-w-3xl text-[42px] font-black leading-[1.04] tracking-tight md:text-[64px]">
-            Post a repair free. Keep the property record clear.
+            Something just broke? Breathe. Help starts now.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-8 text-[var(--text2)] md:text-lg">
-            Fixit247 helps households, tenants, property managers, and real estate agencies start urgent repairs,
-            roadside help, trade work, and PropertySafe records without turning every issue into repeat follow-up.
-          </p>
-          <p className="mt-3 text-sm font-black uppercase tracking-wide text-[var(--amber2)]">
-            Free to post a request. Move the repair now. Keep the record for later.
+            Tell us what happened — it takes about a minute. A verified local Fixer gets the full picture before they
+            call, so you&apos;re not explaining a flood twice.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <TrackedCTA
-              cta={{ label: "Get help now — free", href: "/post-job", event: "hero_get_help" }}
+              cta={{ label: "Get help now — it's free", href: "/post-job", event: "hero_get_help" }}
               className="min-h-13 px-7 text-base"
             />
             <TrackedCTA
-              cta={{ label: "Join Fixit Plus", href: "/fixit-plus", event: "hero_join_plus" }}
+              cta={{ label: "Cover my home from $29/mo", href: "/fixit-peace", event: "hero_join_peace" }}
               variant="ghost"
             />
           </div>
           <p className="mt-4 text-sm font-semibold text-[var(--text2)]">
-            Verified Fixers · 24/7 requests · No account needed to start
+            No account · No call centre queue · Free to post
           </p>
           <div className="mt-8">
             <TrustStrip />
           </div>
         </div>
         <Card variant="elevated" className="relative overflow-hidden p-4 md:p-6">
-          <div className="grid gap-4">
-            <Card variant="emergency">
-              <div className="flex items-center gap-3">
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--amber)] text-white">
-                  <Zap size={21} />
-                </span>
-                <div>
-                  <p className="font-black">Emergency request</p>
-                  <p className="text-sm text-[var(--text2)]">Burst pipe, lockout, roof leak, urgent repair.</p>
-                </div>
-                <Badge tone="red" className="ml-auto">
-                  Priority
-                </Badge>
-              </div>
-            </Card>
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card>
-                <MapPin className="text-[var(--amber2)]" />
-                <h3 className="mt-4 font-black">Roadside support</h3>
-                <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Flat tyre, battery, fuel, towing coordination.</p>
-              </Card>
-              <Card>
-                <ShieldCheck className="text-[var(--green)]" />
-                <h3 className="mt-4 font-black">Verified Fixers</h3>
-                <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Verified Fixers and service providers prepared for urgent requests.</p>
-              </Card>
+          <HeroLanes />
+        </Card>
+      </section>
+
+      <section className="container py-12">
+        <Card variant="dark" className="overflow-hidden p-6 md:p-8">
+          <div className="grid gap-8 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
+            <div>
+              <ShieldCheck className="text-[var(--amber)]" />
+              <Badge className="mt-4">Trust &amp; safety</Badge>
+              <h2 className="mt-4 max-w-xl text-3xl font-black tracking-tight md:text-4xl">
+                You&apos;re opening your door to someone. We take that seriously.
+              </h2>
+              <p className="mt-4 max-w-xl leading-7 text-white/72">
+                Every Fixer on Fixit247 goes through verification before work is dispatched to them — the same network
+                that performs rental safety inspections to minimum standards.
+              </p>
             </div>
-            <Card variant="dark">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <Badge tone="amber">PropertySafe</Badge>
-                  <h3 className="mt-4 text-xl font-black">Every repair can leave a useful record.</h3>
-                  <p className="mt-2 text-sm leading-6 text-white/70">
-                    Saved details, completed Safety Checks, recommended fixes, and follow-up work stay tied to the property.
-                  </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                ["ABN-checked businesses", "Real, registered businesses — not anonymous gig profiles."],
+                ["Licence on file for licensed trades", "Gas, electrical, and other licensed work requires the licence before it can be assigned."],
+                ["Insurance declared & documented", "Public liability status is captured and reviewed during verification."],
+                ["Reviewed after every job", "Real customers rate the work, and strong profiles get matched first."]
+              ].map(([title, copy]) => (
+                <div key={title} className="rounded-2xl border border-white/10 bg-white/8 p-4">
+                  <CheckCircle2 size={18} className="text-[var(--green)]" />
+                  <p className="mt-3 font-black text-white/90">{title}</p>
+                  <p className="mt-1 text-sm leading-6 text-white/65">{copy}</p>
                 </div>
-                <Building2 className="text-[var(--amber)]" />
-              </div>
-            </Card>
+              ))}
+            </div>
           </div>
         </Card>
+      </section>
+
+      <section className="container py-12">
+        <div className="mx-auto max-w-2xl text-center">
+          <Badge>How it works</Badge>
+          <h2 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">From panic to handled, in three steps.</h2>
+        </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {([
+            ["Tell us what happened", "About a minute, photos optional, no account needed. The calmer version of ringing five numbers from a search page.", Zap],
+            ["A verified Fixer responds", "They see your details, location, and photos before they call — so the first conversation is already useful.", ShieldCheck],
+            ["Life goes back to normal", "The fix is done, and it stays on your property's record — handy for landlords, insurance, and next time.", Home]
+          ] as const).map(([title, copy, Icon], index) => (
+            <Card key={String(title)}>
+              <div className="flex items-center justify-between">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--amber-dim)] text-sm font-black text-[var(--amber2)]">
+                  {index + 1}
+                </span>
+                <Icon size={20} className="text-[var(--amber2)]" />
+              </div>
+              <h3 className="mt-5 text-lg font-black">{String(title)}</h3>
+              <p className="mt-2 text-sm leading-6 text-[var(--text2)]">{String(copy)}</p>
+            </Card>
+          ))}
+        </div>
       </section>
 
       <section className="container grid gap-6 py-12 lg:grid-cols-[.9fr_1.1fr]">
@@ -137,25 +153,25 @@ export default function HomePage() {
 
       <section className="container grid gap-6 py-12 lg:grid-cols-[.9fr_1.1fr]">
         <Card variant="membership">
-          <Badge>Fixit Plus</Badge>
+          <Badge>Fixit Peace</Badge>
           <h2 className="mt-4 text-3xl font-black tracking-tight">Peace of mind before panic starts.</h2>
           <p className="mt-4 leading-7 text-[var(--text2)]">
             Home from $29/month or Complete home + roadside support from $49/month. Membership gives priority access,
             emergency coordination, saved profiles, member support, and 6-monthly Safety & Readiness Checks.
           </p>
-          <Button href="/fixit-plus" className="mt-6">
+          <Button href="/fixit-peace" className="mt-6">
             View memberships
           </Button>
         </Card>
         <div className="grid gap-4 md:grid-cols-2">
           <Card>
             <Home className="text-[var(--amber2)]" />
-            <h3 className="mt-4 text-xl font-black">Fixit Plus Home</h3>
+            <h3 className="mt-4 text-xl font-black">Fixit Peace Home</h3>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">$29/month for home emergency peace of mind.</p>
           </Card>
           <Card variant="emergency">
             <ShieldCheck className="text-[var(--green)]" />
-            <h3 className="mt-4 text-xl font-black">Fixit Plus Complete</h3>
+            <h3 className="mt-4 text-xl font-black">Fixit Peace Complete</h3>
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">$49/month for home + roadside peace of mind.</p>
           </Card>
         </div>
@@ -163,16 +179,16 @@ export default function HomePage() {
 
       <section className="container grid gap-6 py-12 lg:grid-cols-[.82fr_1.18fr]">
         <Card variant="membership">
-          <Badge>Included with Fixit Plus</Badge>
+          <Badge>Included with Fixit Peace</Badge>
           <h2 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">Your home checked every 6 months.</h2>
           <p className="mt-4 leading-7 text-[var(--text2)]">
-            Fixit Plus does not just wait for emergencies. It helps you prepare for them. Members receive a visual Home
+            Fixit Peace does not just wait for emergencies. It helps you prepare for them. Members receive a visual Home
             Safety & Readiness Check on signup, then every 6 months while active - helping you spot visible concerns, save
             key home details, and feel ready before the next leak, lockout, fault, storm, or breakdown.
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Button href="/fixit-plus">Protect my home</Button>
-            <Button href="/fixit-plus#safety-check" variant="ghost">See what is checked</Button>
+            <Button href="/fixit-peace">Protect my home</Button>
+            <Button href="/fixit-peace#safety-check" variant="ghost">See what is checked</Button>
           </div>
         </Card>
         <div className="grid gap-3 md:grid-cols-2">
@@ -283,7 +299,7 @@ export default function HomePage() {
           <Badge>Home emergency newsletter</Badge>
           <h2 className="mt-4 text-3xl font-black tracking-tight">Get calm checklists before something goes wrong.</h2>
           <p className="mt-3 leading-7 text-[var(--text2)]">
-            Practical home emergency tips, roadside preparation, maintenance reminders, and Fixit Plus updates for Australian
+            Practical home emergency tips, roadside preparation, maintenance reminders, and Fixit Peace updates for Australian
             households.
           </p>
           <div className="mt-6">

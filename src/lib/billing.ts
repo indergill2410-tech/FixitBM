@@ -13,7 +13,7 @@ export type BillingPlan = {
 export const billingPlans: BillingPlan[] = [
   {
     code: "home",
-    name: "Fixit Plus Home",
+    name: "Fixit Peace Home",
     type: "customer_membership",
     priceCents: 2900,
     interval: "month",
@@ -22,7 +22,7 @@ export const billingPlans: BillingPlan[] = [
   },
   {
     code: "complete",
-    name: "Fixit Plus Complete",
+    name: "Fixit Peace Complete",
     type: "customer_membership",
     priceCents: 4900,
     interval: "month",

@@ -56,7 +56,7 @@ const adminNav: AdminNavGroup[] = [
     items: [
       { label: "Revenue", href: "/admin/revenue", icon: BarChart3, detail: "MRR & billing" },
       { label: "Funnel", href: "/admin/analytics", icon: TrendingUp, detail: "Conversion" },
-      { label: "Memberships", href: "/admin/memberships", icon: Home, detail: "Fixit Plus" },
+      { label: "Memberships", href: "/admin/memberships", icon: Home, detail: "Fixit Peace" },
       { label: "Credits", href: "/admin/credits", icon: CreditCard, detail: "Refunds" },
       { label: "Disputes", href: "/admin/disputes", icon: Scale, detail: "Lead quality" }
     ]

@@ -23,10 +23,10 @@ export function ProtectionHeroCard({ summary }: { summary: HomeProtectionSummary
       ? "Your home and road protection is active."
       : isActive
         ? "Your home protection is active."
-        : "Your Fixit Plus status is pending.";
+        : "Your Fixit Peace status is pending.";
 
   const copy = !membership
-    ? "Fixit Plus gives your household a plan before the next leak, lockout, fault, storm, breakdown, or urgent repair. Join today and get your first Safety & Readiness Check included."
+    ? "Fixit Peace gives your household a plan before the next leak, lockout, fault, storm, breakdown, or urgent repair. Join today and get your first Safety & Readiness Check included."
     : isComplete
       ? "Your household has peace of mind for the two places life breaks down most often - home and road."
       : isActive
@@ -36,17 +36,17 @@ export function ProtectionHeroCard({ summary }: { summary: HomeProtectionSummary
   return (
     <Card variant="membership" className="relative overflow-hidden">
       <div className="absolute right-6 top-6 hidden h-24 w-24 rounded-full bg-[var(--amber)] opacity-10 md:block" />
-      <Badge>{membership ? (isActive ? "Fixit Plus active" : "Pay-as-you-go") : "Pay-as-you-go"}</Badge>
+      <Badge>{membership ? (isActive ? "Fixit Peace active" : "Pay-as-you-go") : "Pay-as-you-go"}</Badge>
       <h2 className="mt-4 max-w-2xl text-3xl font-black tracking-tight">{headline}</h2>
       <p className="mt-3 max-w-2xl leading-7 text-[var(--text2)]">{copy}</p>
       <p className="mt-4 text-sm font-bold text-[var(--amber2)]">
         Includes a visual Home Safety & Readiness Check on signup, then every 6 months while active.
       </p>
       <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-        <Button href={isActive ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"}>
+        <Button href={isActive ? "/dashboard/customer/safety-checks/book" : "/fixit-peace"}>
           {isActive ? (isComplete ? "Book my readiness check" : "Book my Safety Check") : "Protect my home"}
         </Button>
-        <Button href={isComplete ? "/dashboard/customer/membership" : "/fixit-plus"} variant="ghost">
+        <Button href={isComplete ? "/dashboard/customer/membership" : "/fixit-peace"} variant="ghost">
           {isComplete ? "Manage protection" : isActive ? "Upgrade to Complete" : "See what is included"}
         </Button>
       </div>
@@ -104,8 +104,8 @@ export function HomeProtectionScoreCard({ summary }: { summary: HomeProtectionSu
           <h2 className="mt-3 text-2xl font-black">{summary.scoreHeadline}</h2>
           <p className="mt-2 text-sm leading-6 text-[var(--text2)]">{summary.scoreCopy}</p>
           <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-            <Button href={summary.membership?.status === "active" ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"}>
-              {summary.membership?.status === "active" ? "Book Safety Check" : "Join Fixit Plus"}
+            <Button href={summary.membership?.status === "active" ? "/dashboard/customer/safety-checks/book" : "/fixit-peace"}>
+              {summary.membership?.status === "active" ? "Book Safety Check" : "Join Fixit Peace"}
             </Button>
             <Button href="/dashboard/customer/properties" variant="ghost">Complete home profile</Button>
           </div>
@@ -133,7 +133,7 @@ export function SafetyCheckStatusCard({ summary }: { summary: HomeProtectionSumm
       : "A visual readiness check helps spot visible concerns, save key home details, and prepare before the next emergency."
     : summary.membership
       ? activationCopy
-      : "Fixit Plus members get a Home Safety & Readiness Check on signup, then every 6 months while active.";
+      : "Fixit Peace members get a Home Safety & Readiness Check on signup, then every 6 months while active.";
 
   return (
     <Card variant="membership">
@@ -141,7 +141,7 @@ export function SafetyCheckStatusCard({ summary }: { summary: HomeProtectionSumm
       <Badge className="mt-4">{summary.nextDueLabel}</Badge>
       <h2 className="mt-4 text-xl font-black">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-[var(--text2)]">{copy}</p>
-      <Button href={activeCheck ? `/dashboard/customer/safety-checks/${activeCheck.id}` : isActive ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"} className="mt-5 w-full">
+      <Button href={activeCheck ? `/dashboard/customer/safety-checks/${activeCheck.id}` : isActive ? "/dashboard/customer/safety-checks/book" : "/fixit-peace"} className="mt-5 w-full">
         {summary.safetyCheckCta}
       </Button>
     </Card>
@@ -174,7 +174,7 @@ export function HomeProfileReadinessCard({ summary }: { summary: HomeProtectionS
   const checklist: [string, boolean][] = [
     ["Property address saved", summary.properties.some((property) => Boolean(property.address))],
     ["Default home selected", summary.properties.some((property) => property.is_default)],
-    ["Fixit Plus protection active", summary.membership?.status === "active"],
+    ["Fixit Peace protection active", summary.membership?.status === "active"],
     ["Vehicle saved for roadside help", summary.vehicles.length > 0],
     ["First Safety Check completed", summary.safetyChecks.some((check) => check.status === "completed")],
     ["A request started before", summary.requestCount > 0]
@@ -210,9 +210,9 @@ export function VehicleProtectionCard({ summary }: { summary: HomeProtectionSumm
       <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
         {isComplete
           ? "Add vehicle details so roadside requests move faster when life breaks down away from home."
-          : "Fixit Plus Complete adds roadside peace of mind for flat tyres, dead batteries, lockouts, fuel emergencies, towing coordination, and breakdown stress."}
+          : "Fixit Peace Complete adds roadside peace of mind for flat tyres, dead batteries, lockouts, fuel emergencies, towing coordination, and breakdown stress."}
       </p>
-      <Button href={isComplete ? "/dashboard/customer/vehicles" : "/fixit-plus"} variant="ghost" className="mt-5 w-full">
+      <Button href={isComplete ? "/dashboard/customer/vehicles" : "/fixit-peace"} variant="ghost" className="mt-5 w-full">
         {isComplete ? "Add vehicle details" : "Upgrade to Complete"}
       </Button>
     </Card>

@@ -78,7 +78,7 @@ export default function PropertySafePage() {
             <Button href="/agency/login" variant="ghost">
               Agency sign in
             </Button>
-            <Button href="/fixit-plus" variant="ghost">
+            <Button href="/fixit-peace" variant="ghost">
               Protect my property
             </Button>
           </div>

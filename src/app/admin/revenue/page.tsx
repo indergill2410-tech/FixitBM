@@ -15,7 +15,7 @@ export default async function AdminRevenuePage() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
           <StatCard label="Total MRR" value={formatMoney(revenue.total_mrr_cents)} detail="Active recurring revenue / month" />
           <StatCard label="ARR run-rate" value={formatMoney(revenue.arr_cents)} detail="MRR × 12" />
-          <StatCard label="Fixit Plus" value={String(revenue.active_memberships)} detail={`${formatMoney(revenue.membership_mrr_cents)} membership MRR`} />
+          <StatCard label="Fixit Peace" value={String(revenue.active_memberships)} detail={`${formatMoney(revenue.membership_mrr_cents)} membership MRR`} />
           <StatCard label="PropertySafe" value={String(revenue.active_agency_subscriptions)} detail={`${formatMoney(revenue.agency_mrr_cents)} agency MRR`} />
           <StatCard label="Fixer plans" value={String(revenue.active_tradie_subscriptions)} detail={`${formatMoney(revenue.subscription_mrr_cents)} subscription MRR`} />
         </div>

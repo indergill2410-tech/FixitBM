@@ -13,12 +13,12 @@ export default async function AdminMembershipsPage() {
       <section className="container py-8">
         <DashboardHeader title="Memberships" role="Admin" />
         <div className="mb-5 grid gap-4 md:grid-cols-3">
-          <StatCard label="Active" value={String(active)} detail="Live Fixit Plus" />
+          <StatCard label="Active" value={String(active)} detail="Live Fixit Peace" />
           <StatCard label="Activating" value={String(pending)} detail="72-hour protection window" />
           <StatCard label="Inactive" value={String(inactive)} detail="Paused or cancelled" />
         </div>
         <Card>
-          <Badge>Fixit Plus</Badge>
+          <Badge>Fixit Peace</Badge>
           <div className="mt-5 grid gap-3">
             {memberships.length ? (
               memberships.map((membership) => (

@@ -88,7 +88,7 @@ export async function POST(request: Request) {
 
 function checkoutRoleError(role: string, productType: string) {
   if (productType === "customer_membership" && role !== "customer") {
-    return "Fixit Plus memberships must be purchased from a customer account.";
+    return "Fixit Peace memberships must be purchased from a customer account.";
   }
 
   if ((productType === "tradie_subscription" || productType === "credit_pack") && role !== "tradie") {

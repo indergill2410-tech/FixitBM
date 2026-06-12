@@ -19,18 +19,18 @@ export default async function BookSafetyCheckPage() {
           <Card variant={active ? "membership" : "emergency"}>
             <Badge>{active ? "Ready to book" : "Membership required"}</Badge>
             <h1 className="mt-4 text-3xl font-black">
-              {active ? "Book your Safety Check and stay prepared." : "Safety Checks are included with Fixit Plus."}
+              {active ? "Book your Safety Check and stay prepared." : "Safety Checks are included with Fixit Peace."}
             </h1>
             <p className="mt-3 leading-7 text-[var(--text2)]">
               {active
                 ? "This visual check helps your household prepare before emergencies become stressful."
                 : summary.membership
-                  ? "Your Safety Check can be booked after your Fixit Plus activation period."
-                  : "Join Fixit Plus to unlock your first Safety & Readiness Check included with membership."}
+                  ? "Your Safety Check can be booked after your Fixit Peace activation period."
+                  : "Join Fixit Peace to unlock your first Safety & Readiness Check included with membership."}
             </p>
             {!active ? (
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                <Button href="/fixit-plus">Join Fixit Plus</Button>
+                <Button href="/fixit-peace">Join Fixit Peace</Button>
                 <Button href="/dashboard/customer/membership" variant="ghost">View membership</Button>
               </div>
             ) : (

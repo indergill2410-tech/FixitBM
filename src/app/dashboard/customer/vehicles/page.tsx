@@ -28,7 +28,7 @@ export default async function CustomerVehiclesPage() {
             ) : (
               <Card>
                 <h2 className="font-black">No saved vehicles yet</h2>
-                <p className="mt-2 text-[var(--text2)]">Vehicles support Fixit Plus Complete and roadside requests.</p>
+                <p className="mt-2 text-[var(--text2)]">Vehicles support Fixit Peace Complete and roadside requests.</p>
               </Card>
             )}
           </div>
