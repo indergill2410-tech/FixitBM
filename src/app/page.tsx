@@ -102,11 +102,7 @@ export default function HomePage() {
           <h2 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">From panic to handled, in three steps.</h2>
         </div>
         <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {[
-            ["Tell us what happened", "About a minute, photos optional, no account needed. The calmer version of ringing five numbers from a search page.", Zap],
-            ["A verified Fixer responds", "They see your details, location, and photos before they call — so the first conversation is already useful.", ShieldCheck],
-            ["Life goes back to normal", "The fix is done, and it stays on your property's record — handy for landlords, insurance, and next time.", Home]
-          ].map(([title, copy, Icon], index) => (
+          ([\n            [\"Tell us what happened\", \"About a minute, photos optional, no account needed. The calmer version of ringing five numbers from a search page.\", Zap],\n            [\"A verified Fixer responds\", \"They see your details, location, and photos before they call — so the first conversation is already useful.\", ShieldCheck],\n            [\"Life goes back to normal\", \"The fix is done, and it stays on your property's record — handy for landlords, insurance, and next time.\", Home]\n          ] as const).map(([title, copy, Icon], index) => (
             <Card key={String(title)}>
               <div className="flex items-center justify-between">
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--amber-dim)] text-sm font-black text-[var(--amber2)]">
