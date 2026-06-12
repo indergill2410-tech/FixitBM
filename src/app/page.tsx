@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowRight, Building2, CheckCircle2, Hammer, Home, MapPin, ShieldCheck, Zap } from "lucide-react";
 import { NewsletterForm } from "@/components/newsletter-form";
 import { TrackedCTA } from "@/components/customer-dashboard";
@@ -6,24 +7,30 @@ import { Badge, Button, Card, IconTile, MobileBottomActionBar, PublicFooter, Pub
 import { homeCategories, roadsideCategories, tradeCategories } from "@/lib/data";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
 
+// Deep-links a homepage category tile into the request wizard with the lane
+// and category preselected, so a tap lands on the details step ready to go.
+function requestHref(lane: string, category: string) {
+  return `/post-job?lane=${lane}&category=${encodeURIComponent(category)}`;
+}
+
 export default function HomePage() {
   const urgentRequestCategories = [
-    homeCategories.find((item) => item.label === "Burst pipe"),
-    homeCategories.find((item) => item.label === "Electrical fault"),
-    homeCategories.find((item) => item.label === "Lockout"),
-    roadsideCategories.find((item) => item.label === "Flat tyre"),
-    roadsideCategories.find((item) => item.label === "Battery"),
-    roadsideCategories.find((item) => item.label === "Fuel emergency")
-  ].filter((item): item is (typeof homeCategories)[number] => Boolean(item));
+    { ...homeCategories.find((item) => item.label === "Burst pipe")!, lane: "emergency_home" },
+    { ...homeCategories.find((item) => item.label === "Electrical fault")!, lane: "emergency_home" },
+    { ...homeCategories.find((item) => item.label === "Lockout")!, lane: "emergency_home" },
+    { ...roadsideCategories.find((item) => item.label === "Flat tyre")!, lane: "emergency_road" },
+    { ...roadsideCategories.find((item) => item.label === "Battery")!, lane: "emergency_road" },
+    { ...roadsideCategories.find((item) => item.label === "Fuel emergency")!, lane: "emergency_road" }
+  ];
 
   const plannedRequestCategories = [
-    tradeCategories.find((item) => item.label === "Plumbing"),
-    tradeCategories.find((item) => item.label === "Roofing"),
-    tradeCategories.find((item) => item.label === "Painting"),
-    tradeCategories.find((item) => item.label === "Carpentry"),
-    tradeCategories.find((item) => item.label === "Landscaping"),
-    tradeCategories.find((item) => item.label === "Concreting")
-  ].filter((item): item is (typeof tradeCategories)[number] => Boolean(item));
+    tradeCategories.find((item) => item.label === "Plumbing")!,
+    tradeCategories.find((item) => item.label === "Roofing")!,
+    tradeCategories.find((item) => item.label === "Painting")!,
+    tradeCategories.find((item) => item.label === "Carpentry")!,
+    tradeCategories.find((item) => item.label === "Landscaping")!,
+    tradeCategories.find((item) => item.label === "Concreting")!
+  ];
 
   return (
     <main className="premium-shell pb-24">
@@ -183,7 +190,7 @@ export default function HomePage() {
               </div>
             </div>
             <div className="grid gap-4">
-              <Card>
+              <Link href="/fixit-peace" className="focus-ring rounded-2xl border border-[var(--border)] bg-white p-5 shadow-[var(--shadow)] transition hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-[var(--shadow-md)]">
                 <div className="flex items-start justify-between gap-3">
                   <Home className="text-[var(--amber2)]" />
                   <p className="text-xl font-black">$29<span className="text-sm font-bold text-[var(--text3)]">/mo</span></p>
@@ -193,8 +200,11 @@ export default function HomePage() {
                   For the night the pipe bursts. Priority home help, 6-monthly checks, and your home profile ready
                   before you need it.
                 </p>
-              </Card>
-              <Card variant="emergency" className="relative">
+                <span className="mt-3 inline-flex items-center gap-1 text-sm font-black text-[var(--amber2)]">
+                  Choose Home <ArrowRight size={15} />
+                </span>
+              </Link>
+              <Link href="/fixit-peace" className="focus-ring relative rounded-2xl border border-amber-200 bg-[var(--amber-light)] p-5 shadow-[var(--shadow)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)]">
                 <Badge tone="green" className="absolute right-4 top-4">Most peace of mind</Badge>
                 <div className="flex items-start justify-between gap-3">
                   <ShieldCheck className="text-[var(--green)]" />
@@ -205,7 +215,10 @@ export default function HomePage() {
                   Everything in Home, plus the road: flat tyres, dead batteries, lockouts far from home. Covered in
                   both places life breaks down.
                 </p>
-              </Card>
+                <span className="mt-3 inline-flex items-center gap-1 text-sm font-black text-[var(--amber2)]">
+                  Choose Complete <ArrowRight size={15} />
+                </span>
+              </Link>
             </div>
           </div>
         </Card>
@@ -236,7 +249,7 @@ export default function HomePage() {
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {urgentRequestCategories.map((item) => (
-                <IconTile key={item.label} icon={item.icon} label={item.label} />
+                <IconTile key={item.label} icon={item.icon} label={item.label} href={requestHref(item.lane, item.label)} />
               ))}
             </div>
           </div>
@@ -247,7 +260,7 @@ export default function HomePage() {
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {plannedRequestCategories.map((item) => (
-                <IconTile key={item.label} icon={item.icon} label={item.label} />
+                <IconTile key={item.label} icon={item.icon} label={item.label} href={requestHref("standard_trade_job", item.label)} />
               ))}
             </div>
           </div>

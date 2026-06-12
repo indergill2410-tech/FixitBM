@@ -324,13 +324,25 @@ export function DashboardHeader({ title, role }: { title: string; role: string }
   );
 }
 
-export function IconTile({ icon: Icon, label }: { icon: LucideIcon; label: string }) {
-  return (
-    <div className="flex min-h-28 flex-col justify-between rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow)] transition hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-[var(--shadow-md)]">
+export function IconTile({ icon: Icon, label, href }: { icon: LucideIcon; label: string; href?: string }) {
+  const className =
+    "flex min-h-28 flex-col justify-between rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow)] transition hover:-translate-y-0.5 hover:border-amber-200 hover:shadow-[var(--shadow-md)]";
+  const inner = (
+    <>
       <Icon className="text-[var(--amber2)]" size={22} />
       <span className="text-sm font-bold">{label}</span>
-    </div>
+    </>
   );
+
+  if (href) {
+    return (
+      <Link href={href} className={`focus-ring ${className}`}>
+        {inner}
+      </Link>
+    );
+  }
+
+  return <div className={className}>{inner}</div>;
 }
 
 export function TrustStrip() {

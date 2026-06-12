@@ -92,13 +92,22 @@ export default function PostJobPage() {
 function PostJobWizard() {
   const searchParams = useSearchParams();
 
-  // Hero triage lanes deep-link here with ?lane=; seed the form from it on
-  // first render so the visitor lands with their situation already selected
-  // (no effect, no flash of the default lane).
+  // Hero lanes and homepage category tiles deep-link here with ?lane= (and
+  // optionally ?category=); seed the form on first render so the visitor lands
+  // with their situation already selected (no effect, no default-lane flash).
+  // When a category is supplied too, skip straight to the details step.
   const laneParam = searchParams.get("lane");
-  const [step, setStep] = useState(0);
-  const [form, setForm] = useState<FormState>(() =>
-    laneParam && laneValues.has(laneParam) ? applyLane(initialState, laneParam as RequestLane) : initialState
+  const categoryParam = searchParams.get("category");
+  const seededLane = laneParam && laneValues.has(laneParam) ? (laneParam as RequestLane) : null;
+  const [form, setForm] = useState<FormState>(() => {
+    let next = seededLane ? applyLane(initialState, seededLane) : initialState;
+    if (categoryParam && categoriesForLane(next.serviceLane).some((category) => category.label === categoryParam)) {
+      next = { ...next, category: categoryParam };
+    }
+    return next;
+  });
+  const [step, setStep] = useState(() =>
+    seededLane && categoryParam && categoriesForLane(seededLane).some((category) => category.label === categoryParam) ? 1 : 0
   );
   const [photos, setPhotos] = useState<File[]>([]);
   const [result, setResult] = useState<{ ok: boolean; reference?: string; message: string; dashboardUrl?: string | null } | null>(null);
