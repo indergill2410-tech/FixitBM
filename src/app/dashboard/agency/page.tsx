@@ -395,7 +395,7 @@ function ComplianceOverview({ compliance }: { compliance: AgencyComplianceOvervi
               .slice(0, 6)
               .map((row) => (
                 <div
-                  key={`${row.property_label}-${row.location}`}
+                  key={row.id}
                   className="flex flex-col gap-1 rounded-xl border border-[var(--border)] bg-white p-3 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div>

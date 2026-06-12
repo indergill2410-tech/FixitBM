@@ -196,6 +196,7 @@ export async function getAgencyAccessForUser(user: AppUser): Promise<AgencyAcces
 }
 
 export type AgencyComplianceRow = {
+  id: string;
   property_label: string;
   location: string;
   result: "pass" | "fail" | "action_required" | "not_applicable" | null;
@@ -230,10 +231,11 @@ export async function getAgencyComplianceOverview(user: AppUser): Promise<Agency
 
   const { data: properties } = await supabase
     .from("agency_managed_properties")
-    .select("label, address, suburb, postcode, state, propertysafe_profile_id")
+    .select("id, label, address, suburb, postcode, state, propertysafe_profile_id")
     .eq("agency_id", agency.id);
 
   const rowsBase = (properties ?? []) as {
+    id: string;
     label: string;
     address: string;
     suburb: string | null;
@@ -295,6 +297,7 @@ export async function getAgencyComplianceOverview(user: AppUser): Promise<Agency
     }
 
     overview.rows.push({
+      id: base.id,
       property_label: base.label,
       location: [base.suburb, base.postcode, base.state].filter(Boolean).join(" ") || base.address,
       result: result ?? null,

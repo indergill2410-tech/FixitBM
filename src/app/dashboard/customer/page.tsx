@@ -19,7 +19,11 @@ import {
 import { PropertySafeStatusCard } from "@/components/safety-check-cards";
 
 function greeting() {
-  const hour = new Date().getHours();
+  // Server-rendered: use the audience timezone, not the server's (UTC).
+  const hour = Number(
+    new Intl.DateTimeFormat("en-AU", { hour: "numeric", hour12: false, timeZone: "Australia/Sydney" }).format(new Date())
+  );
+  if (!Number.isFinite(hour)) return "Welcome back";
   if (hour < 12) return "Good morning";
   if (hour < 18) return "Good afternoon";
   return "Good evening";
