@@ -65,7 +65,7 @@ const safetyAreas = [
   { icon: Thermometer, title: "Appliances", copy: "Hot water, HVAC, and visible wear concerns." }
 ];
 
-const comparison = [
+const comparison: [string, string, string][] = [
   ["After-hours callout fee", "$99–$180", "$0 — included"],
   ["First hour of emergency labour", "$120–$220", "$0 — included"],
   ["Minor parts (washers, fuses, fittings)", "$20–$75", "$0 — included"],
