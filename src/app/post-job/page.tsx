@@ -101,14 +101,23 @@ function PostJobWizard() {
   const seededLane = laneParam && laneValues.has(laneParam) ? (laneParam as RequestLane) : null;
   const [form, setForm] = useState<FormState>(() => {
     let next = seededLane ? applyLane(initialState, seededLane) : initialState;
-    if (categoryParam && categoriesForLane(next.serviceLane).some((category) => category.label === categoryParam)) {
-      next = { ...next, category: categoryParam };
+    if (categoryParam) {
+      const matchedCategory = categoriesForLane(next.serviceLane).find(
+        (c) => c.label.toLowerCase() === categoryParam.toLowerCase()
+      );
+      if (matchedCategory) {
+        next = { ...next, category: matchedCategory.label };
+      }
     }
     return next;
   });
-  const [step, setStep] = useState(() =>
-    seededLane && categoryParam && categoriesForLane(seededLane).some((category) => category.label === categoryParam) ? 1 : 0
-  );
+  const [step, setStep] = useState(() => {
+    if (!seededLane || !categoryParam) return 0;
+    const hasValidCategory = categoriesForLane(seededLane).some(
+      (c) => c.label.toLowerCase() === categoryParam.toLowerCase()
+    );
+    return hasValidCategory ? 1 : 0;
+  });
   const [photos, setPhotos] = useState<File[]>([]);
   const [result, setResult] = useState<{ ok: boolean; reference?: string; message: string; dashboardUrl?: string | null } | null>(null);
   const [loading, setLoading] = useState(false);
