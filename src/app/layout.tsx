@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     template: "%s | Fixit247"
   },
   description:
-    "Post urgent home repairs, roadside help, and trade jobs free. Verified Fixers, Fixit Plus protection, and PropertySafe records for Australian homes and rentals.",
+    "Post urgent home repairs, roadside help, and trade jobs free. Verified Fixers, Fixit Peace protection, and PropertySafe records for Australian homes and rentals.",
   openGraph: {
     siteName: "Fixit247",
     title: "Fixit247 | 24/7 Emergency Repairs & Trade Jobs",

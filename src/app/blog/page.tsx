@@ -6,7 +6,7 @@ import { appUrl, blogPosts } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Fixit247 Guides | Home emergency, roadside, and trade job advice",
-  description: "Practical guides for home emergencies, roadside help, Fixit Plus peace of mind, and trade requests.",
+  description: "Practical guides for home emergencies, roadside help, Fixit Peace peace of mind, and trade requests.",
   alternates: {
     canonical: "/blog"
   },
@@ -47,7 +47,7 @@ export default function BlogPage() {
       <section className="container pb-16">
         <Card variant="membership" className="max-w-2xl">
           <Badge>Newsletter</Badge>
-          <h2 className="mt-4 text-2xl font-black">Get home emergency checklists and Fixit Plus updates.</h2>
+          <h2 className="mt-4 text-2xl font-black">Get home emergency checklists and Fixit Peace updates.</h2>
           <p className="mt-2 text-sm leading-6 text-[var(--text2)]">Useful, calm, practical guidance for Australian households.</p>
           <div className="mt-5">
             <NewsletterForm source="blog" />

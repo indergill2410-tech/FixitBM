@@ -1,6 +1,6 @@
 import type { HomeProtectionSummary } from "@/lib/safety-checks";
 
-// Pricing anchors — kept consistent with /fixit-plus and the homepage.
+// Pricing anchors — kept consistent with /fixit-peace and the homepage.
 export const HOME_PRICE = "$29";
 export const COMPLETE_PRICE = "$49";
 
@@ -52,21 +52,21 @@ export function getCustomerProtectionState(summary: HomeProtectionSummary): Prot
     { label: "Save your home address", points: 10, href: "/dashboard/customer/properties", done: hasAddress },
     { label: "Set your default home", points: 5, href: "/dashboard/customer/properties", done: hasDefault },
     {
-      label: "Activate Fixit Plus protection",
+      label: "Activate Fixit Peace protection",
       points: 20,
-      href: isActive ? "/dashboard/customer/membership" : "/fixit-plus",
+      href: isActive ? "/dashboard/customer/membership" : "/fixit-peace",
       done: isActive
     },
     {
       label: "Complete your first Safety Check",
       points: 25,
-      href: isActive ? "/dashboard/customer/safety-checks/book" : "/fixit-plus",
+      href: isActive ? "/dashboard/customer/safety-checks/book" : "/fixit-peace",
       done: Boolean(completedCheck)
     },
     {
       label: "Add a vehicle for roadside cover",
       points: 10,
-      href: isComplete ? "/dashboard/customer/vehicles" : "/fixit-plus",
+      href: isComplete ? "/dashboard/customer/vehicles" : "/fixit-peace",
       done: hasVehicle
     }
   ];
@@ -81,20 +81,20 @@ export function getCustomerProtectionState(summary: HomeProtectionSummary): Prot
   if (tier === "none") {
     heroBadge = "Your home is not protected yet";
     heroTitle = "The next emergency won't send a warning.";
-    heroCopy = `A burst pipe at midnight. A lockout in the rain. Fixit Plus means one call, a saved home profile, and priority help when it matters most — from just ${HOME_PRICE}/month, with your first Safety Check included.`;
-    primaryCta = { label: `Protect my home — ${HOME_PRICE}/mo`, href: "/fixit-plus", event: "dashboard_join_home" };
-    secondaryCta = { label: "See what's included", href: "/fixit-plus", event: "dashboard_plus_learn" };
+    heroCopy = `A burst pipe at midnight. A lockout in the rain. Fixit Peace means one call, a saved home profile, and priority help when it matters most — from just ${HOME_PRICE}/month, with your first Safety Check included.`;
+    primaryCta = { label: `Protect my home — ${HOME_PRICE}/mo`, href: "/fixit-peace", event: "dashboard_join_home" };
+    secondaryCta = { label: "See what's included", href: "/fixit-peace", event: "dashboard_plus_learn" };
   } else if (tier === "pending") {
     heroBadge = "Protection activating";
     heroTitle = "You're almost covered.";
     heroCopy =
-      "Your Fixit Plus membership is in its short activation window. You can still start urgent requests now — and the moment it activates, your Safety Check and priority help unlock.";
+      "Your Fixit Peace membership is in its short activation window. You can still start urgent requests now — and the moment it activates, your Safety Check and priority help unlock.";
     primaryCta = { label: "View membership", href: "/dashboard/customer/membership", event: "dashboard_view_membership" };
     secondaryCta = { label: "Start a request", href: "/post-job", event: "dashboard_post_job" };
   } else if (tier === "home") {
     heroBadge = "Home protection active";
     heroTitle = "Your home is covered. Your car isn't.";
-    heroCopy = `You'll never face a home emergency alone again. But life breaks down on the road too — flat tyres, dead batteries, lockouts far from home. Fixit Plus Complete adds roadside peace of mind for just ${COMPLETE_PRICE}/month.`;
+    heroCopy = `You'll never face a home emergency alone again. But life breaks down on the road too — flat tyres, dead batteries, lockouts far from home. Fixit Peace Complete adds roadside peace of mind for just ${COMPLETE_PRICE}/month.`;
     primaryCta = { label: "Upgrade to Complete", href: "/dashboard/customer/membership", event: "dashboard_upgrade_complete" };
     secondaryCta = summary.safetyCheckCta.includes("Book")
       ? { label: "Book my Safety Check", href: "/dashboard/customer/safety-checks/book", event: "dashboard_book_check" }
@@ -130,13 +130,13 @@ export function getCustomerProtectionState(summary: HomeProtectionSummary): Prot
     lossAversion = {
       title: "You've needed urgent help before",
       copy: "Last time you handled it alone. Members get priority dispatch, a saved home profile, and a check-up so the next emergency is calmer and faster.",
-      cta: { label: `Protect my home — ${HOME_PRICE}/mo`, href: "/fixit-plus", event: "dashboard_join_home" }
+      cta: { label: `Protect my home — ${HOME_PRICE}/mo`, href: "/fixit-peace", event: "dashboard_join_home" }
     };
   } else if (!isActive) {
     lossAversion = {
       title: "Emergencies cost more when you're unprepared",
       copy: "No saved details, no priority, scrambling for a number at the worst time. Membership turns panic into one calm call.",
-      cta: { label: "See Fixit Plus", href: "/fixit-plus", event: "dashboard_plus_learn" }
+      cta: { label: "See Fixit Peace", href: "/fixit-peace", event: "dashboard_plus_learn" }
     };
   }
 
@@ -154,7 +154,7 @@ export function getCustomerProtectionState(summary: HomeProtectionSummary): Prot
     completeUpsell = {
       title: "Cover home and road together",
       copy: `Most emergencies happen in two places — your home and your car. Complete protects both from ${COMPLETE_PRICE}/month, so you're never stranded either way.`,
-      cta: { label: "Compare plans", href: "/fixit-plus", event: "dashboard_compare_plans" }
+      cta: { label: "Compare plans", href: "/fixit-peace", event: "dashboard_compare_plans" }
     };
   }
 

@@ -92,7 +92,7 @@ export const fixitSymbolSet = [
   { name: "mark", label: "Fixit mark", tone: "amber" },
   { name: "home", label: "Home help", tone: "green" },
   { name: "road", label: "Road help", tone: "blue" },
-  { name: "plus", label: "Fixit Plus", tone: "amber" },
+  { name: "plus", label: "Fixit Peace", tone: "amber" },
   { name: "urgent", label: "Urgent dispatch", tone: "red" },
   { name: "credits", label: "Lead credits", tone: "dark" }
 ] satisfies { name: FixitSymbolName; label: string; tone: "amber" | "green" | "blue" | "red" | "dark" }[];

@@ -52,7 +52,7 @@ export async function bookSafetyCheckAction(
 
   const membership = await getCustomerMembershipSummary(user);
   if (membership?.status !== "active") {
-    return { ok: false, message: "Safety Check booking unlocks once Fixit Plus is active." };
+    return { ok: false, message: "Safety Check booking unlocks once Fixit Peace is active." };
   }
 
   const supabase = createSupabaseAdminClient();

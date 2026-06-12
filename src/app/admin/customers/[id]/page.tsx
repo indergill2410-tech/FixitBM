@@ -35,7 +35,7 @@ export default async function AdminCustomerDetailPage({ params }: { params: Prom
 
               <div className="grid gap-5">
                 <Card>
-                  <Badge>Fixit Plus</Badge>
+                  <Badge>Fixit Peace</Badge>
                   <div className="mt-4 grid gap-3">
                     {customer.memberships.length ? (
                       customer.memberships.map((membership) => (

@@ -18,7 +18,7 @@ export default async function CustomerMembershipPage() {
         <DashboardHeader title="Membership" role="Customer" />
         <div className="grid gap-5">
           <Card variant="membership">
-            <Badge>{isActive ? "Fixit Plus active" : membership ? "Activation pending" : "Fixit Plus"}</Badge>
+            <Badge>{isActive ? "Fixit Peace active" : membership ? "Activation pending" : "Fixit Peace"}</Badge>
             <h1 className="mt-4 text-3xl font-black">
               {isComplete
                 ? "Your home + road protection is active."
@@ -29,7 +29,7 @@ export default async function CustomerMembershipPage() {
             <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
               {isActive
                 ? "Manage emergency support, saved home details, and your 6-monthly Safety & Readiness Check."
-                : "Join Fixit Plus to unlock emergency support, saved home details, and your first Safety & Readiness Check included."}
+                : "Join Fixit Peace to unlock emergency support, saved home details, and your first Safety & Readiness Check included."}
             </p>
             <p className="mt-4 rounded-2xl border border-amber-200 bg-white p-4 text-sm leading-6 text-[var(--text2)]">
               {activationCopy}
@@ -38,14 +38,14 @@ export default async function CustomerMembershipPage() {
 
           <div className="grid gap-5 md:grid-cols-2">
             <PlanCard
-              title="Fixit Plus Home"
+              title="Fixit Peace Home"
               price="$29"
               copy="Peace of mind for home emergencies."
               features={["24/7 emergency request support", "Priority home emergency coordination", "Saved home profile", "6-monthly Safety Check included", "Home Protection Score", "Recommended Fixes after each check"]}
               action={<CheckoutButton planCode="home" label="Protect my home" variant="ghost" />}
             />
             <PlanCard
-              title="Fixit Plus Complete"
+              title="Fixit Peace Complete"
               price="$49"
               copy="Peace of mind at home and on the road."
               recommended
@@ -63,10 +63,10 @@ export default async function CustomerMembershipPage() {
                 ? "Your Safety Check booking area is available. After your first completed check, your report area shows findings and recommended fixes."
                 : membership
                     ? "Safety Check booking unlocks once your membership is active."
-                    : "Safety Checks are included with Fixit Plus. Free users can still use the digital safety checklist and start requests free."}
+                    : "Safety Checks are included with Fixit Peace. Free users can still use the digital safety checklist and start requests free."}
               </p>
               <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                <Button href={isActive ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"}>
+                <Button href={isActive ? "/dashboard/customer/safety-checks/book" : "/fixit-peace"}>
                   {isActive ? "Book my Safety Check" : "Unlock my Safety Check"}
                 </Button>
                 <Button href="/dashboard/customer/safety-checks" variant="ghost">View my report</Button>

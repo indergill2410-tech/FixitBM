@@ -60,7 +60,7 @@ export default async function CustomerDashboardPage() {
           {protection.membership?.status === "active" ? (
             <Button href="/dashboard/customer/safety-checks/book" variant="ghost">Book my Safety Check</Button>
           ) : (
-            <Button href="/fixit-plus" variant="ghost">See Fixit Plus</Button>
+            <Button href="/fixit-peace" variant="ghost">See Fixit Peace</Button>
           )}
           <Button href="/dashboard/customer/requests" variant="ghost">My requests</Button>
         </div>

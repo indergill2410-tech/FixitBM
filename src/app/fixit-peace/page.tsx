@@ -6,21 +6,21 @@ import { appUrl } from "@/lib/seo";
 import { activationCopy, safetyCheckChecklist, safetyCheckDisclaimer } from "@/lib/safety-checks";
 
 export const metadata: Metadata = {
-  title: "Fixit Plus | Home and roadside emergency peace of mind",
+  title: "Fixit Peace | Home and roadside emergency peace of mind",
   description:
-    "Fixit Plus gives your household priority access, emergency coordination, saved profiles, and member support from $29/month.",
-  alternates: { canonical: "/fixit-plus" },
+    "Fixit Peace gives your household priority access, emergency coordination, saved profiles, and member support from $29/month.",
+  alternates: { canonical: "/fixit-peace" },
   openGraph: {
-    title: "Fixit Plus",
+    title: "Fixit Peace",
     description: "Peace of mind before panic starts.",
-    url: `${appUrl}/fixit-plus`,
+    url: `${appUrl}/fixit-peace`,
     type: "website"
   }
 };
 
 const plans = [
   {
-    name: "Fixit Plus Home",
+    name: "Fixit Peace Home",
     code: "home",
     price: "$29",
     note: "Peace of mind for home emergencies.",
@@ -33,7 +33,7 @@ const plans = [
     ]
   },
   {
-    name: "Fixit Plus Complete",
+    name: "Fixit Peace Complete",
     code: "complete",
     price: "$49",
     note: "Peace of mind at home and on the road.",
@@ -53,14 +53,14 @@ export default function FixitPlusPage() {
     <main className="premium-shell pb-24">
       <PublicHeader />
       <section className="container py-14">
-        <Badge>Fixit Plus</Badge>
+        <Badge>Fixit Peace</Badge>
         <div className="grid gap-8 lg:grid-cols-[.9fr_1.1fr] lg:items-end">
           <div>
             <h1 className="mt-5 text-[40px] font-black leading-tight tracking-tight md:text-[58px]">
               Protect the moments before home panic starts.
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text2)]">
-              Fixit Plus gives your household priority request support, saved home details, and a 6-monthly Safety &
+              Fixit Peace gives your household priority request support, saved home details, and a 6-monthly Safety &
               Readiness Check, so the next leak, lockout, fault, storm, or breakdown starts with a plan.
             </p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
@@ -72,7 +72,7 @@ export default function FixitPlusPage() {
             <Clock className="text-[var(--amber2)]" />
             <h2 className="mt-4 text-xl font-black">Fair-use activation</h2>
             <p className="mt-2 leading-7 text-[var(--text2)]">
-              To keep Fixit Plus fair for every member, benefits activate after 72 hours. Existing emergencies can still be
+              To keep Fixit Peace fair for every member, benefits activate after 72 hours. Existing emergencies can still be
               started free and handled as pay-as-you-go requests.
             </p>
           </Card>
@@ -110,10 +110,10 @@ export default function FixitPlusPage() {
 
       <section id="safety-check" className="container grid gap-5 pb-12 lg:grid-cols-[.9fr_1.1fr]">
         <Card variant="membership">
-          <Badge>Included with Fixit Plus</Badge>
-          <h2 className="mt-4 text-3xl font-black tracking-tight">Included with Fixit Plus: your 6-monthly Safety Check.</h2>
+          <Badge>Included with Fixit Peace</Badge>
+          <h2 className="mt-4 text-3xl font-black tracking-tight">Included with Fixit Peace: your 6-monthly Safety Check.</h2>
           <p className="mt-4 leading-7 text-[var(--text2)]">
-            Most people only think about home emergencies after something goes wrong. Fixit Plus helps you prepare earlier
+            Most people only think about home emergencies after something goes wrong. Fixit Peace helps you prepare earlier
             with a visual readiness check, saved home details, emergency reminders, and recommended fixes.
           </p>
           <p className="mt-4 rounded-2xl border border-amber-200 bg-white p-4 text-sm leading-6 text-[var(--text2)]">
@@ -184,7 +184,7 @@ export default function FixitPlusPage() {
 
       <section className="container grid gap-4 pb-16 md:grid-cols-3">
         {[
-          ["Does Fixit Plus include free repairs?", "No. Repairs, labour, parts, towing, and specialist services are quoted separately unless specifically included."],
+          ["Does Fixit Peace include free repairs?", "No. Repairs, labour, parts, towing, and specialist services are quoted separately unless specifically included."],
           ["Can I start an emergency without membership?", "Yes. Existing emergencies can be started free and handled as pay-as-you-go requests."],
           ["Why the activation period?", "The 72-hour activation period keeps the membership fair and protects every member from misuse after an emergency has already happened."]
         ].map(([question, answer]) => (

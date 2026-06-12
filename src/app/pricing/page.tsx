@@ -6,8 +6,8 @@ import { showFixerSubscriptionUi } from "@/lib/featureFlags";
 import { appUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Fixit247 Pricing | Fixit Plus Home and Complete",
-  description: "Simple peace-of-mind plans for home and roadside emergencies. Free requests plus Fixit Plus from $29/month.",
+  title: "Fixit247 Pricing | Fixit Peace Home and Complete",
+  description: "Simple peace-of-mind plans for home and roadside emergencies. Free requests plus Fixit Peace from $29/month.",
   alternates: { canonical: "/pricing" },
   openGraph: {
     title: "Fixit247 Pricing",
@@ -20,14 +20,14 @@ export const metadata: Metadata = {
 const customerPlans = [
   {
     code: "home",
-    name: "Fixit Plus Home",
+    name: "Fixit Peace Home",
     price: "$29",
     note: "Peace of mind for home emergencies.",
     features: ["Priority home emergency matching", "Saved property profile", "Emergency history", "Member support"]
   },
   {
     code: "complete",
-    name: "Fixit Plus Complete",
+    name: "Fixit Peace Complete",
     price: "$49",
     note: "Peace of mind at home and on the road.",
     features: ["Everything in Home", "Roadside coordination", "Saved vehicle profile", "Home + road account"]
@@ -44,7 +44,7 @@ export default function PricingPage() {
           Start free. Add protection when you want more peace of mind.
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text2)]">
-          Any customer can start a request without paying Fixit247. Fixit Plus adds priority support, saved details,
+          Any customer can start a request without paying Fixit247. Fixit Peace adds priority support, saved details,
           reminders, and Safety Checks for households that want more readiness.
         </p>
       </section>

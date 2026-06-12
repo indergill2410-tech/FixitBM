@@ -27,7 +27,7 @@ export default function HomeEmergenciesPage() {
         </p>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row">
           <Button href="/post-job">Get help now</Button>
-          <Button href="/fixit-plus" variant="ghost">Join Fixit Plus</Button>
+          <Button href="/fixit-peace" variant="ghost">Join Fixit Peace</Button>
         </div>
       </section>
       <section className="container grid grid-cols-2 gap-3 pb-16 md:grid-cols-4 lg:grid-cols-5">

@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { ArrowLeft, ArrowRight, CheckCircle2, Home, Loader2, MapPin, Phone, ShieldAlert, ShieldCheck, Upload } from "lucide-react";
 import { Badge, Button, Card, PublicHeader } from "@/components/ui";
 import { track } from "@/lib/analytics-client";
@@ -57,7 +58,19 @@ const initialState: FormState = {
 // Four steps. Every extra step is a drop-off point — emergencies need speed.
 const steps = ["What's wrong", "Details", "Location & timing", "Contact"];
 
+const laneValues = new Set<string>(["emergency_home", "emergency_road", "standard_trade_job", "larger_project"]);
+
+// useSearchParams requires a Suspense boundary during prerender.
 export default function PostJobPage() {
+  return (
+    <Suspense fallback={null}>
+      <PostJobWizard />
+    </Suspense>
+  );
+}
+
+function PostJobWizard() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(initialState);
   const [photos, setPhotos] = useState<File[]>([]);
@@ -65,6 +78,15 @@ export default function PostJobPage() {
   const [loading, setLoading] = useState(false);
   const [stepError, setStepError] = useState<string | null>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
+
+  // Hero triage lanes deep-link here with ?lane= so the visitor lands with
+  // their situation already selected.
+  const laneParam = searchParams.get("lane");
+  useEffect(() => {
+    if (laneParam && laneValues.has(laneParam)) {
+      chooseLane(laneParam as RequestLane);
+    }
+  }, [laneParam]);
 
   const lane = requestLanes.find((item) => item.value === form.serviceLane) ?? requestLanes[0];
   const isRoad = form.serviceLane === "emergency_road";
@@ -189,8 +211,8 @@ export default function PostJobPage() {
               ) : (
                 <Button href="/login">Create a free account to track it</Button>
               )}
-              <Button href="/fixit-plus" variant="ghost">
-                Protect your home with Fixit Plus
+              <Button href="/fixit-peace" variant="ghost">
+                Protect your home with Fixit Peace
               </Button>
             </div>
           </Card>

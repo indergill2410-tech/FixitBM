@@ -17,7 +17,7 @@ export const safetyCheckDisclaimer =
   "Fixit247 rental compliance and Safety Checks record the inspection results captured by the attending inspector against the relevant rental minimum standards. Regulated gas and electrical work must be carried out and certified by appropriately licensed tradespeople, and any specialist rectification, repairs, parts, labour, or trade work is quoted separately unless specifically included. Pricing and statutory requirements vary by state.";
 
 export const activationCopy =
-  "To keep Fixit Plus fair for every member, benefits activate after 72 hours. Existing emergencies can still be started free and handled as pay-as-you-go requests.";
+  "To keep Fixit Peace fair for every member, benefits activate after 72 hours. Existing emergencies can still be started free and handled as pay-as-you-go requests.";
 
 export const safetyCheckChecklist = [
   "Water shutoff and visible leak readiness",
@@ -242,7 +242,7 @@ export async function getHomeProtectionSummary(user: AppUser): Promise<HomeProte
   const scoreText = {
     low: {
       headline: "Your home plan is just getting started.",
-      copy: "Join Fixit Plus and book your first Safety Check to improve your readiness before the next emergency."
+      copy: "Join Fixit Peace and book your first Safety Check to improve your readiness before the next emergency."
     },
     medium: {
       headline: "You're building a stronger home emergency plan.",
@@ -280,7 +280,7 @@ export async function getHomeProtectionSummary(user: AppUser): Promise<HomeProte
         ? "Ready to book after activation"
         : safetyCheckState === "pending_activation"
           ? "Activation pending"
-          : "Included with Fixit Plus";
+          : "Included with Fixit Peace";
 
   const safetyCheckCta = safetyCheckState === "booked" || safetyCheckState === "assigned"
     ? "View booking"
@@ -288,7 +288,7 @@ export async function getHomeProtectionSummary(user: AppUser): Promise<HomeProte
       ? "Book my Safety Check"
       : safetyCheckState === "pending_activation"
         ? "View membership"
-        : "Join Fixit Plus";
+        : "Join Fixit Peace";
 
   return {
     membership,

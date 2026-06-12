@@ -281,7 +281,7 @@ export async function notifyNewsletterSignup(input: { email: string; source?: st
       eyebrow: "Fixit247 updates",
       title: "Calm home and property updates, only when useful.",
       intro:
-        "You are on the list for practical Fixit247 updates around emergency help, PropertySafe, Fixit Plus, and safer maintenance planning.",
+        "You are on the list for practical Fixit247 updates around emergency help, PropertySafe, Fixit Peace, and safer maintenance planning.",
       sections: [
         {
           label: "What to expect",
@@ -349,7 +349,7 @@ export async function notifyCustomerRegistered(input: { userId: string; email: s
       sections: [
         {
           label: "Useful next steps",
-          lines: ["Save your home or investment property details.", "Start a request when something needs attention.", "Review Fixit Plus if you want Safety Checks included."]
+          lines: ["Save your home or investment property details.", "Start a request when something needs attention.", "Review Fixit Peace if you want Safety Checks included."]
         }
       ],
       cta: { label: "Open my account", href: `${appUrl}/dashboard/customer` },
@@ -851,9 +851,9 @@ export async function notifyMembershipStatusChanged(input: {
           title: `Your membership is ${labelize(input.status)}.`,
           intro:
             input.status === "active"
-              ? "Your Fixit Plus membership is active. Safety Check access and member benefits are now available according to your plan."
-            : "Your Fixit Plus membership status has changed. You can review the latest detail in your account.",
-          sections: [{ label: "Plan", lines: [input.plan ? labelize(input.plan) : "Fixit Plus"] }],
+              ? "Your Fixit Peace membership is active. Safety Check access and member benefits are now available according to your plan."
+            : "Your Fixit Peace membership status has changed. You can review the latest detail in your account.",
+          sections: [{ label: "Plan", lines: [input.plan ? labelize(input.plan) : "Fixit Peace"] }],
           cta: { label: "Open membership", href: `${appUrl}/dashboard/customer/membership` },
           idempotencyKey: `membership-${input.membershipId}-${input.status}`
         })

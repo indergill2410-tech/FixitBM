@@ -27,7 +27,7 @@ export default function RoadsideHelpPage() {
         </p>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row">
           <Button href="/post-job">Get Roadside Help</Button>
-          <Button href="/fixit-plus" variant="ghost">See Complete cover</Button>
+          <Button href="/fixit-peace" variant="ghost">See Complete cover</Button>
         </div>
       </section>
       <section className="container grid grid-cols-2 gap-3 pb-16 md:grid-cols-4">

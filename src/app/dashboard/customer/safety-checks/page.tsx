@@ -17,29 +17,29 @@ export default async function SafetyChecksOverviewPage() {
       <section className="container py-8">
         <DashboardHeader title="Your Safety Checks" role="Customer account" />
         <p className="-mt-3 mb-6 max-w-2xl text-sm leading-6 text-[var(--text2)]">
-          Fixit Plus helps your household prepare before emergencies become stressful.
+          Fixit Peace helps your household prepare before emergencies become stressful.
         </p>
         <div className="grid gap-5 lg:grid-cols-[.62fr_.38fr]">
           <div className="grid gap-5">
             <Card variant="membership">
-              <Badge>{active ? "Ready to book" : "Included with Fixit Plus"}</Badge>
+              <Badge>{active ? "Ready to book" : "Included with Fixit Peace"}</Badge>
               <h1 className="mt-4 text-3xl font-black">
                 {activeCheck
                   ? "Your Safety Check booking is in progress."
                   : active
                     ? "Your next Safety Check is ready to book."
-                    : "Safety Checks are included with Fixit Plus."}
+                    : "Safety Checks are included with Fixit Peace."}
               </h1>
               <p className="mt-3 leading-7 text-[var(--text2)]">
                 {activeCheck
                   ? `Status: ${activeCheck.status.replaceAll("_", " ")}. ${activeCheck.preferred_window ? `Requested window: ${activeCheck.preferred_window}.` : "Fixit247 support can now assign a Fixer."}`
                   : active
                   ? "Book your Home Safety & Readiness Check and keep your home profile ready before the next emergency."
-                  : "Free users can access a digital safety checklist. In-person 6-monthly Safety Checks become available after Fixit Plus membership activation."}
+                  : "Free users can access a digital safety checklist. In-person 6-monthly Safety Checks become available after Fixit Peace membership activation."}
               </p>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <Button href={activeCheck ? `/dashboard/customer/safety-checks/${activeCheck.id}` : active ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"}>
-                  {activeCheck ? "View booking" : active ? "Book my Safety Check" : "Join Fixit Plus"}
+                <Button href={activeCheck ? `/dashboard/customer/safety-checks/${activeCheck.id}` : active ? "/dashboard/customer/safety-checks/book" : "/fixit-peace"}>
+                  {activeCheck ? "View booking" : active ? "Book my Safety Check" : "Join Fixit Peace"}
                 </Button>
                 <Button href="/dashboard/customer/properties" variant="ghost">Complete home profile</Button>
               </div>
@@ -54,7 +54,7 @@ export default async function SafetyChecksOverviewPage() {
                     ? "Your booking is saved. The report becomes available after the visual check is completed."
                     : "After your first completed Safety Check, this report area shows summary notes, readiness changes, findings, and recommended fixes."}
               </p>
-              <Button href={completedCheck ? `/dashboard/customer/safety-checks/${completedCheck.id}` : active ? "/dashboard/customer/safety-checks/book" : "/fixit-plus"} variant="ghost" className="mt-5">
+              <Button href={completedCheck ? `/dashboard/customer/safety-checks/${completedCheck.id}` : active ? "/dashboard/customer/safety-checks/book" : "/fixit-peace"} variant="ghost" className="mt-5">
                 {completedCheck ? "View report" : active ? "Book my first check" : "Unlock Safety Checks"}
               </Button>
             </Card>
@@ -84,7 +84,7 @@ export default async function SafetyChecksOverviewPage() {
               <ShieldCheck className="text-[var(--amber2)]" />
               <h2 className="mt-4 text-xl font-black">Digital safety checklist</h2>
               <p className="mt-2 text-sm leading-6 text-[var(--text2)]">
-                Free users can use a digital checklist. Fixit Plus members get the in-person visual Safety & Readiness Check.
+                Free users can use a digital checklist. Fixit Peace members get the in-person visual Safety & Readiness Check.
               </p>
             </Card>
             <SafetyCheckDisclaimer />

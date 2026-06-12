@@ -50,7 +50,7 @@ export const blogPosts: BlogPost[] = [
       },
       {
         heading: "Keep property and vehicle details ready",
-        body: "Saved home and vehicle profiles reduce stress when something goes wrong. Fixit Plus is built around having those details ready before panic starts."
+        body: "Saved home and vehicle profiles reduce stress when something goes wrong. Fixit Peace is built around having those details ready before panic starts."
       },
       {
         heading: "Use one request path",
