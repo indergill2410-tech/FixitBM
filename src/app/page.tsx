@@ -46,11 +46,12 @@ export default function HomePage() {
         <div>
           <Badge>24/7 · Verified Fixers across Australia</Badge>
           <h1 className="mt-5 max-w-3xl text-[42px] font-black leading-[1.04] tracking-tight md:text-[64px]">
-            Something just broke? Breathe. Help starts now.
+            From a leaky tap to a full reno.
           </h1>
           <p className="mt-5 max-w-xl text-base leading-8 text-[var(--text2)] md:text-lg">
-            Tell us what happened — it takes about a minute. A verified local Fixer gets the full picture before they
-            call, so you&apos;re not explaining a flood twice.
+            Homeowners, renters, landlords, and property managers across Australia start here — emergency repairs,
+            roadside help, and planned trade work. Post it free in about a minute, and a verified local Fixer sees the
+            full picture before they call.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
             <TrackedCTA
