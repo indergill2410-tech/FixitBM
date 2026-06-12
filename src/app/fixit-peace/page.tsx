@@ -13,6 +13,7 @@ import {
   Umbrella,
   Wrench
 } from "lucide-react";
+import Link from "next/link";
 import { Badge, Button, Card, MobileBottomActionBar, PublicFooter, PublicHeader } from "@/components/ui";
 import { CheckoutButton } from "@/components/billing-buttons";
 import { appUrl } from "@/lib/seo";
