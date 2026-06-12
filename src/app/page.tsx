@@ -1,5 +1,6 @@
 import { ArrowRight, Building2, CheckCircle2, Hammer, Home, MapPin, ShieldCheck, Zap } from "lucide-react";
 import { NewsletterForm } from "@/components/newsletter-form";
+import { TrackedCTA } from "@/components/customer-dashboard";
 import { Badge, Button, Card, IconTile, MobileBottomActionBar, PublicFooter, PublicHeader, TrustStrip } from "@/components/ui";
 import { homeCategories, roadsideCategories, tradeCategories } from "@/lib/data";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo";
@@ -44,13 +45,14 @@ export default function HomePage() {
             Free to post a request. Move the repair now. Keep the record for later.
           </p>
           <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-            <Button href="/post-job" className="min-h-13 px-7 text-base">
-              Get help now — free
-              <ArrowRight size={17} />
-            </Button>
-            <Button href="/fixit-plus" variant="ghost">
-              Join Fixit Plus
-            </Button>
+            <TrackedCTA
+              cta={{ label: "Get help now — free", href: "/post-job", event: "hero_get_help" }}
+              className="min-h-13 px-7 text-base"
+            />
+            <TrackedCTA
+              cta={{ label: "Join Fixit Plus", href: "/fixit-plus", event: "hero_join_plus" }}
+              variant="ghost"
+            />
           </div>
           <p className="mt-4 text-sm font-semibold text-[var(--text2)]">
             Verified Fixers · 24/7 requests · No account needed to start

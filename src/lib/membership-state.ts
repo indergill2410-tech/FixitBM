@@ -209,6 +209,7 @@ const STATUS_RANK: Record<string, number> = {
   en_route: 3,
   on_site: 4,
   work_in_progress: 5,
+  disputed: 5,
   completed: 6,
   reviewed: 6,
   closed: 6

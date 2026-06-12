@@ -1260,8 +1260,9 @@ export async function getSuggestedFixersForJob(
       score += 4;
     }
 
-    // Verification & reputation.
-    if ((fixer.verification_status ?? "").toLowerCase() === "verified") {
+    // Verification & reputation. The verification_status enum value is
+    // "approved" (see document_status); accept legacy "verified" defensively.
+    if (["approved", "verified"].includes((fixer.verification_status ?? "").toLowerCase())) {
       score += 12;
       reasons.push("Verified profile");
     }

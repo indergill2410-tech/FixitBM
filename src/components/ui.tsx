@@ -4,6 +4,7 @@ import type { LucideIcon } from "lucide-react";
 import { ArrowRight, LayoutDashboard, ShieldCheck, UserCircle, Zap } from "lucide-react";
 import { FixitMark } from "@/components/brand";
 import { MobileNavDrawer } from "@/components/mobile-nav";
+import { NotificationsBell } from "@/components/notifications-bell";
 import { SignOutForm } from "@/components/sign-out-form";
 
 type ButtonProps = {
@@ -299,6 +300,7 @@ export function DashboardHeader({ title, role }: { title: string; role: string }
         <h1 className="mt-3 text-3xl font-black tracking-tight">{title}</h1>
       </div>
       <div className="ml-auto flex items-center gap-2">
+        <NotificationsBell />
         <details className="group relative">
           <summary className="flex h-10 list-none items-center gap-2 rounded-xl border border-[var(--border)] bg-white px-3 text-sm font-black shadow-[var(--shadow)] transition hover:border-amber-200">
             <UserCircle size={17} />
