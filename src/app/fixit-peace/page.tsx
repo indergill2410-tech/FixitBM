@@ -248,13 +248,16 @@ export default function FixitPeacePage() {
             </p>
           </Card>
           <div className="grid gap-3 sm:grid-cols-2">
-            {safetyAreas.map((area) => (
-              <Card key={area.title}>
-                <area.icon className="text-[var(--amber2)]" size={20} />
-                <h3 className="mt-3 font-black">{area.title}</h3>
-                <p className="mt-1 text-sm leading-6 text-[var(--text2)]">{area.copy}</p>
-              </Card>
-            ))}
+            {safetyAreas.map((area) => {
+              const Icon = area.icon;
+              return (
+                <Card key={area.title}>
+                  <Icon className="text-[var(--amber2)]" size={20} />
+                  <h3 className="mt-3 font-black">{area.title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-[var(--text2)]">{area.copy}</p>
+                </Card>
+              );
+            })}
           </div>
         </div>
         <p className="mt-5 text-xs leading-5 text-[var(--text3)]">
