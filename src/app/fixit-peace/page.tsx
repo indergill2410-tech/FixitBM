@@ -21,91 +21,91 @@ import { appUrl } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Fixit Peace | 24/7 Home & Roadside Emergency Cover from $29/month",
   description:
-    "Emergency callouts with the first hour of labour and minor parts included, priority 24/7 response, and a professional Safety Check every year. From $29/month.",
+    "When something breaks, we turn up, fix it, and you don't get a bill for it. Priority 24/7 help and a yearly home once-over. From $29/month.",
   alternates: { canonical: "/fixit-peace" },
   openGraph: {
     title: "Fixit Peace | 24/7 Emergency Cover from $29/month",
-    description: "The emergency is covered before it happens.",
+    description: "When it breaks, it's already covered.",
     url: `${appUrl}/fixit-peace`,
     type: "website"
   }
 };
 
 const trustBar = [
-  "First hour of labour included",
-  "Minor parts included",
-  "Upfront quotes — no surprise bills",
-  "Licensed, insured Fixers",
-  "24/7, every day of the year"
+  "No charge to turn up",
+  "No bill for the fix",
+  "No 2 AM price-gouging",
+  "Real, insured local Fixers",
+  "Day or night, all year"
 ];
 
 const homeFeatures = [
-  "Emergency callouts included — first hour of labour and minor parts covered, 24/7 *",
-  "Priority response — members jump the queue, day or night",
-  "Annual Home Safety & Readiness Check — valued at $149",
-  "Saved home profile — Fixers arrive already briefed, no 20 questions at 2 AM",
-  "Upfront quotes on bigger jobs — you approve before any extra work starts",
-  "Reminders, emergency history, and recommended fixes in your member account"
+  "We turn up and fix it — and you don't get a bill for it",
+  "Members get help first, day or night",
+  "A yearly once-over that catches trouble early — worth $149, yours free",
+  "We already know your home, so help starts the second you call",
+  "Anything bigger? You see the price first and decide — never a surprise",
+  "Reminders and a simple record of everything, in your account"
 ];
 
 const completeFeatures = [
-  "Everything in Home, plus:",
-  "Roadside emergencies included — flat battery, tyre change, vehicle lockout, fuel emergency, towing coordination *",
-  "6-monthly Safety Checks — home and vehicle, valued at $298/year",
-  "Saved vehicle profile — faster roadside response with your details ready",
-  "Roadside reminders: rego, battery age, tyre wear"
+  "Everything in Home, plus your car:",
+  "Stuck on the road? Flat battery, dead tyre, locked out, out of fuel, need a tow — handled",
+  "Two home check-ups a year instead of one, plus a car once-over — worth $298",
+  "We keep your car details ready, so roadside help moves faster",
+  "Nudges before the stuff that strands you — rego, tired battery, worn tyres"
 ];
 
 const safetyAreas = [
-  { icon: Droplets, title: "Water", copy: "Shutoff valve access, visible leak and pressure concerns." },
-  { icon: PlugZap, title: "Electrical", copy: "Visible hazards, switchboard awareness, safety switch check." },
-  { icon: Flame, title: "Fire", copy: "Smoke alarm placement and battery reminders." },
-  { icon: KeyRound, title: "Access", copy: "Lockout readiness and key safety." },
-  { icon: Umbrella, title: "Weather", copy: "Roof, gutter, and storm readiness." },
-  { icon: Thermometer, title: "Appliances", copy: "Hot water, HVAC, and visible wear concerns." }
+  { icon: Droplets, title: "Water", copy: "Where to shut it off fast, and the drips that turn into floods." },
+  { icon: PlugZap, title: "Power", copy: "The hidden hazards and the trip-switch that keeps you safe." },
+  { icon: Flame, title: "Fire", copy: "Smoke alarms in the right spots, with fresh batteries." },
+  { icon: KeyRound, title: "Getting in", copy: "Spare-key and lockout planning before you're stuck on the doorstep." },
+  { icon: Umbrella, title: "Storms", copy: "Roof and gutters ready before the next big downpour." },
+  { icon: Thermometer, title: "Comfort", copy: "Hot water and heating/cooling, checked before they quit on you." }
 ];
 
-const comparison: [string, string, string][] = [
-  ["After-hours callout fee", "$99–$180", "$0 — included"],
-  ["First hour of emergency labour", "$120–$220", "$0 — included"],
-  ["Minor parts (washers, fuses, fittings)", "$20–$75", "$0 — included"],
-  ["Response priority", "Standard queue", "Front of the queue"],
-  ["Fixer arrives knowing your home", "No", "Yes — saved profile"],
-  ["Annual Safety Check ($149 value)", "—", "Included"]
-];
+const comparison = [
+  ["Someone turns up at 2 AM", "$99–$180 just to knock", "On us"],
+  ["Getting it fixed", "$120–$220 an hour", "On us"],
+  ["The little bits and pieces", "$20–$75 on top", "On us"],
+  ["How fast you're seen", "Wait your turn", "Straight to the front"],
+  ["They already know your home", "Twenty questions while you panic", "We've got your details"],
+  ["Yearly home once-over", "Never happens", "Yours free ($149 value)"]
+] as [string, string, string][];
 
 const faqs: [string, string][] = [
   [
-    "What exactly is included in an emergency callout?",
-    "The callout itself, the first hour of labour, and minor parts (up to $75) — 24/7, with no after-hours surcharge. Most common emergencies are resolved entirely within this. Bigger repairs are quoted upfront for your approval first."
+    "So what does “covered” actually mean?",
+    "We come out, and we fix the emergency — and you pay nothing for that. The trip out, the time to sort it, the small bits and pieces: all on us. If it turns out to be a much bigger job, you'll see the price and decide before anyone lifts a tool."
   ],
   [
-    "How many included callouts do I get?",
-    "Up to 4 genuine emergency callouts per year per property, under our fair use policy. Roadside callouts for Complete members are counted separately (up to 4 per year)."
+    "Is there a limit?",
+    "It covers the real emergencies life throws at you — up to four a year for your home (and four more on the road if you're on Complete). That's well beyond what almost anyone ever needs. The limit just stops the rare person abusing it, which is how we keep it $29 and not $99."
   ],
   [
     "What counts as an emergency?",
-    "Something that can’t safely wait: burst or leaking pipes, loss of power, electrical faults, lockouts, blocked toilets, storm damage, broken glass, no hot water, roadside breakdowns (Complete). A dripping tap or a planned renovation isn’t an emergency — but you can post those as standard jobs anytime, free."
+    "Anything that can't safely wait: water going everywhere, no power, a fault that worries you, locked out, a toilet that won't stop, storm damage, broken glass, no hot water — and breakdowns on the road if you're on Complete. A dripping tap or a planned reno isn't an emergency, but you can always post those as a normal job, free."
   ],
   [
-    "What if my repair needs more than the included hour or parts?",
-    "The Fixer gives you an upfront quote on the spot before doing anything further. Approve it and they continue; decline and they make the area safe at no extra cost. You are never billed for work you didn’t approve."
+    "What if it's a big job?",
+    "You'll get a clear price up front, before anything happens. Say yes and we get on with it. Say no and we'll make it safe and leave the decision with you. You will never be charged for work you didn't agree to. Simple as that."
   ],
   [
-    "Why is there a 72-hour activation period?",
-    "It keeps membership fair — people join before emergencies, not during them — which is exactly what keeps the price at $29. If you have an emergency right now, start it free as a pay-as-you-go request."
+    "Why do I wait 3 days to be covered?",
+    "Your cover switches on three days after you join. It's the same rule the big insurers use — it keeps things fair so people join before the emergency, not halfway through one. That's exactly what keeps it $29. Already in the middle of one? You don't need to join — just get help now and pay as you go."
   ],
   [
-    "Can I cover an investment property or rental?",
-    "Each membership covers one property. For landlords and property managers who need rental compliance checks and tenant emergency support, see PropertySafe — built specifically for that."
+    "Can I cover a rental or investment property?",
+    "One membership looks after one home. If you're a landlord or manage rentals and need compliance checks and tenant emergency support, PropertySafe is built for exactly that."
   ],
   [
-    "Can I cancel anytime?",
-    "Yes. Monthly plans cancel anytime from your account, effective at the end of the billing period. No lock-in, no exit fees."
+    "Can I cancel whenever I want?",
+    "Yep. Cancel anytime from your account — it just runs to the end of the month you've paid for. No lock-in, no exit fee, no awkward phone call."
   ],
   [
-    "Is my Fixer licensed and insured?",
-    "Yes. Emergency work is performed by Fixers verified for the relevant licence and insurance. Regulated gas and electrical work is always performed and certified by appropriately licensed tradespeople."
+    "Are your Fixers the real deal?",
+    "Every Fixer is checked for the right licence and insurance before we send them your way. Anything to do with gas or electrical safety is always handled and signed off by a properly licensed tradesperson."
   ]
 ];
 
@@ -118,13 +118,12 @@ export default function FixitPeacePage() {
       <section className="container py-14">
         <Badge>Fixit Peace Membership</Badge>
         <h1 className="mt-5 max-w-4xl text-[40px] font-black leading-[1.05] tracking-tight md:text-[64px]">
-          The 2 AM emergency, already paid for.
+          We turn up, fix it, and you don&rsquo;t get a bill for it.
         </h1>
         <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--text2)]">
-          Fixit Peace members get emergency callouts with the{" "}
-          <strong className="text-[var(--text)]">first hour of labour and minor parts included</strong> — plus priority
-          24/7 response and a professional Home Safety Check every year. When something bursts, trips, or locks you out,
-          it starts with a plan instead of a panic.
+          It&rsquo;s 2 AM and the water&rsquo;s everywhere. You&rsquo;re not Googling plumbers or bracing for a
+          rip-off price — you&rsquo;re already covered. Fixit Peace members get a real, insured local Fixer out fast,
+          the emergency sorted, and nothing to pay for it. From $29 a month.
         </p>
         <div className="mt-7 flex flex-col gap-3 sm:flex-row">
           <CheckoutButton planCode="home" label="Protect my home — $29/mo" />
@@ -133,7 +132,7 @@ export default function FixitPeacePage() {
             <ArrowRight size={16} />
           </Button>
         </div>
-        <p className="mt-4 text-sm font-semibold text-[var(--text3)]">Cancel anytime. Benefits activate after 72 hours.</p>
+        <p className="mt-4 text-sm font-semibold text-[var(--text3)]">Cancel anytime. Your cover switches on in 3 days.</p>
 
         {/* TRUST BAR */}
         <div className="mt-8 grid gap-3 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow)] sm:grid-cols-2 lg:grid-cols-5">
@@ -156,7 +155,7 @@ export default function FixitPeacePage() {
             <span className="pb-2 text-sm font-semibold text-[var(--text2)]">/month</span>
           </div>
           <p className="mt-1 text-sm font-semibold text-[var(--amber2)]">Or $290/year — 2 months free</p>
-          <p className="mt-3 text-[var(--text2)]">Peace of mind for every home emergency.</p>
+          <p className="mt-3 text-[var(--text2)]">Whatever goes wrong at home, it&rsquo;s handled.</p>
           <div className="mt-5 grid gap-3">
             {homeFeatures.map((feature) => (
               <div key={feature} className="flex gap-3 text-sm text-[var(--text2)]">
@@ -178,7 +177,7 @@ export default function FixitPeacePage() {
             <span className="pb-2 text-sm font-semibold text-[var(--text2)]">/month</span>
           </div>
           <p className="mt-1 text-sm font-semibold text-[var(--amber2)]">Or $490/year — 2 months free</p>
-          <p className="mt-3 text-[var(--text2)]">Covered at home and on the road.</p>
+          <p className="mt-3 text-[var(--text2)]">Covered at home and stranded on the road.</p>
           <div className="mt-5 grid gap-3">
             {completeFeatures.map((feature) => (
               <div key={feature} className="flex gap-3 text-sm text-[var(--text2)]">
@@ -192,24 +191,24 @@ export default function FixitPeacePage() {
           </div>
         </Card>
         <p className="text-xs leading-5 text-[var(--text3)] md:col-span-2">
-          * Fair use applies. See “How included emergencies work” below. Coverage is expanding across Australia —
-          confirm your area when you join.
+          Covers the real emergencies life throws at you — see exactly how it works below. We&rsquo;re bringing
+          cover to more of Australia every month; just confirm your area when you join.
         </p>
       </section>
 
-      {/* HOW INCLUDED EMERGENCIES WORK */}
+      {/* HOW IT WORKS */}
       <section className="container pb-12">
         <Card variant="dark" className="p-6 md:p-8">
-          <Badge>No surprises</Badge>
-          <h2 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">No surprise bills. Ever.</h2>
+          <Badge>No nasty surprises</Badge>
+          <h2 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">Here&rsquo;s exactly what happens when you call.</h2>
           <p className="mt-3 max-w-2xl leading-7 text-white/72">
-            Here’s exactly how a member emergency works — no fine-print games:
+            No fine print, no games. Three steps, that&rsquo;s it:
           </p>
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {[
-              ["1. You call or tap “Help now.”", "Any hour, any day. Your saved home profile means we already know your property, access details, and history. The Fixer arrives briefed."],
-              ["2. First hour of labour and minor parts are included.", "Most common emergencies — a burst tap, a tripped circuit, a lockout, a blocked toilet — are fixed on the spot, fully covered by your membership (parts up to $75)."],
-              ["3. Bigger job? Upfront quote first.", "Major repairs, replacements, and specialist work are quoted before anything happens. Approve it, or we make the area safe and you decide later. You’re never billed for work you didn’t agree to."]
+              ["1. You tap “Help now.”", "Any hour, any day. We already know your home and how to get in — so help starts the second you call, not after twenty questions."],
+              ["2. We turn up and fix it.", "The burst tap, the dead power, the lockout, the blocked loo — sorted on the spot. The visit, the time it takes, the small bits and pieces: all on us."],
+              ["3. Something bigger? You see the price first.", "If it&rsquo;s a major job, you get a clear price before anyone lifts a tool. Say yes, or we make it safe and you decide later. You never pay for work you didn&rsquo;t agree to."]
             ].map(([title, copy]) => (
               <div key={title} className="rounded-2xl border border-white/10 bg-white/8 p-5">
                 <p className="font-black text-white/90">{title}</p>
@@ -218,9 +217,8 @@ export default function FixitPeacePage() {
             ))}
           </div>
           <p className="mt-6 rounded-2xl border border-white/10 bg-white/8 p-4 text-sm leading-6 text-white/72">
-            <strong className="text-[var(--amber)]">Fair use:</strong> Membership covers up to 4 included emergency
-            callouts per year, per property. Genuine emergencies only — and that’s almost everyone. It’s what keeps the
-            price at $29 instead of $99.
+            It covers the real emergencies life throws at you — well beyond what almost anyone ever needs. There&rsquo;s
+            a sensible limit so no one can take the mickey, and that&rsquo;s exactly what keeps it $29 a month, not $99.
           </p>
         </Card>
       </section>
@@ -229,22 +227,22 @@ export default function FixitPeacePage() {
       <section id="safety-check" className="container pb-12">
         <div className="grid gap-6 lg:grid-cols-[.85fr_1.15fr] lg:items-start">
           <Card variant="membership">
-            <Badge tone="green">Included with every plan</Badge>
+            <Badge tone="green">Free with every plan</Badge>
             <h2 className="mt-4 text-3xl font-black tracking-tight">
-              Most cover waits for things to break. We show up before they do.
+              Most cover waits for things to break. We catch them first.
             </h2>
             <p className="mt-4 leading-7 text-[var(--text2)]">
-              Every Fixit Peace plan includes a professional Safety &amp; Readiness Check —{" "}
-              <strong className="text-[var(--text)]">valued at $149</strong> — where a Fixer walks your property and gets
-              it emergency-ready.
+              Once a year, a Fixer walks your home and gets it ready for trouble — the kind of once-over that turns a
+              future 2 AM disaster into a quiet ten-minute fix today.{" "}
+              <strong className="text-[var(--text)]">Worth $149. Yours free.</strong>
             </p>
             <p className="mt-4 rounded-2xl border border-amber-200 bg-white p-4 text-sm leading-6 text-[var(--text2)]">
-              <strong>Complete members</strong> get this every 6 months — plus a vehicle readiness check: battery,
-              tyres, fluids, and the things that strand you.
+              <strong>On Complete?</strong> You get it twice a year — plus a quick look over the car: battery, tyres,
+              and the things that leave you stranded.
             </p>
             <p className="mt-4 text-sm leading-6 text-[var(--text2)]">
-              You’ll get a written summary, reminders for anything due, and recommended fixes ranked by urgency — fix
-              them with any Fixer you like, no obligation.
+              You get it all written up in plain English, a nudge when anything&rsquo;s due, and a short list of what to
+              sort first — fix it with any Fixer you like, no pressure.
             </p>
           </Card>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -261,9 +259,8 @@ export default function FixitPeacePage() {
           </div>
         </div>
         <p className="mt-5 text-xs leading-5 text-[var(--text3)]">
-          Safety Checks are visual readiness inspections. Regulated gas and electrical compliance work must be performed
-          and certified by appropriately licensed tradespeople and is quoted separately. For rental compliance
-          inspections, see{" "}
+          This once-over is a visual safety check, not a compliance certificate. Anything to do with gas or electrical
+          safety is always handled and signed off by a properly licensed tradesperson. Landlords and rentals — that&rsquo;s{" "}
           <Link href="/propertysafe" className="font-bold text-[var(--amber2)] hover:underline">
             PropertySafe
           </Link>
@@ -273,13 +270,13 @@ export default function FixitPeacePage() {
 
       {/* COMPARISON TABLE */}
       <section className="container pb-12">
-        <h2 className="text-3xl font-black tracking-tight md:text-4xl">What a single bad night costs without Fixit Peace</h2>
+        <h2 className="text-3xl font-black tracking-tight md:text-4xl">What one bad night costs the person who didn&rsquo;t join.</h2>
         <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border)] bg-white shadow-[var(--shadow)]">
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-[var(--border)] bg-[var(--bg)]">
                 <th className="p-4 font-black"> </th>
-                <th className="p-4 font-black text-[var(--text2)]">Pay-as-you-go</th>
+                <th className="p-4 font-black text-[var(--text2)]">Not a member</th>
                 <th className="p-4 font-black text-[var(--amber2)]">Fixit Peace member</th>
               </tr>
             </thead>
@@ -295,26 +292,26 @@ export default function FixitPeacePage() {
           </table>
         </div>
         <p className="mt-4 text-lg font-black">
-          One emergency can cost more than a full year of membership. That’s the entire point.
+          One bad night can cost more than a whole year of cover. That&rsquo;s the entire point.
         </p>
         <p className="mt-2 text-xs leading-5 text-[var(--text3)]">
-          Pay-as-you-go ranges are typical after-hours trade rates and vary by region and trade.
+          Non-member costs are typical after-hours trade prices and vary by area and trade.
         </p>
       </section>
 
-      {/* FAIR-USE ACTIVATION */}
+      {/* WHEN COVER STARTS */}
       <section className="container pb-12">
         <Card variant="emergency">
           <Clock className="text-[var(--amber2)]" />
-          <h2 className="mt-4 text-2xl font-black tracking-tight">Why benefits start after 72 hours</h2>
+          <h2 className="mt-4 text-2xl font-black tracking-tight">Your cover switches on in 3 days. Here&rsquo;s why.</h2>
           <p className="mt-3 max-w-3xl leading-7 text-[var(--text2)]">
-            Included benefits activate 72 hours after you join. It’s the same standard the big providers use — it keeps
-            membership fair and the price low for everyone, by making sure people join before the emergency, not during
-            one.
+            Cover kicks in three days after you join — the same rule the big insurers use. It keeps things fair, so
+            people join before the emergency, not halfway through one. That&rsquo;s exactly what keeps it $29.
+            You can&rsquo;t buy an umbrella once it&rsquo;s already pouring — so the cheapest day to start is today.
           </p>
           <p className="mt-4 max-w-3xl font-bold leading-7 text-[var(--text)]">
-            Already mid-emergency right now? You don’t need a membership to get help. Start your request free and pay as
-            you go — then join afterwards so the next one’s covered.
+            In the middle of one right now? You don&rsquo;t need to join to get help. Get someone out today and pay as
+            you go — then join after, so the next one&rsquo;s already covered.
           </p>
           <Button href="/post-job" variant="ghost" className="mt-5">
             Get help now — no membership needed
@@ -327,11 +324,12 @@ export default function FixitPeacePage() {
         <Card>
           <Wrench className="text-[var(--purple)]" />
           <h2 className="mt-4 text-2xl font-black tracking-tight">
-            Membership is for emergencies. Everything else stays free to post.
+            This is for the emergencies. Everything else is still free to post.
           </h2>
           <p className="mt-3 max-w-3xl leading-7 text-[var(--text2)]">
-            Renovation? New fence? Bathroom redo? Post any standard trade job on Fixit247 free, membership or not. Fixit
-            Peace is purely your emergency safety net — and members’ saved profiles make every job start smoother.
+            Planning a reno, a new fence, a fresh bathroom? Post it on Fixit247 free, member or not. Fixit Peace is
+            just your safety net for when things go wrong — and because we already know your home, every job starts
+            quicker.
           </p>
         </Card>
       </section>
@@ -341,14 +339,15 @@ export default function FixitPeacePage() {
         <Card variant="dark" className="p-6 md:p-8">
           <BadgeCheck className="text-[var(--amber)]" />
           <h2 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">
-            Lock in founding member pricing — for life.
+            Get in early. Keep $29 for life.
           </h2>
           <p className="mt-3 max-w-2xl leading-7 text-white/72">
-            Fixit Peace is new, and early members are the reason it’ll work. Join now and your rate is locked at
-            $29/month for as long as you stay a member — even when pricing rises for new members later.
+            Fixit Peace is brand new, and the people who join now are the reason it&rsquo;ll work. So here&rsquo;s the
+            deal: join today and your price stays $29 a month for as long as you&rsquo;re a member — even when it goes
+            up for everyone who joins later.
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            {["Price locked for life", "Cancel anytime", "Direct line to the team building this"].map((item) => (
+            {["Your price, locked for life", "Cancel anytime", "A direct line to the team building this"].map((item) => (
               <div key={item} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/8 p-3 text-sm font-black text-white/85">
                 <Check size={16} className="text-[var(--green)]" />
                 {item}
@@ -360,7 +359,7 @@ export default function FixitPeacePage() {
 
       {/* FAQ */}
       <section className="container pb-12">
-        <h2 className="text-3xl font-black tracking-tight md:text-4xl">Questions, answered.</h2>
+        <h2 className="text-3xl font-black tracking-tight md:text-4xl">The bits you&rsquo;re wondering about.</h2>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           {faqs.map(([question, answer]) => (
             <Card key={question}>
@@ -375,11 +374,11 @@ export default function FixitPeacePage() {
       <section className="container pb-16">
         <Card variant="membership" className="text-center">
           <h2 className="mx-auto max-w-2xl text-3xl font-black tracking-tight md:text-4xl">
-            The next emergency is a matter of when.
+            Picture the next time something breaks.
           </h2>
           <p className="mx-auto mt-3 max-w-2xl leading-7 text-[var(--text2)]">
-            Join today, and in 72 hours every burst pipe, dead battery, and midnight lockout starts with: “It’s
-            covered.”
+            Now picture already knowing it&rsquo;s handled. Join today, and in three days every burst pipe, dead
+            battery, and midnight lockout starts with two words: &ldquo;it&rsquo;s covered.&rdquo;
           </p>
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <CheckoutButton planCode="home" label="Protect my home — $29/mo" />
