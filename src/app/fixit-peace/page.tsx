@@ -343,7 +343,7 @@ export default function FixitPeacePage() {
           </h2>
           <p className="mt-3 max-w-2xl leading-7 text-white/72">
             Fixit Peace is a 12-month membership. You&rsquo;re covered for home emergencies every day of the year, your
-            monthly price is held for the full term, and your annual Safety &amp; Readiness Check is built in.
+            price is held for the full term, and your annual Safety &amp; Readiness Check is built in.
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
             {["12 months of 24/7 emergency cover", "Your price held for the full term", "Annual Safety & Readiness Check included"].map((item) => (
