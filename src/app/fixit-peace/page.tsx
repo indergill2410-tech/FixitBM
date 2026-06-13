@@ -100,8 +100,8 @@ const faqs: [string, string][] = [
     "Each membership covers one property. Landlords and property managers who need rental compliance inspections and tenant emergency support should use PropertySafe, which is built for that."
   ],
   [
-    "Can I cancel anytime?",
-    "Yes. Cancel anytime from your account; cover runs to the end of the period you've paid for. No lock-in and no exit fees."
+    "How does the 12-month membership work?",
+    "Fixit Peace is a 12-month membership, managed from your account. Your cover and your price are set for the full term; full cancellation and renewal terms are in the membership Terms."
   ],
   [
     "Are your Fixers licensed and insured?",
@@ -132,7 +132,7 @@ export default function FixitPeacePage() {
             <ArrowRight size={16} />
           </Button>
         </div>
-        <p className="mt-4 text-sm font-semibold text-[var(--text3)]">Cancel anytime. Cover starts 3 days after you join.</p>
+        <p className="mt-4 text-sm font-semibold text-[var(--text3)]">12-month membership · Cover starts 3 days after you join.</p>
 
         {/* TRUST BAR */}
         <div className="mt-8 grid gap-3 rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[var(--shadow)] sm:grid-cols-2 lg:grid-cols-5">
@@ -334,20 +334,19 @@ export default function FixitPeacePage() {
         </Card>
       </section>
 
-      {/* FOUNDING MEMBER */}
+      {/* 12-MONTH MEMBERSHIP */}
       <section className="container pb-12">
         <Card variant="dark" className="p-6 md:p-8">
           <BadgeCheck className="text-[var(--amber)]" />
           <h2 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">
-            Get in early. Keep $29 for life.
+            A full year of cover, in one membership.
           </h2>
           <p className="mt-3 max-w-2xl leading-7 text-white/72">
-            Fixit Peace is brand new, and the people who join now are the reason it&rsquo;ll work. So here&rsquo;s the
-            deal: join today and your price stays $29 a month for as long as you&rsquo;re a member — even when it goes
-            up for everyone who joins later.
+            Fixit Peace is a 12-month membership. You&rsquo;re covered for home emergencies every day of the year, your
+            monthly price is held for the full term, and your annual Safety &amp; Readiness Check is built in.
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
-            {["Your price, locked for life", "Cancel anytime", "A direct line to the team building this"].map((item) => (
+            {["12 months of 24/7 emergency cover", "Your price held for the full term", "Annual Safety & Readiness Check included"].map((item) => (
               <div key={item} className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/8 p-3 text-sm font-black text-white/85">
                 <Check size={16} className="text-[var(--green)]" />
                 {item}
@@ -385,7 +384,7 @@ export default function FixitPeacePage() {
             <CheckoutButton planCode="complete" label="Protect home + road — $49/mo" variant="ghost" />
           </div>
           <p className="mt-4 text-xs font-semibold text-[var(--text3)]">
-            Cancel anytime · Founding member price locked for life · Licensed &amp; insured Fixers
+            12-month membership · Annual Safety &amp; Readiness Check included · Licensed &amp; insured Fixers
           </p>
         </Card>
       </section>
