@@ -208,7 +208,7 @@ export default function FixitPeacePage() {
             {[
               ["1. Request help, 24/7", "Tap “Help now” any hour. Your saved home details mean a Fixer responds faster — no twenty questions while you panic."],
               ["2. A Fixer attends and repairs it", "Burst pipe, power fault, lockout, blocked toilet — most are fixed on the spot. The call-out, the first hour on site, and emergency repair parts are all included, and most repairs take 30 minutes to an hour."],
-              ["3. Larger job? Upfront quote first", "If a bigger repair is needed, you get a clear quote before any further work. Approve it, or we make the area safe and you decide later — you&rsquo;re never charged for work you didn&rsquo;t approve."]
+              ["3. Larger job? Upfront quote first", "If a bigger repair is needed, you get a clear quote before any further work. Approve it, or we make the area safe and you decide later — you're never charged for work you didn't approve."]
             ].map(([title, copy]) => (
               <div key={title} className="rounded-2xl border border-white/10 bg-white/8 p-5">
                 <p className="font-black text-white/90">{title}</p>
