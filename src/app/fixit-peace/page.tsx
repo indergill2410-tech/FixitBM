@@ -338,9 +338,6 @@ export default function FixitPeacePage() {
       <section className="container pb-12">
         <Card variant="dark" className="p-6 md:p-8">
           <BadgeCheck className="text-[var(--amber)]" />
-          <h2 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">
-            A full year of cover, in one membership.
-          </h2>
           <p className="mt-3 max-w-2xl leading-7 text-white/72">
             Fixit Peace is a 12-month membership. You&rsquo;re covered for home emergencies every day of the year, your
             price is held for the full term, and your annual Safety &amp; Readiness Check is built in.
